@@ -2370,7 +2370,7 @@ const questions = [
       "regedit.exe",
       "msconfig.exe"
     ],
-    correct: [2, 3],
+    correct: [0, 2, 3],
     explanation: "driverquery.exe /si lista sve instalirane drajvere sa informacijom da li su digitalno potpisani. sigverif.exe proverava digitalni potpis sistemskih fajlova i drajvera.",
     image: ""
   },
@@ -2405,7 +2405,7 @@ const questions = [
       "Pokrenuti komandu bootrec /fixboot",
       "Iskoristiti opciju 'Use the last known good configuration' pri podizanju"
     ],
-    correct: [0, 3],
+    correct: [0, 2],
     explanation: "BOOTMGR is missing znači da je boot manager oštećen ili nedostaje. Rešenje: Windows Recovery Environment (može obnoviti BOOTMGR) i bootrec /fixboot koji popravlja boot sektor.",
     image: ""
   },
@@ -2421,7 +2421,7 @@ const questions = [
       "Konfigurišete sistem tako da se stranična datoteka nalazi na D i E diskovima",
       "Povećate veličinu stranične datoteke na 3 GB"
     ],
-    correct: [1],
+    correct: [0,1],
     explanation: "Greške straničenja i van rada aplikacije ukazuju na trajni nedostatak RAM-a. Dodavanje RAM-a je pravo rešenje.",
     image: ""
   },
@@ -3094,7 +3094,7 @@ const questions = [
     category: "odrzavanje",
     type: "input",
     question: "194. Instalirali ste sistem za pravljenje i vraćanje rezervnih kopija podataka (Backup and Recovery System). Vrsta rezervne kopije koju ćete PRVO pokrenuti da biste se zaštitili od gubitka podataka je __________ backup.",
-    correct: ["full", "Full", "puni", "Puni"],
+    correct: ["full", "Full", "puni", "Puni", "full backup", "Full Backup", "Full backup"],
     explanation: "Full backup (potpuna rezervna kopija) mora biti prva — kopira apsolutno sve podatke sa zadatog izvora. Tek nakon toga može se koristiti inkrementalni ili diferencijalni backup koji zavise od postojanja prethodnog full backupa.",
     image: ""
   },
@@ -3109,92 +3109,91 @@ const questions = [
     explanation: "Stress test (test opterećenja) tera procesor da radi na 100% kapaciteta duži vremenski period koristeći benchmark alate (Prime95, AIDA64, Cinebench). Koristi se za proveru stabilnosti i termičkih karakteristika pri overclockingu.",
     image: ""
   },
+// ── 197 (Održavanje – matching) ─────────────────────────────────
+{
+  id: 197,
+  category: "odrzavanje",
+  type: "matching",
+  question: "197. Poveži svaki objekat Active Directory-ja sa odgovarajućom karakteristikom:",
+  pairs: [
+    { left: "Omogućava prijavu na domen", right: "Korisnik (user)" },
+    { left: "Omogućava da se objektima upravlja kolektivno umesto pojedinačno", right: "Grupa (group)" },
+    { left: "Objekat koji nema nikakve bezbednosne dozvole", right: "Kontakt (contact)" },
+    { left: "Koristi se za prikupljanje objekata koji dele zajedničke zahteve za administriranje", right: "Organizaciona jedinica (OU)" }
+  ],
+  correct: [],
+  explanation: "User nalog omogućava autentifikaciju. Grupe olakšavaju administraciju — dozvole se daju grupi, a ne svakom korisniku posebno. Kontakt je samo adresarska stavka bez AD dozvola. OU je kontejner za organizaciju objekata u AD-u.",
+  image: ""
+},
 
-  // ── 197 (Održavanje – matching) ─────────────────────────────────
-  {
-    id: 197,
-    category: "odrzavanje",
-    type: "matching",
-    question: "197. Poveži svaki objekat Active Directory-ja sa odgovarajućom karakteristikom:",
-    pairs: [
-      { left: "Korisnik (user)",                        right: "Omogućava prijavu na domen" },
-      { left: "Grupa (group)",                          right: "Omogućava da se objektima upravlja kolektivno umesto pojedinačno" },
-      { left: "Kontakt (contact)",                      right: "Objekat koji nema nikakve bezbednosne dozvole" },
-      { left: "Organizaciona jedinica (OU)",            right: "Koristi se za prikupljanje objekata koji dele zajedničke zahteve za administriranje" }
-    ],
-    correct: [],
-    explanation: "User nalog omogućava autentifikaciju. Grupe olakšavaju administraciju — dozvole se daju grupi, a ne svakom korisniku posebno. Kontakt je samo adresarska stavka bez AD dozvola. OU je kontejner za organizaciju objekata u AD-u.",
-    image: ""
-  },
+// ── 198 (Održavanje – matching) ─────────────────────────────────
+{
+  id: 198,
+  category: "odrzavanje",
+  type: "matching",
+  question: "198. Poveži svaki tip softverske licence sa odgovarajućim objašnjenjem:",
+  pairs: [
+    { left: "Proizvođač softvera daje korisniku pravo da koristi kopiju, dok proizvođač zadržava pravo vlasništva nad svakom kopijom", right:"Proprietary licence" },
+    { left: "Proizvođač ne zadržava pravo vlasništva nad kopijama — pravo vlasništva se prenosi na krajnjeg korisnika", right:"Free licence"},
+    { left: "Korisniku daje pravo da vrši izmene na softveru, ali je obavezan da objavi izvorni kod za sve izmene", right: "Copyleft licence" },
+    { left: "Daje pravo da korisnik iskoristi softver i njegov izvorni kod kao deo softvera zatvorenog koda", right: "Permissive licence" }
+  ],
+  correct: [],
+  explanation: "Proprietary (vlasnička) = Windows, Office. Free licence = prenos vlasništva kopije. Copyleft (GPL) = izmene moraju biti open source. Permissive (MIT, BSD) = može se koristiti i u vlasničkom softveru.",
+  image: ""
+},
 
-  // ── 198 (Održavanje – matching) ─────────────────────────────────
-  {
-    id: 198,
-    category: "odrzavanje",
-    type: "matching",
-    question: "198. Poveži svaki tip softverske licence sa odgovarajućim objašnjenjem:",
-    pairs: [
-      { left: "Proprietary licence", right: "Proizvođač softvera daje korisniku pravo da koristi kopiju, dok proizvođač zadržava pravo vlasništva nad svakom kopijom" },
-      { left: "Free licence",        right: "Proizvođač ne zadržava pravo vlasništva nad kopijama — pravo vlasništva se prenosi na krajnjeg korisnika" },
-      { left: "Copyleft licence",    right: "Korisniku daje pravo da vrši izmene na softveru, ali je obavezan da objavi izvorni kod za sve izmene" },
-      { left: "Permissive licence",  right: "Daje pravo da korisnik iskoristi softver i njegov izvorni kod kao deo softvera zatvorenog koda" }
-    ],
-    correct: [],
-    explanation: "Proprietary (vlasnička) = Windows, Office. Free licence = prenos vlasništva kopije. Copyleft (GPL) = izmene moraju biti open source. Permissive (MIT, BSD) = može se koristiti i u vlasničkom softveru.",
-    image: ""
-  },
+// ── 199 (Održavanje – matching) ─────────────────────────────────
+{
+  id: 199,
+  category: "odrzavanje",
+  type: "matching",
+  question: "199. Poveži svaku vrstu rezervne kopije sa odgovarajućim objašnjenjem:",
+  pairs: [
+    { left: "Kopira sve podatke sa zadate lokacije na zadato odredište", right: "Full backup" },
+    { left: "Kopira samo promene nastale u odnosu na poslednju rezervnu kopiju bilo kog tipa", right: "Incremental backup" },
+    { left: "Kada se prvi put pokrene kopira sve podatke. Svaki sledeći put kopiraju se sve promene nastale u odnosu na prvu sveobuhvatnu kopiju", right: "Differential backup" },
+    { left: "Pokreće se automatski u određenom vremenskom intervalu", right: "Schedule backup" }
+  ],
+  correct: [],
+  explanation: "Full = sve. Incremental = promene od poslednjeg backupa (bilo koje vrste) — najbrži za kreiranje, najsporiji za oporavak. Differential = promene od poslednjeg full backupa — kompromis. Schedule = automatsko zakazivanje.",
+  image: ""
+},
 
-  // ── 199 (Održavanje – matching) ─────────────────────────────────
-  {
-    id: 199,
-    category: "odrzavanje",
-    type: "matching",
-    question: "199. Poveži svaku vrstu rezervne kopije sa odgovarajućim objašnjenjem:",
-    pairs: [
-      { left: "Full backup",         right: "Kopira sve podatke sa zadate lokacije na zadato odredište" },
-      { left: "Incremental backup",  right: "Kopira samo promene nastale u odnosu na poslednju rezervnu kopiju bilo kog tipa" },
-      { left: "Differential backup", right: "Kopira sve promene nastale u odnosu na prvu sveobuhvatnu kopiju" },
-      { left: "Schedule backup",     right: "Pokreće se automatski u određenom vremenskom intervalu" }
-    ],
-    correct: [],
-    explanation: "Full = sve. Incremental = promene od poslednjeg backupa (bilo koje vrste) — najbrži za kreiranje, najsporiji za oporavak. Differential = promene od poslednjeg full backupa — kompromis. Schedule = automatsko zakazivanje.",
-    image: ""
-  },
+// ── 200 (Održavanje – matching) ─────────────────────────────────
+{
+  id: 200,
+  category: "odrzavanje",
+  type: "matching",
+  question: "200. Poveži svaku perfmon komandu sa situacijom u kojoj je najprikladnija:",
+  pairs: [
+    { left: "Potrebno je pronaći proces koji najviše koristi procesor", right: "perfmon /res" },
+    { left: "Potrebna je ukupna procena stabilnosti sistema", right: "perfmon /rel" },
+    { left: "Potrebno je pratiti broj štampačkih poslova u vremenskom periodu", right: "perfmon /sys" },
+    { left: "Potrebno je generisati izveštaje o stanju hardverskih i softverskih resursa", right: "perfmon /report" }
+  ],
+  correct: [],
+  explanation: "perfmon /res = Resource Monitor (CPU/RAM/disk/mreža po procesu). perfmon /rel = Reliability Monitor (istorija stabilnosti). perfmon /sys = System Monitor (praćenje brojača). perfmon /report = generiše sistemski dijagnostički izveštaj.",
+  image: ""
+},
 
-  // ── 200 (Održavanje – matching) ─────────────────────────────────
-  {
-    id: 200,
-    category: "odrzavanje",
-    type: "matching",
-    question: "200. Poveži svaku perfmon komandu sa situacijom u kojoj je najprikladnija:",
-    pairs: [
-      { left: "perfmon /res",    right: "Potrebno je pronaći proces koji najviše koristi procesor" },
-      { left: "perfmon /rel",    right: "Potrebna je ukupna procena stabilnosti sistema" },
-      { left: "perfmon /sys",    right: "Potrebno je pratiti broj štampačkih poslova u vremenskom periodu" },
-      { left: "perfmon /report", right: "Potrebno je generisati izveštaje o stanju hardverskih i softverskih resursa" }
-    ],
-    correct: [],
-    explanation: "perfmon /res = Resource Monitor (CPU/RAM/disk/mreža po procesu). perfmon /rel = Reliability Monitor (istorija stabilnosti). perfmon /sys = System Monitor (praćenje brojača). perfmon /report = generiše sistemski dijagnostički izveštaj.",
-    image: ""
-  },
-
-  // ── 201 (Održavanje – matching) ─────────────────────────────────
-  {
-    id: 201,
-    category: "odrzavanje",
-    type: "matching",
-    question: "201. Poređaj hronološkim redosledom korake VBScript skripte za kreiranje računara 'Lucas' u OU 'Jedi' na domenu starwars.com:",
-    pairs: [
-      { left: "1. korak", right: "Set objOU = GetObject(\"LDAP://OU=Jedi, DC=starwars, DC=com\")" },
-      { left: "2. korak", right: "Set objComputer = objOU.Create(\"Computer\", \"CN=Lucas\")" },
-      { left: "3. korak", right: "objComputer.Put \"sAMAccountName\", \"Lucas$\"" },
-      { left: "4. korak", right: "objComputer.Put \"userAccountControl\", 4096" },
-      { left: "5. korak", right: "objComputer.SetInfo" }
-    ],
-    correct: [],
-    explanation: "Redosled VBScript AD skripte: (1) Povežemo se na OU, (2) Kreiramo računarski objekat, (3) Postavimo SAM ime (mora imati $ na kraju), (4) Postavimo userAccountControl=4096 (workstation), (5) SetInfo() upisuje objekat u AD.",
-    image: ""
-  },
+// ── 201 (Održavanje – matching) ─────────────────────────────────
+{
+  id: 201,
+  category: "odrzavanje",
+  type: "matching",
+  question: "201. Poređaj hronološkim redosledom korake VBScript skripte za kreiranje računara 'Lucas' u OU 'Jedi' na domenu starwars.com:",
+  pairs: [
+    { left: "Set objOU = GetObject(\"LDAP://OU=Jedi, DC=starwars, DC=com\")", right: "1. korak" },
+    { left: "Set objComputer = objOU.Create(\"Computer\", \"CN=Lucas\")", right: "2. korak" },
+    { left: "objComputer.Put \"sAMAccountName\", \"Lucas$\"", right: "3. korak" },
+    { left: "objComputer.Put \"userAccountControl\", 4096", right: "4. korak" },
+    { left: "objComputer.SetInfo", right: "5. korak" }
+  ],
+  correct: [],
+  explanation: "Redosled VBScript AD skripte: (1) Povežemo se na OU, (2) Kreiramo računarski objekat, (3) Postavimo SAM ime (mora imati $ na kraju), (4) Postavimo userAccountControl=4096 (workstation), (5) SetInfo() upisuje objekat u AD.",
+  image: ""
+},
 
 
   
