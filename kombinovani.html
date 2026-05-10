@@ -369,7 +369,22 @@
     <div class="question-box">
 
       <div class="question-header">
-        <h2 id="questionCounter">Pitanje 1</h2>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+  <h2 id="questionCounter" style="margin:0;">Pitanje 1</h2>
+
+  <div
+    id="questionCategory"
+    style="
+      font-size:13px;
+      color:#94a3b8;
+      font-weight:500;
+      background:rgba(255,255,255,0.05);
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.08);
+    "
+  ></div>
+</div>
         <input type="number" id="jumpInput" placeholder="Idi na pitanje #" min="1" />
       </div>
 
@@ -396,15 +411,52 @@
       <h2>ℹ Informacije</h2>
       <br>
       <ul style="line-height:2; padding-left:20px;">
-        <li>Ovaj sajt je uglavnom pravio AI, može da se desi da su neka pitanja netačna</li>
-        <li>Ovo nije zvanican sajt, vec samo projekat.</li>
+		<li>ver. 1.01</li>
+        <li>Ovaj sajt je uglavnom pravio AI, i nisam kontrolisao sva pitanja, pa moze da se desi da je nesto pogresno, ako jeste prijavite problem (dole)</li>
+        <li>Ovo nije zvanican sajt tesle, vec samo projekat.</li>
         <li>Rađeno po priručniku za maturski ispit 2024. Elektrotehničar računara</li>
 		<li>!!! Tehnicka dokumentacija ima jedno nenumerisano pitanje, i zato je posle pomereno sve za 1</li>
-        <li>Za probleme i predloge pišite na mail boki.mali.smoki@gmail.com</li>
 		<li>Srećno na maturi :D</li>
+		<li>Kontakt na home page-u</li>
+        <li><span onclick="openProblemModal()" style="text-decoration:underline;cursor:pointer;color:#cbd5e1;">Prijavi problem</span></li>
       </ul>
     </div>
 
+  </div>
+
+  <!-- PROBLEM MODAL -->
+  <div id="problemModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:2000;justify-content:center;align-items:center;">
+    <div style="background:#151c2c;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:36px;width:90%;max-width:520px;position:relative;max-height:85vh;overflow-y:auto;">
+      <span onclick="closeProblemModal()" style="position:absolute;top:16px;right:20px;font-size:24px;cursor:pointer;color:#94a3b8;">×</span>
+      <h2 style="margin-bottom:24px;font-size:22px;color:#e2e8f0;">Kako ispraviti netacan zadatak?</h2>
+
+      <div style="margin-bottom:20px;">
+        <h3 style="font-size:16px;color:#cbd5e1;margin-bottom:6px;">Korak 1</h3>
+        <p style="font-size:13px;color:#64748b;line-height:1.6;">Idite na sajt githuba gde se nalazi databaza pitanja (https://github.com/boki123s/Maturahub/blob/main/questions.js)
+		i naci ID zadatka koji nije tacan.</p>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <h3 style="font-size:16px;color:#cbd5e1;margin-bottom:6px;">Korak 2</h3>
+        <p style="font-size:13px;color:#64748b;line-height:1.6;">Kopirati ga (samo taj zadatak, ukljucujuci {ove viticaste zagrade i zarez},)</p>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <h3 style="font-size:16px;color:#cbd5e1;margin-bottom:6px;">Korak 3</h3>
+        <p style="font-size:13px;color:#64748b;line-height:1.6;">Izmenite tekst zadatka ili resenje, ne menjati ID zadatka i nije preporucljivo menjati tip
+		postoji 4 tipa a to su multiple(JEDNO TACNO RESENJE), multi(VISE TACNIH), input(kucanje teksta), matching(povezivanje).</p>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <h3 style="font-size:16px;color:#cbd5e1;margin-bottom:6px;">Korak 4</h3>
+        <p style="font-size:13px;color:#64748b;line-height:1.6;">Mozes primetiti kako funkcionisu pitanja i izmeniti to sto je potrebno.</p>
+      </div>
+
+      <div style="margin-bottom:4px;">
+        <h3 style="font-size:16px;color:#cbd5e1;margin-bottom:6px;">Korak 5</h3>
+        <p style="font-size:13px;color:#64748b;line-height:1.6;">Posalji mi na discord pitanje i ja cu se potruditi da sto pre ispravim :) discord: bokiyt</p>
+      </div>
+    </div>
   </div>
 
   <script src="questions.js"></script>
@@ -432,7 +484,7 @@ let filteredQuestions = sortQuestionsById([...questions]);
     const questionText     = document.getElementById("questionText");
     const answersContainer = document.getElementById("answersContainer");
     const explanation      = document.getElementById("explanation");
-    const questionCounter  = document.getElementById("questionCounter");
+    const questionCategory = document.getElementById("questionCategory");
     const categorySelect   = document.getElementById("categorySelect");
     const questionImage    = document.getElementById("questionImage");
     const typeBadge        = document.getElementById("questionTypeBadge");
@@ -454,6 +506,14 @@ let filteredQuestions = sortQuestionsById([...questions]);
       btnCheck.style.opacity = "";
 
       questionCounter.innerText  = "Pitanje " + (currentQuestion + 1) + " / " + filteredQuestions.length;
+	  const categoryNames = {
+  os: "Operativni sistemi",
+  hardver: "Računarski hardver",
+  odrzavanje: "Održavanje računarskih sistema",
+  dokumentacija: "Tehnička dokumentacija"
+};
+
+questionCategory.innerText = categoryNames[q.category] || "";
       questionText.innerText     = q.question;
       explanation.style.display  = "none";
       explanation.innerHTML      = "";
@@ -888,6 +948,17 @@ document.getElementById("jumpInput").addEventListener("change", function(e) {
     });
 
     renderQuestion();
+
+    function openProblemModal() {
+      document.getElementById("problemModal").style.display = "flex";
+    }
+    function closeProblemModal() {
+      document.getElementById("problemModal").style.display = "none";
+    }
+    window.addEventListener("click", function(e) {
+      const modal = document.getElementById("problemModal");
+      if (e.target === modal) closeProblemModal();
+    });
 
   </script>
 </body>

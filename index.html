@@ -26,13 +26,61 @@
       overflow-x:hidden;
     }
 
+    /* ASCII ART - top left */
+    .ascii-art {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      font-family: monospace;
+      font-size: 9px;
+      line-height: 1.15;
+      color: rgba(255,255,255,0.07);
+      pointer-events: none;
+      z-index: 0;
+      white-space: pre;
+      user-select: none;
+    }
+
     .container{
       width:100%;
       min-height:100vh;
       padding:60px 40px;
+      padding-bottom: 80px;
       display:flex;
       flex-direction:column;
       align-items:center;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* SCHOOL HEADER */
+    .school-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 36px;
+      gap: 10px;
+    }
+
+    .school-logo {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      border-radius: 16px;
+      filter: drop-shadow(0 0 12px rgba(124,92,255,0.35));
+    }
+
+    .school-icon {
+      font-size: 36px;
+      line-height: 1;
+      filter: drop-shadow(0 0 8px rgba(124,92,255,0.5));
+    }
+
+    .school-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: #9aa4b2;
+      letter-spacing: 0.04em;
     }
 
     .title{
@@ -155,6 +203,20 @@
       transform:translateX(4px);
     }
 
+    /* FOOTER */
+    .footer {
+      margin-top: 60px;
+      text-align: center;
+      color: #4a5260;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+    }
+
+    .footer span {
+      color: #5a6275;
+    }
+
     .modal{
       position:fixed;
       inset:0;
@@ -220,6 +282,7 @@
     @media(max-width:768px){
       .container{
         padding:40px 20px;
+        padding-bottom: 70px;
       }
 
       .title{
@@ -229,17 +292,45 @@
       .card{
         min-height:auto;
       }
+
+      .ascii-art {
+        font-size: 7px;
+        top: 10px;
+        left: 10px;
+      }
     }
   </style>
 </head>
 <body>
 
+  <!-- ASCII ART top left -->
+  <div class="ascii-art">⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⣾⣿⠟⢻⡀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⣳⠖⠳⣄⡀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⡤⠒⠀⠂⡾⠉⠀⠀⠀⠀⠉⢳⡄⣄⡀⠀⠀
+⠀⠀⠀⢸⡥⠀⣀⡼⢁⠀⢰⡄⠀⡄⠀⠀⣧⠀⠙⡆⠀
+⠀⢀⣠⠼⠗⠚⠉⠠⠋⠀⠀⢷⣠⣧⠀⠀⠈⠳⢤⣇⠀
+⠀⣾⣟⠒⠦⣄⠀⠀⠀⣠⡴⠋⠁⢈⠛⢦⣄⣠⣴⣾⣷
+⢀⡟⠙⢶⣤⠬⠷⣼⡏⠉⠉⢩⡍⠹⠦⢤⣿⣤⣨⣿⠈
+⡾⣡⠆⠁⠀⠀⠀⢠⡀⠀⠀⠀⢱⡀⠀⠂⠙⠎⠻⡅⠀
+⢿⠁⠒⣤⠤⣤⣀⠀⢧⠀⠀⠀⣸⠃⠀⠀⠀⡶⣤⣽⠀
+⠈⠳⣴⡇⠀⠀⠈⠛⢦⣄⣠⠾⢿⣄⣀⣠⠾⣡⠞⠁⠀
+⠀⠀⠈⠉⠉⠉⠁⢧⢠⠟⣽⠀⢿⠀⢧⢰⡈⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠐⢫⠏⢸⠁⠀⠈⢳⠘⢧⣙⢦⠀⠀⠀</div>
+
   <div class="container">
+
+    <!-- SCHOOL HEADER -->
+    <div class="school-header">
+      <img src="slike/logo.png" alt="Logo" class="school-logo" onerror="this.style.display='none'">
+      <div class="school-icon">⚡</div>
+      <span class="school-name">ETŠ Tesla BG</span>
+    </div>
 
     <h1 class="title">Matura Hub - Elektrotehnicar Racunara</h1>
 
     <p class="subtitle">
-      Izaberi oblast i kreni sa vežbanjem pitanja.
+      Nezvanican, open source projekat koji pomaze ucenicima da se spreme za prakticni deo maturskog ispita. Pravio ga je ucenik uz pomoc AI alata.
     </p>
 
     <div class="cards">
@@ -309,6 +400,12 @@
       </div>
 
     </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      Problem? Predlog? Kontakt discord: <span>bokiyt</span>
+    </div>
+
   </div>
 
   <!-- MODAL -->
@@ -321,7 +418,7 @@
       <h3>Dodatne informacije</h3>
 
       <p>
-        Na maturskom testu nema negativnih poena, a svaki tačan odgovor donosi od 0.5 do 1 boda. Kod računskih zadataka obavezno je prikazati postupak rešavanja, jer se bez njega odgovor neće priznati. Pitanja na testu mogu biti ista ili delimično izmenjena u odnosu na zbirku za pripremu. Test obuhvata области Hardver, Operativni sistemi, ORS i Tehnička dokumentacija, a nezvanični rezultati se objavljuju u roku od 24 časa nakon završetka ispita.
+        Na maturskom testu nema negativnih poena, a svaki tačan odgovor donosi od 0.5 do 1 boda. Kod računskih zadataka obavezno je prikazati postupak rešavanja, jer se bez njega odgovor neće priznati. Pitanja na testu mogu biti ista ili delimično izmenjena u odnosu na zbirku za pripremu. Test obuhvata oblasti Hardver, Operativni sistemi, ORS i Tehnička dokumentacija, a nezvanični rezultati se objavljuju u roku od 24 časa nakon završetka ispita.
       </p>
 
     </div>
