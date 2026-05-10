@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matura Vezba</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0f172a;
+      color: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    select, button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      margin-top: 10px;
+      background: #1e293b;
+      color: white;
+      font-size: 15px;
+    }
+
+    button {
+      cursor: pointer;
+      transition: 0.2s;
+      font-weight: bold;
+    }
+
+    button:hover {
+      transform: scale(1.02);
+      background: #334155;
+    }
+
+    /* Dugme za sledeće kada je odgovor netačan */
+    button.btn-blocked {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    button.btn-blocked:hover {
+      transform: none;
+      background: #1e293b;
+    }
+
+    .question-box {
+      margin-top: 20px;
+      padding: 30px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 25px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 15px;
+    }
+
+    .question-header input[type="number"] {
+      width: 180px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: none;
+      background: #1e293b;
+      color: white;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .question-title {
+      font-size: 24px;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .question-type-badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .badge-multiple { background: #1e3a5f; color: #60a5fa; border: 1px solid #2563eb; }
+    .badge-multi    { background: #1e3d2f; color: #4ade80; border: 1px solid #16a34a; }
+    .badge-input    { background: #3b2a1e; color: #fb923c; border: 1px solid #ea580c; }
+    .badge-matching { background: #2e1e3b; color: #c084fc; border: 1px solid #9333ea; }
+
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    /* ── Multiple / Multi ─────────────────────────────────── */
+    .answer {
+      background: #1e293b;
+      padding: 18px;
+      border-radius: 15px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 16px;
+      line-height: 1.4;
+    }
+    .answer:hover   { border-color: #60a5fa; }
+    .answer.selected { border-color: #38bdf8; background: #0c4a6e; }
+    .answer.checked  { border-color: #38bdf8; background: #0c4a6e; }
+    .answer.correct  { border-color: #22c55e; background: #14532d; }
+    .answer.wrong    { border-color: #ef4444; background: #7f1d1d; }
+
+    .answer-checkbox {
+      width: 22px;
+      height: 22px;
+      border: 2px solid #475569;
+      border-radius: 6px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: 0.15s;
+    }
+    .answer.checked .answer-checkbox { background: #38bdf8; border-color: #38bdf8; color: #0f172a; }
+    .answer.correct .answer-checkbox { background: #22c55e; border-color: #22c55e; color: #0f172a; }
+    .answer.wrong   .answer-checkbox { background: #ef4444; border-color: #ef4444; color: white; }
+
+    /* ── Input tip ───────────────────────────────────────── */
+    .input-answer-wrap {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .input-answer-wrap input[type="text"] {
+      flex: 1;
+      padding: 16px 18px;
+      border-radius: 15px;
+      border: 2px solid #334155;
+      background: #1e293b;
+      color: white;
+      font-size: 17px;
+      outline: none;
+      transition: 0.2s;
+    }
+    .input-answer-wrap input[type="text"]:focus {
+      border-color: #fb923c;
+    }
+    .input-answer-wrap input.input-correct { border-color: #22c55e; background: #14532d; }
+    .input-answer-wrap input.input-wrong   { border-color: #ef4444; background: #7f1d1d; }
+
+    /* ── Matching tip ────────────────────────────────────── */
+    .matching-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 10px;
+    }
+    .matching-left-col,
+    .matching-right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .match-left-item {
+      background: #1e293b;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 2px solid #334155;
+      font-size: 15px;
+      line-height: 1.4;
+      /* jednaka visina kao i select red */
+      display: flex;
+      align-items: center;
+    }
+    .match-row {
+      display: flex;
+      align-items: stretch;
+      gap: 10px;
+    }
+    .match-select {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 2px solid #334155;
+      background: #0f172a;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      margin-top: 0;
+      width: 100%;
+    }
+    .match-select:focus { outline: none; border-color: #c084fc; }
+    .match-select.match-correct { border-color: #22c55e; background: #14532d; }
+    .match-select.match-wrong   { border-color: #ef4444; background: #7f1d1d; }
+
+    /* Tačan odgovor ispod pogrešnog selekta */
+    .match-correct-hint {
+      font-size: 12px;
+      color: #4ade80;
+      margin-top: 4px;
+      padding-left: 4px;
+    }
+
+    /* ── Controls — 3 dugmeta ────────────────────────────── */
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .explanation {
+      margin-top: 25px;
+      background: rgba(255,255,255,0.04);
+      padding: 20px;
+      border-radius: 15px;
+      display: none;
+      line-height: 1.6;
+    }
+
+    /* Boja naslova u objašnjenju */
+    .explanation h3.correct-title { color: #4ade80; }
+    .explanation h3.wrong-title   { color: #f87171; }
+
+    /* Matching explanation tabela */
+    .match-explanation-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 15px;
+    }
+    .match-explanation-table th {
+      text-align: left;
+      padding: 8px 14px;
+      background: rgba(255,255,255,0.07);
+    }
+    .match-explanation-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      vertical-align: top;
+    }
+    .match-arrow { color: #c084fc; font-size: 18px; }
+
+    .stats {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 15px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.06);
+      padding: 20px;
+      border-radius: 20px;
+      text-align: center;
+    }
+
+    .big {
+      font-size: 30px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    img.question-image {
+      max-width: 100%;
+      border-radius: 15px;
+      margin-top: 20px;
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+
+    .timer {
+      font-size: 24px;
+      font-weight: bold;
+      color: #38bdf8;
+    }
+
+    @media(max-width: 900px){
+      .topbar,
+      .stats,
+      .controls { grid-template-columns: 1fr; }
+      .question-title { font-size: 20px; }
+      .matching-wrap { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <h1 style="margin-bottom:20px;">🎓 Matura - Elektrotehničar računara</h1>
+
+    <div class="topbar">
+      <div class="card">
+        <h2>📚 Oblast pitanja</h2>
+        <select id="categorySelect">
+          <option value="all">Sva pitanja</option>
+          <option value="hardver">Računarski hardver</option>
+          <option value="os">Operativni sistemi</option>
+          <option value="odrzavanje">Održavanje računarskih sistema</option>
+          <option value="dokumentacija">Tehnička dokumentacija</option>
+          <option value="random50">Nasumičnih 50 pitanja</option>
+          <option value="wrong">Pogrešno odgovorena pitanja</option>
+        </select>
+      </div>
+
+      <div class="card">
+        <h2>🧠 Simulacija mature</h2>
+        <button onclick="startSimulation()">Pokreni simulaciju (random 50 pitanja / 2h)</button>
+        <div class="timer" id="timer">02:00:00</div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div>Ukupno pitanja</div>
+        <div class="big" id="totalQuestions">0</div>
+      </div>
+      <div class="stat">
+        <div>Tačno</div>
+        <div class="big" id="correctCount">0</div>
+      </div>
+      <div class="stat">
+        <div>Netačno</div>
+        <div class="big" id="wrongCount">0</div>
+      </div>
+      <div class="stat">
+        <div>Uspeh</div>
+        <div class="big" id="successRate">0%</div>
+      </div>
+    </div>
+
+    <div class="question-box">
+
+      <div class="question-header">
+        <h2 id="questionCounter">Pitanje 1</h2>
+        <input type="number" id="jumpInput" placeholder="Idi na pitanje #" min="1" />
+      </div>
+
+      <div id="questionTypeBadge"></div>
+
+      <div class="question-title" id="questionText"></div>
+
+      <img id="questionImage" class="question-image" style="display:none;" alt="Slika uz pitanje" />
+
+      <div class="answers" id="answersContainer"></div>
+
+      <!-- 3 dugmeta: Prethodno | Proveri | Sledeće -->
+      <div class="controls">
+        <button id="btnPrev" onclick="prevQuestion()">⬅ Prethodno</button>
+        <button id="btnCheck" onclick="showAnswer()">🔍 Proveri odgovor</button>
+        <button id="btnNext" onclick="nextQuestion()">➡ Sledeće</button>
+      </div>
+
+      <div class="explanation" id="explanation"></div>
+
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h2>ℹ Informacije</h2>
+      <br>
+      <ul style="line-height:2; padding-left:20px;">
+        <li>Ovaj sajt je uglavnom pravio AI, može da se desi da su neka pitanja netačna</li>
+        <li>Ovo nije zvanican sajt, vec samo projekat.</li>
+        <li>Rađeno po priručniku za maturski ispit 2024. Elektrotehničar računara</li>
+		<li>!!! Tehnicka dokumentacija ima jedno nenumerisano pitanje, i zato je posle pomereno sve za 1</li>
+        <li>Za probleme i predloge pišite na mail boki.mali.smoki@gmail.com</li>
+		<li>Srećno na maturi :D</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <script src="questions.js"></script>
+  <script>
+
+    function sortQuestionsById(arr) {
+  return arr.slice().sort(function(a, b) {
+    return (a.id || 0) - (b.id || 0);
+  });
+}
+
+let filteredQuestions = sortQuestionsById([...questions]);
+    let currentQuestion   = 0;
+
+    let selectedAnswer     = null;
+    let selectedAnswers    = new Set();
+    let matchingSelections = {};
+    let answered           = false;
+    let lastAnswerCorrect  = false;
+
+    let correctAnswers   = 0;
+    let wrongAnswers     = 0;
+    let wrongQuestionIds = JSON.parse(localStorage.getItem("wrongQuestions") || "[]");
+
+    const questionText     = document.getElementById("questionText");
+    const answersContainer = document.getElementById("answersContainer");
+    const explanation      = document.getElementById("explanation");
+    const questionCounter  = document.getElementById("questionCounter");
+    const categorySelect   = document.getElementById("categorySelect");
+    const questionImage    = document.getElementById("questionImage");
+    const typeBadge        = document.getElementById("questionTypeBadge");
+    const btnNext          = document.getElementById("btnNext");
+    const btnCheck         = document.getElementById("btnCheck");
+
+    function renderQuestion() {
+      const q = filteredQuestions[currentQuestion];
+      if (!q) return;
+
+      selectedAnswer     = null;
+      selectedAnswers    = new Set();
+      matchingSelections = {};
+      answered           = false;
+      lastAnswerCorrect  = false;
+
+      btnNext.classList.remove("btn-blocked");
+      btnCheck.disabled      = false;
+      btnCheck.style.opacity = "";
+
+      questionCounter.innerText  = "Pitanje " + (currentQuestion + 1) + " / " + filteredQuestions.length;
+      questionText.innerText     = q.question;
+      explanation.style.display  = "none";
+      explanation.innerHTML      = "";
+      answersContainer.innerHTML = "";
+
+      const badges = {
+        multiple : '<span class="question-type-badge badge-multiple">Jedan tačan odgovor</span>',
+        multi    : '<span class="question-type-badge badge-multi">Više tačnih odgovora — čekiraj sve</span>',
+        input    : '<span class="question-type-badge badge-input">Upiši odgovor</span>',
+        matching : '<span class="question-type-badge badge-matching">Poveži pojmove</span>',
+      };
+      typeBadge.innerHTML = badges[q.type] || "";
+
+      if (q.image) {
+        questionImage.src           = q.image;
+        questionImage.style.display = "block";
+      } else {
+        questionImage.style.display = "none";
+      }
+
+      // ── multiple ──────────────────────────────────────────────────
+      if (q.type === "multiple") {
+        (q.answers || []).forEach(function(answer, index) {
+          const div = document.createElement("div");
+          div.className = "answer";
+          div.innerText = answer;
+          div.onclick = function() {
+            if (answered) return;
+            document.querySelectorAll(".answer").forEach(function(a) { a.classList.remove("selected"); });
+            div.classList.add("selected");
+            selectedAnswer = index;
+          };
+          answersContainer.appendChild(div);
+        });
+      }
+
+      // ── multi ─────────────────────────────────────────────────────
+      if (q.type === "multi") {
+        (q.answers || []).forEach(function(answer, index) {
+          const div = document.createElement("div");
+          div.className = "answer";
+
+          const box = document.createElement("span");
+          box.className = "answer-checkbox";
+
+          const label = document.createElement("span");
+          label.innerText = answer;
+
+          div.appendChild(box);
+          div.appendChild(label);
+
+          div.onclick = function() {
+            if (answered) return;
+            if (selectedAnswers.has(index)) {
+              selectedAnswers.delete(index);
+              div.classList.remove("checked");
+              box.innerText = "";
+            } else {
+              selectedAnswers.add(index);
+              div.classList.add("checked");
+              box.innerText = "✓";
+            }
+          };
+          answersContainer.appendChild(div);
+        });
+      }
+
+      // ── input ─────────────────────────────────────────────────────
+      if (q.type === "input") {
+        const wrap = document.createElement("div");
+        wrap.className = "input-answer-wrap";
+
+        const inp = document.createElement("input");
+        inp.type        = "text";
+        inp.id          = "textAnswer";
+        inp.placeholder = "Upiši odgovor ovde...";
+        inp.addEventListener("keydown", function(e) {
+          if (e.key === "Enter" && !answered) showAnswer();
+        });
+
+        wrap.appendChild(inp);
+        answersContainer.appendChild(wrap);
+        setTimeout(function() { inp.focus(); }, 50);
+      }
+
+      // ── matching ──────────────────────────────────────────────────
+      if (q.type === "matching") {
+        const pairs = q.pairs || [];
+        const rightOptions = pairs.map(function(p) { return p.right; });
+        const shuffled     = rightOptions.slice().sort(function() { return Math.random() - 0.5; });
+
+        const wrap     = document.createElement("div");
+        wrap.className = "matching-wrap";
+
+        const leftCol  = document.createElement("div");
+        leftCol.className = "matching-left-col";
+        const rightCol = document.createElement("div");
+        rightCol.className = "matching-right-col";
+
+        pairs.forEach(function(pair, i) {
+          const leftDiv = document.createElement("div");
+          leftDiv.className = "match-left-item";
+          leftDiv.innerHTML = '<span style="color:#c084fc;font-weight:bold;margin-right:8px;">' + (i + 1) + '.</span>' + pair.left;
+          leftCol.appendChild(leftDiv);
+
+          const rowWrap = document.createElement("div");
+
+          const rowDiv = document.createElement("div");
+          rowDiv.className = "match-row";
+
+          const sel = document.createElement("select");
+          sel.className      = "match-select";
+          sel.dataset.index  = i;
+
+          const placeholder = document.createElement("option");
+          placeholder.value       = "";
+          placeholder.textContent = "— odaberi —";
+          sel.appendChild(placeholder);
+
+          shuffled.forEach(function(opt) {
+            const o = document.createElement("option");
+            o.value       = opt;
+            o.textContent = opt.length > 45 ? opt.slice(0, 45) + "…" : opt;
+            o.title       = opt;
+            sel.appendChild(o);
+          });
+
+          sel.addEventListener("change", function() {
+            if (answered) { sel.value = matchingSelections[i] || ""; return; }
+            matchingSelections[i] = sel.value;
+          });
+
+          rowDiv.appendChild(sel);
+          rowWrap.appendChild(rowDiv);
+          rightCol.appendChild(rowWrap);
+        });
+
+        wrap.appendChild(leftCol);
+        wrap.appendChild(rightCol);
+        answersContainer.appendChild(wrap);
+      }
+
+      updateStats();
+    }
+
+    function showAnswer() {
+      if (answered) return;
+      answered = true;
+
+      btnCheck.disabled      = true;
+      btnCheck.style.opacity = "0.4";
+
+      const q = filteredQuestions[currentQuestion];
+      let isCorrect = false;
+
+      // ── multiple ──────────────────────────────────────────────────
+      if (q.type === "multiple") {
+        const els = document.querySelectorAll(".answer");
+        els.forEach(function(el, index) {
+          el.style.cursor = "default";
+          if (index === q.correct) el.classList.add("correct");
+          if (index === selectedAnswer && selectedAnswer !== q.correct) el.classList.add("wrong");
+        });
+
+        isCorrect = (selectedAnswer === q.correct);
+        const correctText = (q.answers || [])[q.correct] || "";
+        explanation.innerHTML = buildExplanation(isCorrect, correctText, q.explanation);
+      }
+
+      // ── multi ─────────────────────────────────────────────────────
+      if (q.type === "multi") {
+        const correctSet = new Set(q.correct || []);
+        const els        = document.querySelectorAll(".answer");
+
+        els.forEach(function(el, index) {
+          el.style.cursor = "default";
+          const userChecked = selectedAnswers.has(index);
+          const isRight     = correctSet.has(index);
+
+          if (isRight) {
+            el.classList.remove("checked", "wrong");
+            el.classList.add("correct");
+            el.querySelector(".answer-checkbox").innerText = "✓";
+          } else if (userChecked) {
+            el.classList.remove("checked");
+            el.classList.add("wrong");
+            el.querySelector(".answer-checkbox").innerText = "✗";
+          }
+        });
+
+        isCorrect = (
+          correctSet.size === selectedAnswers.size &&
+          [...correctSet].every(function(i) { return selectedAnswers.has(i); })
+        );
+
+        const correctLabels = (q.correct || []).map(function(i) { return (q.answers || [])[i]; }).join(", ");
+        explanation.innerHTML = buildExplanation(isCorrect, correctLabels, q.explanation);
+      }
+
+      // ── input ─────────────────────────────────────────────────────
+      if (q.type === "input") {
+        const inp   = document.getElementById("textAnswer");
+        const value = inp ? inp.value.trim() : "";
+
+        const acceptedRaw = Array.isArray(q.correct) ? q.correct : [q.correct];
+        const accepted    = acceptedRaw.map(function(a) { return String(a).trim().toLowerCase(); });
+        isCorrect         = accepted.includes(value.toLowerCase());
+
+        if (inp) {
+          inp.classList.add(isCorrect ? "input-correct" : "input-wrong");
+          inp.disabled = true;
+        }
+
+        const displayCorrect = acceptedRaw.join(" / ");
+        explanation.innerHTML = buildExplanation(isCorrect, displayCorrect, q.explanation);
+      }
+
+      // ── matching ──────────────────────────────────────────────────
+      if (q.type === "matching") {
+        const pairs   = q.pairs || [];
+        const selects = document.querySelectorAll(".match-select");
+        let allCorrect = true;
+
+        selects.forEach(function(sel) {
+          const i          = parseInt(sel.dataset.index);
+          const userVal    = sel.value;
+          const correctVal = pairs[i] ? pairs[i].right : "";
+          const isOk       = userVal.trim() === correctVal.trim();
+
+          sel.disabled = true;
+          sel.classList.add(isOk ? "match-correct" : "match-wrong");
+
+          if (!isOk) {
+            allCorrect = false;
+            const hint = document.createElement("div");
+            hint.className   = "match-correct-hint";
+            hint.textContent = "✅ Tačno: " + correctVal;
+            sel.parentElement.parentElement.appendChild(hint);
+          }
+        });
+
+        isCorrect = allCorrect;
+
+        const tableRows = pairs.map(function(p) {
+          return '<tr><td>' + p.left + '</td><td class="match-arrow">→</td><td><b>' + p.right + '</b></td></tr>';
+        }).join("");
+
+        explanation.innerHTML =
+          '<h3 class="' + (isCorrect ? 'correct-title' : 'wrong-title') + '">' +
+          (isCorrect ? '✅ Tačno!' : '❌ Netačno') + '</h3>' +
+          '<table class="match-explanation-table">' +
+          '<thead><tr><th>Pojam</th><th></th><th>Odgovara</th></tr></thead>' +
+          '<tbody>' + tableRows + '</tbody></table>' +
+          '<br><p>' + q.explanation + '</p>';
+      }
+
+      if (isCorrect) {
+        correctAnswers++;
+        lastAnswerCorrect = true;
+      } else {
+        wrongAnswers++;
+        lastAnswerCorrect = false;
+        if (!wrongQuestionIds.includes(q.id)) wrongQuestionIds.push(q.id);
+      }
+
+      localStorage.setItem("wrongQuestions", JSON.stringify(wrongQuestionIds));
+      explanation.style.display = "block";
+      updateStats();
+    }
+
+    function buildExplanation(isCorrect, correctLabel, explanationText) {
+      const titleClass = isCorrect ? "correct-title" : "wrong-title";
+      const titleText  = isCorrect ? "✅ Tačan odgovor" : "❌ Netačan odgovor — tačno je:";
+      return '<h3 class="' + titleClass + '">' + titleText + '</h3><br><p><b>' + correctLabel + '</b></p><br><p>' + explanationText + '</p>';
+    }
+
+    function nextQuestion() {
+
+  // Ako nije odgovoreno/provereno,
+  // idi normalno dalje
+  if (!answered) {
+
+    if (currentQuestion < filteredQuestions.length - 1) {
+
+      currentQuestion++;
+
+      renderQuestion();
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+    return;
+  }
+
+  // Ako jeste odgovoreno,
+  // bez obzira da li je tačno ili netačno,
+  // dozvoli sledeće pitanje
+  if (currentQuestion < filteredQuestions.length - 1) {
+
+    currentQuestion++;
+
+    renderQuestion();
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+}
+
+    function prevQuestion() {
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        renderQuestion();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+
+    function updateStats() {
+      document.getElementById("totalQuestions").innerText = filteredQuestions.length;
+      document.getElementById("correctCount").innerText   = correctAnswers;
+      document.getElementById("wrongCount").innerText     = wrongAnswers;
+      const total = correctAnswers + wrongAnswers;
+      const rate  = total ? Math.round((correctAnswers / total) * 100) : 0;
+      document.getElementById("successRate").innerText    = rate + "%";
+    }
+
+    categorySelect.addEventListener("change", function() {
+
+  const value = categorySelect.value;
+
+  if (value === "all") {
+
+    filteredQuestions = sortQuestionsById(questions);
+
+  } else if (value === "random50") {
+
+    filteredQuestions = questions
+      .slice()
+      .sort(function() {
+        return Math.random() - 0.5;
+      })
+      .slice(0, 50);
+
+  } else if (value === "wrong") {
+
+    filteredQuestions = sortQuestionsById(
+      questions.filter(function(q) {
+        return wrongQuestionIds.includes(q.id);
+      })
+    );
+
+    if (filteredQuestions.length === 0) {
+
+      alert("Nema pogrešno odgovorenih pitanja. 🎉");
+
+      categorySelect.value = "all";
+
+      filteredQuestions = sortQuestionsById(questions);
+    }
+
+  } else {
+
+    filteredQuestions = sortQuestionsById(
+      questions.filter(function(q) {
+        return q.category === value;
+      })
+    );
+  }
+
+  currentQuestion = 0;
+  correctAnswers  = 0;
+  wrongAnswers    = 0;
+
+  renderQuestion();
+});
+
+document.getElementById("jumpInput").addEventListener("change", function(e) {
+
+  const value = parseInt(e.target.value);
+
+  const index = filteredQuestions.findIndex(function(q) {
+    return q.id === value;
+  });
+
+  if (index !== -1) {
+
+    currentQuestion = index;
+
+    renderQuestion();
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+  } else {
+
+    alert("Pitanje sa tim ID-em ne postoji.");
+  }
+
+  e.target.value = "";
+});
+
+    let simTimer;
+    let timeLeft = 7200;
+
+    function startSimulation() {
+      categorySelect.value = "random50";
+      categorySelect.dispatchEvent(new Event("change"));
+      clearInterval(simTimer);
+      timeLeft = 7200;
+      simTimer = setInterval(function() {
+        const h = String(Math.floor(timeLeft / 3600)).padStart(2, "0");
+        const m = String(Math.floor((timeLeft % 3600) / 60)).padStart(2, "0");
+        const s = String(timeLeft % 60).padStart(2, "0");
+        document.getElementById("timer").innerText = h + ":" + m + ":" + s;
+        timeLeft--;
+        if (timeLeft < 0) { clearInterval(simTimer); alert("Vreme je isteklo!"); }
+      }, 1000);
+    }
+
+    document.addEventListener("keydown", function(e) {
+      if (document.activeElement.id === "textAnswer") return;
+      if (document.activeElement.id === "jumpInput") return;
+      if (e.key === "ArrowRight") nextQuestion();
+      if (e.key === "ArrowLeft")  prevQuestion();
+      if (e.key === "Enter" && !answered) showAnswer();
+    });
+
+    renderQuestion();
+
+  </script>
+</body>
+</html>
