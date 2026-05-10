@@ -3462,7 +3462,7 @@ const questions = [
 
   {
   id: 143,
-  category: "hardver",
+  category: "os",
   type: "matching",
   question: "143. Slika predstavlja audio portove na matičnoj ploči. Svaki port se po standardu izrađuje tačno određene boje. Desno pored slike navedene su boje. Na liniji ispred boje napisati broj porta koji je prilikom izrade obojen tom bojom. Ako se neka od ponuđenih boja ne koristi za portove na slici, upisati X.",
   pairs: [
@@ -3647,7 +3647,7 @@ const questions = [
   // ── 227 (id 227, originalno 226 – Hardver – multiple) ──────────────────────────────
   {
     id: 227,
-    category: "hardver",
+    category: "dokumentacija",
     type: "multiple",
     question: "227. Na električnoj šemi ako se položaj potenciometra P (vrednost potenciometra 1 KOhm) iz položaja 1 prebaci u položaj 2. Šta se dešava sa svetlećom diodom D?",
     answers: [
@@ -3663,7 +3663,7 @@ const questions = [
   // ── 228 (id 228, originalno 227 – Hardver – multiple) ──────────────────────────────
   {
     id: 228,
-    category: "hardver",
+    category: "dokumentacija",
     type: "multiple",
     question: "228. Na prikazanoj šemi DIN je digitalni ulaz mikroračunara. Šta se događa kada je taster otvoren?",
     answers: [
@@ -3679,7 +3679,7 @@ const questions = [
   // ── 229 (id 229, originalno 228 – Hardver – multiple) ──────────────────────────────
   {
     id: 229,
-    category: "hardver",
+    category: "dokumentacija",
     type: "multiple",
     question: "229. Na prikazanoj šemi DIN je digitalni ulaz mikrokontrolera. Šta se događa kada je taster otvoren? (kada taster nije pritisnut)",
     answers: [
