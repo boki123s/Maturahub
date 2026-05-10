@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mikrokontroleri — Baci Kockicu</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    :root {
+      --bg:              #080d18;
+      --surface:         #0e1625;
+      --surface2:        #151f33;
+      --border:          rgba(255,255,255,0.07);
+      --cyan:            #22d3ee;
+      --orange:          #fb923c;
+      --pink:            #f472b6;
+      --green:           #4ade80;
+      --yellow:          #fbbf24;
+      --text:            #e2e8f0;
+      --muted:           #64748b;
+      --added-bg:        rgba(74,222,128,0.08);
+      --added-border:    rgba(74,222,128,0.4);
+      --changed-bg:      rgba(251,191,36,0.08);
+      --changed-border:  rgba(251,191,36,0.4);
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+    }
+
+    header {
+      height: 60px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      width: 40px; height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface2);
+      color: var(--text);
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-btn:hover { background: #1e2d47; border-color: var(--cyan); }
+    .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .header-center { text-align: center; }
+    .header-center h1 { font-size: 17px; font-weight: 800; color: var(--cyan); letter-spacing: 0.02em; }
+    .step-counter { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 310px;
+      gap: 14px;
+      padding: 14px;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+    }
+
+    .code-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .code-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: #0a1020;
+      flex-shrink: 0;
+    }
+    .code-header-top {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 5px;
+    }
+    .step-title { font-size: 15px; font-weight: 700; color: var(--cyan); }
+    .step-desc  { font-size: 11.5px; color: #94a3b8; line-height: 1.55; }
+
+    .copy-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--muted); font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; padding: 4px 9px; border-radius: 7px;
+      cursor: pointer; transition: 0.2s; flex-shrink: 0; white-space: nowrap;
+    }
+    .copy-btn:hover  { border-color: var(--cyan);  color: var(--cyan); }
+    .copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+    .code-scroll {
+      flex: 1; overflow-y: auto; padding: 10px 14px;
+    }
+    .code-scroll::-webkit-scrollbar { width: 4px; }
+    .code-scroll::-webkit-scrollbar-track { background: transparent; }
+    .code-scroll::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 4px; }
+
+    pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      white-space: pre;
+    }
+
+    .line {
+      display: block;
+      padding: 0 6px;
+      border-left: 2px solid transparent;
+    }
+    .line.normal  { color: var(--green); }
+    .line.comment { color: var(--muted); }
+    .line.added   { color: #86efac; background: var(--added-bg);   border-left-color: var(--green); }
+    .line.changed { color: #fde68a; background: var(--changed-bg); border-left-color: var(--yellow); }
+
+    .side-panel {
+      display: flex; flex-direction: column; gap: 10px; overflow: hidden;
+    }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 12px 14px;
+    }
+    .card-title {
+      font-size: 12px; font-weight: 700; margin-bottom: 9px;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .progress-wrap  { background: var(--surface2); border-radius: 10px; height: 4px; overflow: hidden; }
+    .progress-bar   { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--pink)); border-radius: 10px; transition: width 0.4s ease; }
+    .progress-label { font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; text-align: right; margin-top: 4px; }
+
+    .changes-card { flex-shrink: 0; }
+
+    .change-item {
+      display: flex; align-items: flex-start; gap: 7px;
+      font-size: 11px; color: #cbd5e1; line-height: 1.45; margin-bottom: 6px;
+    }
+    .change-item:last-child { margin-bottom: 0; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 1px 5px; border-radius: 4px;
+      font-size: 9px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .badge.added   { background: var(--added-bg);  color: var(--green);  border: 1px solid var(--added-border); }
+    .badge.changed { background: var(--changed-bg); color: var(--yellow); border: 1px solid var(--changed-border); }
+
+    .req-card { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+    .req-body {
+      flex: 1; background: var(--surface2); border-radius: 8px; padding: 10px;
+      font-size: 11.5px; color: #94a3b8; line-height: 1.65; overflow-y: auto; white-space: pre-wrap;
+    }
+    .req-body::-webkit-scrollbar { width: 4px; }
+    .req-body::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 4px; }
+
+    .home-btn {
+      position: fixed; right: 18px; bottom: 18px;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--muted); padding: 9px 14px; border-radius: 10px;
+      font-size: 12px; font-family: 'Syne', sans-serif;
+      cursor: pointer; transition: 0.2s; z-index: 100;
+    }
+    .home-btn:hover { background: var(--surface2); color: var(--text); }
+  </style>
+</head>
+<body>
+
+<header>
+  <button class="nav-btn" id="prevBtn" onclick="changeStep(-1)">←</button>
+  <div class="header-center">
+    <h1>Mikrokontroleri — Baci Kockicu</h1>
+    <div class="step-counter" id="stepCounter">Korak 1 / 5</div>
+  </div>
+  <button class="nav-btn" id="nextBtn" onclick="changeStep(1)">→</button>
+</header>
+
+<div class="layout">
+
+  <section class="code-panel">
+    <div class="code-header">
+      <div class="code-header-top">
+        <div class="step-title" id="stepTitle"></div>
+        <button class="copy-btn" id="copyBtn" onclick="copyCode()">⎘ <span id="copyLabel">Kopiraj</span></button>
+      </div>
+      <div class="step-desc" id="stepDesc"></div>
+    </div>
+    <div class="code-scroll">
+      <pre id="codeBlock"></pre>
+    </div>
+  </section>
+
+  <aside class="side-panel">
+    <div class="card" style="padding:10px 14px;">
+      <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:20%"></div></div>
+      <div class="progress-label" id="progressLabel">Korak 1 / 5</div>
+    </div>
+    <div class="card changes-card">
+      <div class="card-title" style="color:var(--orange);">⚡ Šta je urađeno</div>
+      <div id="changesList"></div>
+    </div>
+    <div class="card req-card">
+      <div class="card-title" style="color:var(--pink);">📋 Zahtev zadatka</div>
+      <div class="req-body" id="reqBody"></div>
+    </div>
+  </aside>
+
+</div>
+
+<button class="home-btn" onclick="javascript:history.back()">⬅ Home</button>
+
+<script>
+function L(text, tag='normal') { return { text, tag }; }
+
+const STEPS = [
+  {
+    title: "Korak 1 — Početni test program",
+    desc: "Ovo je program koji dobijamo na maturi. Ima osnovni LCD simulator i jedan taster koji menja tekst. Od ovoga počinjemo.",
+    changes: [{ tag:'normal', text:'Polazna tačka — test program sa jednim tasterom' }],
+    req: `⏳ Work in progress\n\nZahtev zadatka biće dodat uskoro.\n\nCilj: napraviti LCD simulaciju bacanja kocke sa uvodnom animacijom, korišćenjem tastera D2 i posebnom porukom kada korisnik baci broj 6.`,
+    code: [
+      L(`import tkinter as tk`),
+      L(`import time`),
+      L(``),
+      L(`class LCDSimulator(tk.Tk):`),
+      L(`    def __init__(self):`),
+      L(`        super().__init__()`),
+      L(`        self.title("LCD Simulator - Dobar dan / Zdravo")`),
+      L(`        self.geometry("400x300")`),
+      L(`        self.configure(bg="#2c3e50")`),
+      L(``),
+      L(`        # LCD okvir`, 'comment'),
+      L(`        self.lcd_okvir = tk.Frame(`),
+      L(`            self, bg="#33ff33", bd=10, relief="sunken"`),
+      L(`        )`),
+      L(`        self.lcd_okvir.pack(pady=30)`),
+      L(``),
+      L(`        # LCD tekst`, 'comment'),
+      L(`        self.linija1 = tk.StringVar(value="Dobar dan")`),
+      L(`        self.labela = tk.Label(`),
+      L(`            self.lcd_okvir, textvariable=self.linija1,`),
+      L(`            font=("Courier", 22, "bold"), bg="#33ff33",`),
+      L(`            fg="black", width=16, anchor="w"`),
+      L(`        )`),
+      L(`        self.labela.pack()`),
+      L(``),
+      L(`        # Taster`, 'comment'),
+      L(`        self.label_info = tk.Label(`),
+      L(`            self, text="Klikni na taster D2:",`),
+      L(`            bg="#2c3e50", fg="white"`),
+      L(`        )`),
+      L(`        self.label_info.pack(pady=5)`),
+      L(``),
+      L(`        self.taster_d2 = tk.Button(`),
+      L(`            self, text="TASTER D2",`),
+      L(`            command=self.promeni_tekst,`),
+      L(`            bg="#e67e22", fg="white",`),
+      L(`            font=("Arial", 12, "bold"),`),
+      L(`            width=15, height=2`),
+      L(`        )`),
+      L(`        self.taster_d2.pack(pady=20)`),
+      L(``),
+      L(`    def promeni_tekst(self):`),
+      L(`        self.linija1.set("Zdravo")`),
+      L(`        print("Logika: Taster pritisnut")`),
+      L(``),
+      L(`if __name__ == "__main__":`),
+      L(`    app = LCDSimulator()`),
+      L(`    app.mainloop()`),
+    ],
+  },
+
+  {
+    title: "Korak 2 — LCD na 2 linije + logika bacanja",
+    desc: "Dodajemo drugu liniju LCD-a i random biblioteku. Taster sada baca kocku i prikazuje rezultat.",
+    changes: [
+      { tag:'added',   text:'import random — biblioteka za nasumičan broj' },
+      { tag:'added',   text:'self.x — brojač bacanja' },
+      { tag:'added',   text:'red2 — druga linija LCD ekrana' },
+      { tag:'changed', text:'promeni_tekst → baci_kocku — nova logika tastera' },
+    ],
+    req: `⏳ Work in progress\n\nZahtev zadatka biće dodat uskoro.\n\nCilj: napraviti LCD simulaciju bacanja kocke sa uvodnom animacijom, korišćenjem tastera D2 i posebnom porukom kada korisnik baci broj 6.`,
+    code: [
+      L(`import tkinter as tk`),
+      L(`import random`, 'added'),
+      L(`import time`),
+      L(``),
+      L(`class LCDSimulator(tk.Tk):`),
+      L(`    def __init__(self):`),
+      L(`        super().__init__()`),
+      L(`        self.title("LCD 16x2 Simulator - Baci kocku")`),
+      L(`        self.geometry("450x400")`),
+      L(`        self.configure(bg="#2c3e50")`),
+      L(``),
+      L(`        # Logika`, 'comment'),
+      L(`        self.x = 0  # Redni broj bacanja`, 'added'),
+      L(``),
+      L(`        # LCD okvir`, 'comment'),
+      L(`        self.lcd_frame = tk.Frame(self, bg="#33ff33", bd=10, relief="sunken")`),
+      L(`        self.lcd_frame.pack(pady=20)`),
+      L(``),
+      L(`        self.red1 = tk.StringVar(value=" " * 16)`, 'changed'),
+      L(`        self.red2 = tk.StringVar(value=" " * 16)`, 'added'),
+      L(``),
+      L(`        tk.Label(self.lcd_frame, textvariable=self.red1,`),
+      L(`                 font=("Courier", 20, "bold"), bg="#33ff33",`),
+      L(`                 fg="black", anchor="w", width=16).pack()`),
+      L(`        tk.Label(self.lcd_frame, textvariable=self.red2,`, 'added'),
+      L(`                 font=("Courier", 20, "bold"), bg="#33ff33",`, 'added'),
+      L(`                 fg="black", anchor="w", width=16).pack()`, 'added'),
+      L(``),
+      L(`        # Taster`, 'comment'),
+      L(`        tk.Label(self, text="Simulacija hardvera:", bg="#2c3e50", fg="white").pack()`),
+      L(`        self.btn_d2 = tk.Button(`),
+      L(`            self, text="PRITISNI TASTER (D2)",`),
+      L(`            command=self.baci_kocku,`, 'changed'),
+      L(`            bg="#e67e22", fg="white",`),
+      L(`            font=("Arial", 12, "bold"), height=2`),
+      L(`        )`),
+      L(`        self.btn_d2.pack(pady=20)`),
+      L(``),
+      L(`    def baci_kocku(self):`, 'changed'),
+      L(`        self.x += 1`, 'added'),
+      L(`        y = random.randint(1, 6)`, 'added'),
+      L(``),
+      L(`        linija1 = f"vas {self.x} broj je {y}"`, 'added'),
+      L(`        linija2 = "ponovite bacanje" if y == 6 else ""`, 'added'),
+      L(``),
+      L(`        self.red1.set(linija1[:16])`, 'added'),
+      L(`        self.red2.set(linija2[:16])`, 'added'),
+      L(``),
+      L(`if __name__ == "__main__":`),
+      L(`    app = LCDSimulator()`),
+      L(`    app.mainloop()`),
+    ],
+  },
+
+  {
+    title: "Korak 3 — Metoda osvezi_prikaz i shift offset",
+    desc: "Izdvajamo logiku prikaza u posebnu metodu. Dodajemo self.offset koji simulira pomeranje teksta na LCD-u — biće nam potreban za animaciju.",
+    changes: [
+      { tag:'added',   text:'self.offset — čuva trenutno pomeranje teksta' },
+      { tag:'added',   text:'osvezi_prikaz() — metoda koja simulira LCD shift' },
+      { tag:'changed', text:'baci_kocku() koristi osvezi_prikaz umesto direktnog set()' },
+    ],
+    req: `⏳ Work in progress\n\nZahtev zadatka biće dodat uskoro.\n\nCilj: napraviti LCD simulaciju bacanja kocke sa uvodnom animacijom, korišćenjem tastera D2 i posebnom porukom kada korisnik baci broj 6.`,
+    code: [
+      L(`import tkinter as tk`),
+      L(`import random`),
+      L(`import time`),
+      L(``),
+      L(`class LCDSimulator(tk.Tk):`),
+      L(`    def __init__(self):`),
+      L(`        super().__init__()`),
+      L(`        self.title("LCD 16x2 Simulator - Baci kocku")`),
+      L(`        self.geometry("450x400")`),
+      L(`        self.configure(bg="#2c3e50")`),
+      L(``),
+      L(`        # Logika`, 'comment'),
+      L(`        self.x = 0`),
+      L(`        self.offset = 0  # Za pomeranje teksta (shift)`, 'added'),
+      L(``),
+      L(`        # LCD okvir`, 'comment'),
+      L(`        self.lcd_frame = tk.Frame(self, bg="#33ff33", bd=10, relief="sunken")`),
+      L(`        self.lcd_frame.pack(pady=20)`),
+      L(``),
+      L(`        self.red1 = tk.StringVar(value=" " * 16)`),
+      L(`        self.red2 = tk.StringVar(value=" " * 16)`),
+      L(``),
+      L(`        tk.Label(self.lcd_frame, textvariable=self.red1,`),
+      L(`                 font=("Courier", 20, "bold"), bg="#33ff33",`),
+      L(`                 fg="black", anchor="w", width=16).pack()`),
+      L(`        tk.Label(self.lcd_frame, textvariable=self.red2,`),
+      L(`                 font=("Courier", 20, "bold"), bg="#33ff33",`),
+      L(`                 fg="black", anchor="w", width=16).pack()`),
+      L(``),
+      L(`        # Taster`, 'comment'),
+      L(`        tk.Label(self, text="Simulacija hardvera:", bg="#2c3e50", fg="white").pack()`),
+      L(`        self.btn_d2 = tk.Button(`),
+      L(`            self, text="PRITISNI TASTER (D2)",`),
+      L(`            command=self.baci_kocku,`),
+      L(`            bg="#e67e22", fg="white",`),
+      L(`            font=("Arial", 12, "bold"), height=2`),
+      L(`        )`),
+      L(`        self.btn_d2.pack(pady=20)`),
+      L(``),
+      L(`    def osvezi_prikaz(self, tekst1="", tekst2=""):`, 'added'),
+      L(`        """Simulira upis na LCD sa trenutnim pomakom (offset)"""`, 'added'),
+      L(`        prazno = " " * 40`, 'added'),
+      L(`        linija1 = (prazno + tekst1 + prazno)[40-self.offset : 56-self.offset]`, 'added'),
+      L(`        linija2 = (prazno + tekst2 + prazno)[40-self.offset : 56-self.offset]`, 'added'),
+      L(`        self.red1.set(linija1)`, 'added'),
+      L(`        self.red2.set(linija2)`, 'added'),
+      L(``),
+      L(`    def baci_kocku(self):`),
+      L(`        self.x += 1`),
+      L(`        y = random.randint(1, 6)`),
+      L(`        linija1 = f"vas {self.x} broj je {y}"`),
+      L(`        linija2 = "ponovite bacanje" if y == 6 else ""`),
+      L(`        self.osvezi_prikaz(linija1, linija2)`, 'changed'),
+      L(``),
+      L(`if __name__ == "__main__":`),
+      L(`    app = LCDSimulator()`),
+      L(`    app.mainloop()`),
+    ],
+  },
+
+  {
+    title: "Korak 4 — Thread i uvodna animacija",
+    desc: "Dodajemo uvodni tekst sa animacijom pomeranja. Koristimo Thread da animacija ne zamrzne prozor. Taster je onemogućen dok animacija traje.",
+    changes: [
+      { tag:'added', text:'from threading import Thread — pokretanje animacije u pozadini' },
+      { tag:'added', text:'btn_d2.config(state="disabled") — taster blokiran tokom animacije' },
+      { tag:'added', text:'uvodna_animacija() — tekst "dobro dosli" + pomeranje levo-desno' },
+      { tag:'added', text:'Thread(target=...).start() — pokreće animaciju odmah pri startu' },
+    ],
+    req: `⏳ Work in progress\n\nZahtev zadatka biće dodat uskoro.\n\nCilj: napraviti LCD simulaciju bacanja kocke sa uvodnom animacijom, korišćenjem tastera D2 i posebnom porukom kada korisnik baci broj 6.`,
+    code: [
+      L(`import tkinter as tk`),
+      L(`import random`),
+      L(`import time`),
+      L(`from threading import Thread`, 'added'),
+      L(``),
+      L(`class LCDSimulator(tk.Tk):`),
+      L(`    def __init__(self):`),
+      L(`        super().__init__()`),
+      L(`        self.title("LCD 16x2 Simulator - Baci kocku")`),
+      L(`        self.geometry("450x400")`),
+      L(`        self.configure(bg="#2c3e50")`),
+      L(``),
+      L(`        self.x = 0`),
+      L(`        self.offset = 0`),
+      L(``),
+      L(`        self.lcd_frame = tk.Frame(self, bg="#33ff33", bd=10, relief="sunken")`),
+      L(`        self.lcd_frame.pack(pady=20)`),
+      L(``),
+      L(`        self.red1 = tk.StringVar(value=" " * 16)`),
+      L(`        self.red2 = tk.StringVar(value=" " * 16)`),
+      L(``),
+      L(`        tk.Label(self.lcd_frame, textvariable=self.red1,`),
+      L(`                 font=("Courier", 20, "bold"), bg="#33ff33",`),
+      L(`                 fg="black", anchor="w", width=16).pack()`),
+      L(`        tk.Label(self.lcd_frame, textvariable=self.red2,`),
+      L(`                 font=("Courier", 20, "bold"), bg="#33ff33",`),
+      L(`                 fg="black", anchor="w", width=16).pack()`),
+      L(``),
+      L(`        tk.Label(self, text="Simulacija hardvera:", bg="#2c3e50", fg="white").pack()`),
+      L(`        self.btn_d2 = tk.Button(`),
+      L(`            self, text="PRITISNI TASTER (D2)",`),
+      L(`            command=self.baci_kocku,`),
+      L(`            bg="#e67e22", fg="white",`),
+      L(`            font=("Arial", 12, "bold"), height=2`),
+      L(`        )`),
+      L(`        self.btn_d2.pack(pady=20)`),
+      L(`        self.btn_d2.config(state="disabled")  # blokiran dok traje animacija`, 'added'),
+      L(``),
+      L(`        Thread(target=self.uvodna_animacija, daemon=True).start()`, 'added'),
+      L(``),
+      L(`    def osvezi_prikaz(self, tekst1="", tekst2=""):`),
+      L(`        prazno = " " * 40`),
+      L(`        linija1 = (prazno + tekst1 + prazno)[40-self.offset : 56-self.offset]`),
+      L(`        linija2 = (prazno + tekst2 + prazno)[40-self.offset : 56-self.offset]`),
+      L(`        self.red1.set(linija1)`),
+      L(`        self.red2.set(linija2)`),
+      L(``),
+      L(`    def uvodna_animacija(self):`, 'added'),
+      L(`        tekst = "dobro dosli"`, 'added'),
+      L(``),
+      L(`        self.osvezi_prikaz(tekst)`, 'added'),
+      L(`        time.sleep(1)`, 'added'),
+      L(``),
+      L(`        for _ in range(7):  # Pomeri udesno`, 'added'),
+      L(`            self.offset += 1`, 'added'),
+      L(`            self.osvezi_prikaz(tekst)`, 'added'),
+      L(`            time.sleep(0.428)`, 'added'),
+      L(``),
+      L(`        for _ in range(7):  # Vrati ulevo`, 'added'),
+      L(`            self.offset -= 1`, 'added'),
+      L(`            self.osvezi_prikaz(tekst)`, 'added'),
+      L(`            time.sleep(0.428)`, 'added'),
+      L(``),
+      L(`        self.offset = 0`, 'added'),
+      L(`        self.osvezi_prikaz("baci kocku")`, 'added'),
+      L(`        self.btn_d2.config(state="normal")  # Otključaj taster`, 'added'),
+      L(``),
+      L(`    def baci_kocku(self):`),
+      L(`        self.x += 1`),
+      L(`        y = random.randint(1, 6)`),
+      L(`        linija1 = f"vas {self.x} broj je {y}"`),
+      L(`        linija2 = "ponovite bacanje" if y == 6 else ""`),
+      L(`        self.osvezi_prikaz(linija1, linija2)`),
+      L(``),
+      L(`if __name__ == "__main__":`),
+      L(`    app = LCDSimulator()`),
+      L(`    app.mainloop()`),
+    ],
+  },
+
+  {
+    title: "Korak 5 — Finalni program",
+    desc: "Sve je na mestu. Čistimo kod i dodajemo komentare. Ovo je finalni program spreman za predaju na maturi.",
+    changes: [
+      { tag:'added',   text:'Komentari koji objašnjavaju svaki deo koda' },
+      { tag:'added',   text:'Docstring za svaku metodu' },
+      { tag:'changed', text:'Poruka na liniji 2 — "ponovite bacanje" samo kad padne 6' },
+    ],
+    req: `⏳ Work in progress\n\nZahtev zadatka biće dodat uskoro.\n\nCilj: napraviti LCD simulaciju bacanja kocke sa uvodnom animacijom, korišćenjem tastera D2 i posebnom porukom kada korisnik baci broj 6.`,
+    code: [
+      L(`import tkinter as tk`),
+      L(`import random`),
+      L(`import time`),
+      L(`from threading import Thread`),
+      L(``),
+      L(`class LCDSimulator(tk.Tk):`),
+      L(`    def __init__(self):`),
+      L(`        super().__init__()`),
+      L(`        self.title("LCD 16x2 Simulator - Baci kocku")`),
+      L(`        self.geometry("450x400")`),
+      L(`        self.configure(bg="#2c3e50")`),
+      L(``),
+      L(`        # ── Interne promenljive ──────────────────`, 'added'),
+      L(`        self.x = 0       # Redni broj bacanja`),
+      L(`        self.offset = 0  # Trenutna pozicija shift-a`),
+      L(``),
+      L(`        # ── UI: LCD ekran (2 linije) ─────────────`, 'added'),
+      L(`        self.lcd_frame = tk.Frame(self, bg="#33ff33", bd=10, relief="sunken")`),
+      L(`        self.lcd_frame.pack(pady=20)`),
+      L(``),
+      L(`        self.red1 = tk.StringVar(value=" " * 16)`),
+      L(`        self.red2 = tk.StringVar(value=" " * 16)`),
+      L(``),
+      L(`        tk.Label(self.lcd_frame, textvariable=self.red1,`),
+      L(`                 font=("Courier", 20, "bold"), bg="#33ff33",`),
+      L(`                 fg="black", anchor="w", width=16).pack()`),
+      L(`        tk.Label(self.lcd_frame, textvariable=self.red2,`),
+      L(`                 font=("Courier", 20, "bold"), bg="#33ff33",`),
+      L(`                 fg="black", anchor="w", width=16).pack()`),
+      L(``),
+      L(`        # ── UI: Taster D2 ────────────────────────`, 'added'),
+      L(`        tk.Label(self, text="Simulacija hardvera:",`),
+      L(`                 bg="#2c3e50", fg="white").pack()`),
+      L(`        self.btn_d2 = tk.Button(`),
+      L(`            self, text="PRITISNI TASTER (D2)",`),
+      L(`            command=self.baci_kocku,`),
+      L(`            bg="#e67e22", fg="white",`),
+      L(`            font=("Arial", 12, "bold"), height=2`),
+      L(`        )`),
+      L(`        self.btn_d2.pack(pady=20)`),
+      L(`        self.btn_d2.config(state="disabled")`),
+      L(``),
+      L(`        # Pokreni uvodnu animaciju u zasebnom threadu`, 'added'),
+      L(`        Thread(target=self.uvodna_animacija, daemon=True).start()`),
+      L(``),
+      L(`    def osvezi_prikaz(self, tekst1="", tekst2=""):`),
+      L(`        """Simulira LCD shift — pomera tekst prema offsetu."""`, 'added'),
+      L(`        prazno = " " * 40`),
+      L(`        linija1 = (prazno + tekst1 + prazno)[40-self.offset : 56-self.offset]`),
+      L(`        linija2 = (prazno + tekst2 + prazno)[40-self.offset : 56-self.offset]`),
+      L(`        self.red1.set(linija1)`),
+      L(`        self.red2.set(linija2)`),
+      L(``),
+      L(`    def uvodna_animacija(self):`),
+      L(`        """Prikazuje pozdrav i animira pomeranje, zatim otključava taster."""`, 'added'),
+      L(`        tekst = "dobro dosli"`),
+      L(`        self.osvezi_prikaz(tekst)`),
+      L(`        time.sleep(1)`),
+      L(``),
+      L(`        for _ in range(7):   # Pomeri udesno`),
+      L(`            self.offset += 1`),
+      L(`            self.osvezi_prikaz(tekst)`),
+      L(`            time.sleep(0.428)`),
+      L(``),
+      L(`        for _ in range(7):   # Vrati ulevo`),
+      L(`            self.offset -= 1`),
+      L(`            self.osvezi_prikaz(tekst)`),
+      L(`            time.sleep(0.428)`),
+      L(``),
+      L(`        self.offset = 0`),
+      L(`        self.osvezi_prikaz("baci kocku")`),
+      L(`        self.btn_d2.config(state="normal")  # Otključaj taster`),
+      L(``),
+      L(`    def baci_kocku(self):`),
+      L(`        """Poziva se pritiskom na D2 — baca kocku i prikazuje rezultat."""`, 'added'),
+      L(`        self.x += 1`),
+      L(`        y = random.randint(1, 6)`),
+      L(`        linija1 = f"vas {self.x} broj je {y}"`),
+      L(`        linija2 = "ponovite bacanje" if y == 6 else ""`, 'changed'),
+      L(`        self.osvezi_prikaz(linija1, linija2)`),
+      L(``),
+      L(`if __name__ == "__main__":`),
+      L(`    app = LCDSimulator()`),
+      L(`    app.mainloop()`),
+    ],
+  },
+];
+
+let currentStep = 0;
+
+function renderStep(idx) {
+  const s = STEPS[idx];
+  const total = STEPS.length;
+
+  document.getElementById('stepCounter').textContent = `Korak ${idx+1} / ${total}`;
+  document.getElementById('stepTitle').textContent = s.title;
+  document.getElementById('stepDesc').textContent = s.desc;
+
+  const pct = Math.round(((idx+1)/total)*100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `Korak ${idx+1} / ${total} — ${pct}%`;
+
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === total - 1;
+
+  const pre = document.getElementById('codeBlock');
+  pre.innerHTML = s.code.map(l => {
+    const esc = l.text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    return `<span class="line ${l.tag}">${esc || ' '}</span>`;
+  }).join('\n');
+
+  const cl = document.getElementById('changesList');
+  cl.innerHTML = '';
+  if (idx === 0) {
+    cl.innerHTML = '<div class="change-item" style="color:var(--muted);">Ovo je polazna tačka — nema izmena.</div>';
+  } else {
+    s.changes.forEach(c => {
+      const div = document.createElement('div');
+      div.className = 'change-item';
+      const badgeClass = c.tag === 'added' ? 'added' : c.tag === 'changed' ? 'changed' : '';
+      const badgeLabel = c.tag === 'added' ? 'NOVO' : c.tag === 'changed' ? 'IZM' : '';
+      div.innerHTML = badgeClass
+        ? `<span class="badge ${badgeClass}">${badgeLabel}</span><span>${c.text}</span>`
+        : `<span style="color:var(--muted)">•</span><span>${c.text}</span>`;
+      cl.appendChild(div);
+    });
+  }
+
+  document.getElementById('reqBody').textContent = s.req;
+}
+
+function changeStep(dir) {
+  const next = currentStep + dir;
+  if (next < 0 || next >= STEPS.length) return;
+  currentStep = next;
+  renderStep(currentStep);
+  document.querySelector('.code-scroll').scrollTop = 0;
+}
+
+function copyCode() {
+  const text = STEPS[currentStep].code.map(l => l.text).join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    const lbl = document.getElementById('copyLabel');
+    btn.classList.add('copied');
+    lbl.textContent = 'Kopirano!';
+    setTimeout(() => { btn.classList.remove('copied'); lbl.textContent = 'Kopiraj'; }, 2000);
+  });
+}
+
+renderStep(0);
+</script>
+</body>
+</html>
