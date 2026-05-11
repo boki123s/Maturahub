@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alarmni sistem – PIR Senzor Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0d0e14;
+  --surface:  #13141f;
+  --card:     #181926;
+  --border:   #252640;
+  --accent:   #7c6af7;
+  --accent2:  #4e6ef2;
+  --accent3:  #a78bfa;
+  --green:    #33ff99;
+  --text:     #dde1f5;
+  --muted:    #6b7099;
+  --mono:     'JetBrains Mono', monospace;
+  --sans:     'Sora', sans-serif;
+
+  --hl-add-bg:    rgba(52,211,153,.09);
+  --hl-add-bar:   #34d399;
+  --hl-del-bg:    rgba(239,68,68,.09);
+  --hl-del-bar:   #ef4444;
+  --hl-mod-bg:    rgba(251,191,36,.07);
+  --hl-mod-bar:   #fbbf24;
+  --hl-copy-bg:   rgba(236,72,153,.07);
+  --hl-copy-bar:  #ec4899;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.65;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.home-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  transition: color .15s;
+  flex-shrink: 0;
+}
+.home-btn:hover { color: var(--accent3); }
+.home-btn svg { width: 14px; height: 14px; }
+.header-center { flex: 1; text-align: center; }
+.header-center h1 { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -.01em; }
+.header-center h1 span { color: var(--accent3); }
+.header-chip {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--accent);
+  background: rgba(124,106,247,.1);
+  border: 1px solid rgba(124,106,247,.22);
+  border-radius: 20px;
+  padding: 2px 10px;
+  margin-top: 3px;
+  text-transform: uppercase;
+}
+.header-spacer { width: 80px; flex-shrink: 0; }
+
+.layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100vh - 53px);
+}
+
+.sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.sidebar-head {
+  padding: 14px 16px 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  color: var(--accent);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sidebar-steps { padding: 12px 16px 16px; flex: 1; }
+.sidebar-steps > p {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.sidebar-reqs { padding: 12px 16px 4px; border-bottom: 1px solid var(--border); }
+.req-item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
+}
+.req-item::before {
+  content: '→';
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 11px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.step-explain {
+  padding: 10px 18px 9px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+}
+.step-explain strong { color: var(--accent3); font-weight: 600; }
+.step-explain code {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent3);
+  background: rgba(167,139,250,.1);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.step-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin-bottom: 3px;
+  cursor: pointer;
+  transition: background .15s;
+  font-size: 12px;
+  color: var(--muted);
+  user-select: none;
+}
+.step-pill:hover { background: rgba(255,255,255,.04); color: var(--text); }
+.step-pill.active { background: rgba(124,106,247,.12); color: var(--accent3); }
+.pill-num {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: rgba(124,106,247,.12);
+  border: 1px solid rgba(124,106,247,.25);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 10px; font-weight: 600;
+  color: var(--accent3);
+  flex-shrink: 0;
+}
+.step-pill.active .pill-num {
+  background: rgba(124,106,247,.28);
+  border-color: var(--accent);
+}
+
+.legend {
+  border-top: 1px solid var(--border);
+  padding: 12px 16px 16px;
+  flex-shrink: 0;
+}
+.legend-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 9px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--text);
+}
+.legend-bar { width: 3px; height: 16px; border-radius: 2px; flex-shrink: 0; }
+.legend-swatch { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+.lb-add   { background: var(--hl-add-bar); }
+.lb-del   { background: var(--hl-del-bar); }
+.lb-mod   { background: var(--hl-mod-bar); }
+.lb-copy  { background: var(--hl-copy-bar); }
+.ls-add   { background: var(--hl-add-bg);  border: 1px solid var(--hl-add-bar); }
+.ls-del   { background: var(--hl-del-bg);  border: 1px solid var(--hl-del-bar); }
+.ls-mod   { background: var(--hl-mod-bg);  border: 1px solid var(--hl-mod-bar); }
+.ls-copy  { background: var(--hl-copy-bg); border: 1px solid var(--hl-copy-bar); }
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.step-nav {
+  display: flex;
+  align-items: center;
+  padding: 9px 18px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 12px;
+}
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: color .15s, border-color .15s, background .15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.nav-btn:hover:not(:disabled) {
+  color: var(--accent3);
+  border-color: rgba(124,106,247,.4);
+  background: rgba(124,106,247,.06);
+}
+.nav-btn:disabled { opacity: .3; cursor: default; }
+.nav-btn svg { width: 12px; height: 12px; }
+.step-info { flex: 1; text-align: center; min-width: 0; }
+.step-label { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: .08em; text-transform: uppercase; }
+.step-name  { font-size: 13px; font-weight: 600; color: #fff; }
+.step-sub   { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+.progress-dots { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background .2s, transform .2s;
+  cursor: pointer;
+}
+.dot.active { background: var(--accent); transform: scale(1.35); }
+.dot.done   { background: var(--accent2); }
+
+.code-area { flex: 1; overflow-y: auto; }
+.code-wrap { background: #0a0b10; min-height: 100%; }
+.code-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 14px;
+  background: #0f1018;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.code-bar span { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+.copy-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.copy-btn:hover  { color: var(--accent3); border-color: rgba(124,106,247,.4); }
+.copy-btn.copied { color: var(--green);   border-color: rgba(51,255,153,.3); }
+
+.mobile-legend {
+  display: none;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 7px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.ml-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+.ml-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+.mld-add  { background: var(--hl-add-bar); }
+.mld-del  { background: var(--hl-del-bar); }
+.mld-mod  { background: var(--hl-mod-bar); }
+.mld-copy { background: var(--hl-copy-bar); }
+
+pre {
+  margin: 0;
+  padding: 10px 0 28px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.55;
+  color: #c8cde8;
+  counter-reset: line;
+}
+.ln {
+  display: flex;
+  padding-right: 16px;
+}
+.ln::before {
+  counter-increment: line;
+  content: counter(line);
+  min-width: 38px;
+  padding: 0 10px 0 14px;
+  text-align: right;
+  color: #272940;
+  user-select: none;
+  flex-shrink: 0;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.ln-code { flex: 1; white-space: pre; }
+
+.ln.hl-add  { background: var(--hl-add-bg);  border-left: 2px solid var(--hl-add-bar);  }
+.ln.hl-del  { background: var(--hl-del-bg);  border-left: 2px solid var(--hl-del-bar);  }
+.ln.hl-mod  { background: var(--hl-mod-bg);  border-left: 2px solid var(--hl-mod-bar);  }
+.ln.hl-copy { background: var(--hl-copy-bg); border-left: 2px solid var(--hl-copy-bar); }
+.ln.hl-add::before  { color: rgba(52,211,153,.3); }
+.ln.hl-del::before  { color: rgba(239,68,68,.3); }
+.ln.hl-mod::before  { color: rgba(251,191,36,.3); }
+.ln.hl-copy::before { color: rgba(236,72,153,.3); }
+
+.kw { color: #a78bfa; }
+.fn { color: #60a5fa; }
+.st { color: #86efac; }
+.cm { color: #3a3d60; font-style: italic; }
+.nm { color: #fbbf24; }
+.cl { color: #f9a8d4; }
+.op { color: #7c6af7; }
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+@media (max-width: 680px) {
+  .sidebar        { display: none; }
+  .layout         { height: calc(100vh - 49px); }
+  .step-sub       { display: none; }
+  .header-spacer  { width: 40px; }
+  pre             { font-size: 11.5px; }
+  .ln::before     { min-width: 28px; padding: 0 8px; }
+  .mobile-legend  { display: flex; }
+}
+@media (max-width: 420px) {
+  .progress-dots { display: none; }
+  .step-name     { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="javascript:history.back()" class="home-btn">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+      <path d="M2 6.5L8 2l6 4.5V14H10v-3.5H6V14H2V6.5z"/>
+    </svg>
+    home
+  </a>
+  <div class="header-center">
+    <h1>Alarmni <span>Sistem</span></h1>
+    <div class="header-chip">4ETR – B15 · PIR Senzor · LED · LCD · tkinter</div>
+  </div>
+  <div class="header-spacer"></div>
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar">
+
+    <div class="sidebar-head">// zahtev zadatka</div>
+    <div class="sidebar-reqs" id="sidebar-reqs"></div>
+
+    <div class="sidebar-head" style="border-top: 1px solid var(--border); margin-top: 0;">// koraci</div>
+    <div class="sidebar-steps" id="sidebar-steps"></div>
+
+    <div class="legend">
+      <div class="legend-title">// legenda</div>
+      <div class="legend-item">
+        <div class="legend-bar lb-add"></div>
+        <div class="legend-swatch ls-add"></div>
+        Dodato
+      </div>
+      <div class="legend-item">
+        <div class="legend-bar lb-del"></div>
+        <div class="legend-swatch ls-del"></div>
+        Obrisano
+      </div>
+      <div class="legend-item">
+        <div class="legend-bar lb-mod"></div>
+        <div class="legend-swatch ls-mod"></div>
+        Izmenjeno
+      </div>
+      <div class="legend-item">
+        <div class="legend-bar lb-copy"></div>
+        <div class="legend-swatch ls-copy"></div>
+        Copy-paste
+      </div>
+    </div>
+
+  </aside>
+
+  <div class="content">
+
+    <div class="step-nav">
+      <button class="nav-btn" id="btn-prev" onclick="prev()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3L5 8l5 5"/></svg>
+        Prethodni
+      </button>
+      <div class="step-info">
+        <div class="step-label" id="nav-label"></div>
+        <div class="step-name"  id="nav-name"></div>
+        <div class="step-sub"   id="nav-sub"></div>
+      </div>
+      <div class="progress-dots" id="dots"></div>
+      <button class="nav-btn" id="btn-next" onclick="next()">
+        Sledeći
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3l5 5-5 5"/></svg>
+      </button>
+    </div>
+
+    <div class="step-explain" id="step-explain"></div>
+
+    <div class="code-area">
+      <div class="code-wrap">
+        <div class="code-bar">
+          <span id="filename"></span>
+          <button class="copy-btn" id="copy-btn" onclick="copyCode()">copy</button>
+        </div>
+        <div class="mobile-legend">
+          <div class="ml-item"><div class="ml-dot mld-add"></div>Dodato</div>
+          <div class="ml-item"><div class="ml-dot mld-del"></div>Obrisano</div>
+          <div class="ml-item"><div class="ml-dot mld-mod"></div>Izmenjeno</div>
+          <div class="ml-item"><div class="ml-dot mld-copy"></div>Copy-paste</div>
+        </div>
+        <pre id="code-pre"></pre>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+
+const ZAHTEVI = [
+  'PIR senzor detektuje prisustvo u prostoriji – simulacija dugmetom.',
+  'Dok je objekat u zoni: LED svetlo uključena, zvučnik emituje zvuk, LCD prikazuje "UPOZORENJE" i broj aktiviranja.',
+  'Kada objekat napusti zonu: LED isključena, zvučnik staje, serijski monitor ispisuje "Bezbedno".',
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  STEPS
+// ─────────────────────────────────────────────────────────────────────────────
+
+const STEPS = [
+
+// ── KORAK 1 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 1',
+  sub:     'Test program – polazna tačka',
+  file:    '01_test_program.py',
+  explain: `<strong>Polazna tačka – test program.</strong><br>
+Ovo je program koji smo dobili kao test. Ima dva LED-a (svetlo i zvučnik), LCD displej i crveno dugme koje sve uključuje/isključuje odjednom.<br><br>
+Pročitaj kod, pokreni ga i razumi kako radi. <strong>Ideja za dalje:</strong> dugme treba da postane PIR senzor (koji stalno osluškuje), a sistem treba da broji koliko puta je aktiviran i ispisuje "UPOZORENJE" umesto "Dobar dan".`,
+  lines: [
+    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># Promenljiva za praćenje stanja (False = ugašeno, True = upaljeno)</span>`, hl: '' },
+    { c: `stanje_aktivno <span class="op">=</span> <span class="nm">False</span>`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">toggle_sistem</span>():`, hl: '' },
+    { c: `    <span class="kw">global</span> stanje_aktivno`, hl: '' },
+    { c: `    `, hl: '' },
+    { c: `    <span class="kw">if not</span> stanje_aktivno:`, hl: '' },
+    { c: `        <span class="cm"># UKLJUČIVANJE</span>`, hl: '' },
+    { c: `        led_svetlo.<span class="fn">config</span>(bg=<span class="st">"yellow"</span>)      <span class="cm"># Žuta LED za svetlo</span>`, hl: '' },
+    { c: `        led_zvucnik.<span class="fn">config</span>(bg=<span class="st">"orange"</span>)    <span class="cm"># Narandžasta LED za zvučnik</span>`, hl: '' },
+    { c: `        lcd_ekran.<span class="fn">config</span>(text=<span class="st">"Dobar dan"</span>)`, hl: '' },
+    { c: `        btn_glavni.<span class="fn">config</span>(text=<span class="st">"ISKLJUČI"</span>)`, hl: '' },
+    { c: `        stanje_aktivno <span class="op">=</span> <span class="nm">True</span>`, hl: '' },
+    { c: `    <span class="kw">else</span>:`, hl: '' },
+    { c: `        <span class="cm"># ISKLJUČIVANJE (RESET)</span>`, hl: '' },
+    { c: `        led_svetlo.<span class="fn">config</span>(bg=<span class="st">"#333300"</span>)     <span class="cm"># Ugašena žuta</span>`, hl: '' },
+    { c: `        led_zvucnik.<span class="fn">config</span>(bg=<span class="st">"#331a00"</span>)   <span class="cm"># Ugašena narandžasta</span>`, hl: '' },
+    { c: `        lcd_ekran.<span class="fn">config</span>(text=<span class="st">""</span>)`, hl: '' },
+    { c: `        btn_glavni.<span class="fn">config</span>(text=<span class="st">"UKLJUČI"</span>)`, hl: '' },
+    { c: `        stanje_aktivno <span class="op">=</span> <span class="nm">False</span>`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># Podešavanje prozora</span>`, hl: '' },
+    { c: `root <span class="op">=</span> tk.<span class="cl">Tk</span>()`, hl: '' },
+    { c: `root.<span class="fn">title</span>(<span class="st">"Horizontalne LED - Crveni taster"</span>)`, hl: '' },
+    { c: `root.<span class="fn">geometry</span>(<span class="st">"400x450"</span>)`, hl: '' },
+    { c: `root.<span class="fn">configure</span>(bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># Okvir za horizontalno poravnanje LED dioda</span>`, hl: '' },
+    { c: `okvir_led <span class="op">=</span> tk.<span class="cl">Frame</span>(root, bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: `okvir_led.<span class="fn">pack</span>(pady=<span class="nm">30</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># LED 1: SVETLO</span>`, hl: '' },
+    { c: `okvir_svetlo <span class="op">=</span> tk.<span class="cl">Frame</span>(okvir_led, bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: `okvir_svetlo.<span class="fn">pack</span>(side=<span class="st">"left"</span>, padx=<span class="nm">20</span>)`, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(okvir_svetlo, text=<span class="st">"LED SVETLO"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>()`, hl: '' },
+    { c: `led_svetlo <span class="op">=</span> tk.<span class="cl">Label</span>(okvir_svetlo, width=<span class="nm">12</span>, height=<span class="nm">2</span>, bg=<span class="st">"#333300"</span>)`, hl: '' },
+    { c: `led_svetlo.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># LED 2: ZVUČNIK</span>`, hl: '' },
+    { c: `okvir_zvucnik <span class="op">=</span> tk.<span class="cl">Frame</span>(okvir_led, bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: `okvir_zvucnik.<span class="fn">pack</span>(side=<span class="st">"left"</span>, padx=<span class="nm">20</span>)`, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(okvir_zvucnik, text=<span class="st">"LED ZVUČNIK"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>()`, hl: '' },
+    { c: `led_zvucnik <span class="op">=</span> tk.<span class="cl">Label</span>(okvir_zvucnik, width=<span class="nm">12</span>, height=<span class="nm">2</span>, bg=<span class="st">"#331a00"</span>)`, hl: '' },
+    { c: `led_zvucnik.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># Vizualizacija LCD displeja</span>`, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(root, text=<span class="st">"LCD DISPLEJ"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>(pady=(<span class="nm">20</span>, <span class="nm">5</span>))`, hl: '' },
+    { c: `lcd_ekran <span class="op">=</span> tk.<span class="cl">Label</span>(root, text=<span class="st">""</span>, font=(<span class="st">"Courier"</span>, <span class="nm">18</span>, <span class="st">"bold"</span>),`, hl: '' },
+    { c: `                     bg=<span class="st">"#0000FF"</span>, fg=<span class="st">"white"</span>, width=<span class="nm">15</span>, height=<span class="nm">2</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
+    { c: `lcd_ekran.<span class="fn">pack</span>()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># CRVENI TASTER</span>`, hl: '' },
+    { c: `btn_glavni <span class="op">=</span> tk.<span class="cl">Button</span>(root, text=<span class="st">"UKLJUČI"</span>, bg=<span class="st">"red"</span>, fg=<span class="st">"white"</span>,`, hl: '' },
+    { c: `                       font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>), width=<span class="nm">15</span>, height=<span class="nm">2</span>,`, hl: '' },
+    { c: `                       activebackground=<span class="st">"#ff6666"</span>, command=toggle_sistem)`, hl: '' },
+    { c: `btn_glavni.<span class="fn">pack</span>(pady=<span class="nm">40</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `root.<span class="fn">mainloop</span>()`, hl: '' },
+  ]
+},
+
+// ── KORAK 2 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 2',
+  sub:     'Brojač aktiviranja + tekst "UPOZORENJE"',
+  file:    '02_brojac_upozorenje.py',
+  explain: `<strong>Dodajemo brojač</strong> koliko puta je senzor aktiviran, i menjamo LCD poruku u <code>"UPOZORENJE"</code>.<br><br>
+Dodajemo promenljivu <code>broj_aktiviranja = 0</code> na vrh programa – to je naš brojač. Svaki put kada se sistem uključi, povećamo ga za 1 i prikažemo na LCD-u zajedno sa porukom. Ovo su minimalne izmene – samo dve nove linije i malo izmenjene dve postojeće.`,
+  lines: [
+    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># Promenljiva za praćenje stanja (False = ugašeno, True = upaljeno)</span>`, hl: '' },
+    { c: `stanje_aktivno <span class="op">=</span> <span class="nm">False</span>`, hl: '' },
+    { c: `<span class="cm"># Brojač - koliko puta je senzor aktiviran</span>`, hl: 'add' },
+    { c: `broj_aktiviranja <span class="op">=</span> <span class="nm">0</span>`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">toggle_sistem</span>():`, hl: '' },
+    { c: `    <span class="kw">global</span> stanje_aktivno, broj_aktiviranja`, hl: 'mod' },
+    { c: `    `, hl: '' },
+    { c: `    <span class="kw">if not</span> stanje_aktivno:`, hl: '' },
+    { c: `        <span class="cm"># UKLJUČIVANJE – povećaj brojač</span>`, hl: '' },
+    { c: `        broj_aktiviranja <span class="op">+=</span> <span class="nm">1</span>`, hl: 'add' },
+    { c: `        led_svetlo.<span class="fn">config</span>(bg=<span class="st">"yellow"</span>)`, hl: '' },
+    { c: `        led_zvucnik.<span class="fn">config</span>(bg=<span class="st">"orange"</span>)`, hl: '' },
+    { c: `        <span class="cm"># Prikazujemo "UPOZORENJE" i koliko puta je aktivirano</span>`, hl: '' },
+    { c: `        lcd_ekran.<span class="fn">config</span>(text=<span class="st">"UPOZORENJE "</span> <span class="op">+</span> <span class="fn">str</span>(broj_aktiviranja))`, hl: 'mod' },
+    { c: `        btn_glavni.<span class="fn">config</span>(text=<span class="st">"ISKLJUČI"</span>)`, hl: '' },
+    { c: `        stanje_aktivno <span class="op">=</span> <span class="nm">True</span>`, hl: '' },
+    { c: `    <span class="kw">else</span>:`, hl: '' },
+    { c: `        <span class="cm"># ISKLJUČIVANJE (RESET)</span>`, hl: '' },
+    { c: `        led_svetlo.<span class="fn">config</span>(bg=<span class="st">"#333300"</span>)`, hl: '' },
+    { c: `        led_zvucnik.<span class="fn">config</span>(bg=<span class="st">"#331a00"</span>)`, hl: '' },
+    { c: `        lcd_ekran.<span class="fn">config</span>(text=<span class="st">""</span>)`, hl: '' },
+    { c: `        btn_glavni.<span class="fn">config</span>(text=<span class="st">"UKLJUČI"</span>)`, hl: '' },
+    { c: `        stanje_aktivno <span class="op">=</span> <span class="nm">False</span>`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># Podešavanje prozora</span>`, hl: '' },
+    { c: `root <span class="op">=</span> tk.<span class="cl">Tk</span>()`, hl: '' },
+    { c: `root.<span class="fn">title</span>(<span class="st">"Horizontalne LED - Crveni taster"</span>)`, hl: '' },
+    { c: `root.<span class="fn">geometry</span>(<span class="st">"400x450"</span>)`, hl: '' },
+    { c: `root.<span class="fn">configure</span>(bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `okvir_led <span class="op">=</span> tk.<span class="cl">Frame</span>(root, bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: `okvir_led.<span class="fn">pack</span>(pady=<span class="nm">30</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `okvir_svetlo <span class="op">=</span> tk.<span class="cl">Frame</span>(okvir_led, bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: `okvir_svetlo.<span class="fn">pack</span>(side=<span class="st">"left"</span>, padx=<span class="nm">20</span>)`, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(okvir_svetlo, text=<span class="st">"LED SVETLO"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>()`, hl: '' },
+    { c: `led_svetlo <span class="op">=</span> tk.<span class="cl">Label</span>(okvir_svetlo, width=<span class="nm">12</span>, height=<span class="nm">2</span>, bg=<span class="st">"#333300"</span>)`, hl: '' },
+    { c: `led_svetlo.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `okvir_zvucnik <span class="op">=</span> tk.<span class="cl">Frame</span>(okvir_led, bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: `okvir_zvucnik.<span class="fn">pack</span>(side=<span class="st">"left"</span>, padx=<span class="nm">20</span>)`, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(okvir_zvucnik, text=<span class="st">"LED ZVUČNIK"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>()`, hl: '' },
+    { c: `led_zvucnik <span class="op">=</span> tk.<span class="cl">Label</span>(okvir_zvucnik, width=<span class="nm">12</span>, height=<span class="nm">2</span>, bg=<span class="st">"#331a00"</span>)`, hl: '' },
+    { c: `led_zvucnik.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(root, text=<span class="st">"LCD DISPLEJ"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>(pady=(<span class="nm">20</span>, <span class="nm">5</span>))`, hl: '' },
+    { c: `lcd_ekran <span class="op">=</span> tk.<span class="cl">Label</span>(root, text=<span class="st">""</span>, font=(<span class="st">"Courier"</span>, <span class="nm">18</span>, <span class="st">"bold"</span>),`, hl: '' },
+    { c: `                     bg=<span class="st">"#0000FF"</span>, fg=<span class="st">"white"</span>, width=<span class="nm">15</span>, height=<span class="nm">2</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
+    { c: `lcd_ekran.<span class="fn">pack</span>()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `btn_glavni <span class="op">=</span> tk.<span class="cl">Button</span>(root, text=<span class="st">"UKLJUČI"</span>, bg=<span class="st">"red"</span>, fg=<span class="st">"white"</span>,`, hl: '' },
+    { c: `                       font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>), width=<span class="nm">15</span>, height=<span class="nm">2</span>,`, hl: '' },
+    { c: `                       activebackground=<span class="st">"#ff6666"</span>, command=toggle_sistem)`, hl: '' },
+    { c: `btn_glavni.<span class="fn">pack</span>(pady=<span class="nm">40</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `root.<span class="fn">mainloop</span>()`, hl: '' },
+  ]
+},
+
+// ── KORAK 3 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 3',
+  sub:     'Dugme → PIR senzor (drži = detektuje)',
+  file:    '03_pir_senzor.py',
+  explain: `<strong>Transformišemo dugme u PIR senzor.</strong><br><br>
+Pravi PIR senzor šalje signal dok god detektuje pokret. U tkinteru to simuliramo ovako: dok <strong>držiš dugme</strong> – senzor detektuje; kada ga pustiš – zona je prazna. Koristimo <code>bind("&lt;ButtonPress&gt;")</code> za pritisak i <code>bind("&lt;ButtonRelease&gt;")</code> za puštanje. Funkcija <code>toggle_sistem</code> se kopira u dve nove funkcije: <code>ukljuci()</code> i <code>iskljuci()</code> – svaka radi samo jednu stvar.`,
+  lines: [
+    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `stanje_aktivno <span class="op">=</span> <span class="nm">False</span>`, hl: '' },
+    { c: `broj_aktiviranja <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># --- Funkcija za UKLJUČIVANJE (PIR detektovao pokret) ---</span>`, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">ukljuci</span>(event):           <span class="cm"># "event" je obavezno jer bind šalje info o kliku</span>`, hl: 'mod' },
+    { c: `    <span class="kw">global</span> stanje_aktivno, broj_aktiviranja`, hl: 'copy' },
+    { c: `    <span class="kw">if not</span> stanje_aktivno:`, hl: 'copy' },
+    { c: `        broj_aktiviranja <span class="op">+=</span> <span class="nm">1</span>`, hl: 'copy' },
+    { c: `        led_svetlo.<span class="fn">config</span>(bg=<span class="st">"yellow"</span>)`, hl: 'copy' },
+    { c: `        led_zvucnik.<span class="fn">config</span>(bg=<span class="st">"orange"</span>)`, hl: 'copy' },
+    { c: `        lcd_ekran.<span class="fn">config</span>(text=<span class="st">"UPOZORENJE "</span> <span class="op">+</span> <span class="fn">str</span>(broj_aktiviranja))`, hl: 'copy' },
+    { c: `        btn_glavni.<span class="fn">config</span>(text=<span class="st">"DETEKTOVANO"</span>)`, hl: 'mod' },
+    { c: `        stanje_aktivno <span class="op">=</span> <span class="nm">True</span>`, hl: 'copy' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># --- Funkcija za ISKLJUČIVANJE (objekat napustio zonu) ---</span>`, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">iskljuci</span>(event):           <span class="cm"># ista priča, "event" obavezan</span>`, hl: 'mod' },
+    { c: `    <span class="kw">global</span> stanje_aktivno`, hl: 'copy' },
+    { c: `    <span class="kw">if</span> stanje_aktivno:`, hl: 'mod' },
+    { c: `        led_svetlo.<span class="fn">config</span>(bg=<span class="st">"#333300"</span>)`, hl: 'copy' },
+    { c: `        led_zvucnik.<span class="fn">config</span>(bg=<span class="st">"#331a00"</span>)`, hl: 'copy' },
+    { c: `        lcd_ekran.<span class="fn">config</span>(text=<span class="st">""</span>)`, hl: 'copy' },
+    { c: `        btn_glavni.<span class="fn">config</span>(text=<span class="st">"PIR SENZOR"</span>)`, hl: 'mod' },
+    { c: `        stanje_aktivno <span class="op">=</span> <span class="nm">False</span>`, hl: 'copy' },
+    { c: ``, hl: '' },
+    { c: `root <span class="op">=</span> tk.<span class="cl">Tk</span>()`, hl: '' },
+    { c: `root.<span class="fn">title</span>(<span class="st">"Alarmni sistem – PIR senzor"</span>)`, hl: 'mod' },
+    { c: `root.<span class="fn">geometry</span>(<span class="st">"400x450"</span>)`, hl: '' },
+    { c: `root.<span class="fn">configure</span>(bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `okvir_led <span class="op">=</span> tk.<span class="cl">Frame</span>(root, bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: `okvir_led.<span class="fn">pack</span>(pady=<span class="nm">30</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `okvir_svetlo <span class="op">=</span> tk.<span class="cl">Frame</span>(okvir_led, bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: `okvir_svetlo.<span class="fn">pack</span>(side=<span class="st">"left"</span>, padx=<span class="nm">20</span>)`, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(okvir_svetlo, text=<span class="st">"LED SVETLO"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>()`, hl: '' },
+    { c: `led_svetlo <span class="op">=</span> tk.<span class="cl">Label</span>(okvir_svetlo, width=<span class="nm">12</span>, height=<span class="nm">2</span>, bg=<span class="st">"#333300"</span>)`, hl: '' },
+    { c: `led_svetlo.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `okvir_zvucnik <span class="op">=</span> tk.<span class="cl">Frame</span>(okvir_led, bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: `okvir_zvucnik.<span class="fn">pack</span>(side=<span class="st">"left"</span>, padx=<span class="nm">20</span>)`, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(okvir_zvucnik, text=<span class="st">"LED ZVUČNIK"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>()`, hl: '' },
+    { c: `led_zvucnik <span class="op">=</span> tk.<span class="cl">Label</span>(okvir_zvucnik, width=<span class="nm">12</span>, height=<span class="nm">2</span>, bg=<span class="st">"#331a00"</span>)`, hl: '' },
+    { c: `led_zvucnik.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(root, text=<span class="st">"LCD DISPLEJ"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>(pady=(<span class="nm">20</span>, <span class="nm">5</span>))`, hl: '' },
+    { c: `lcd_ekran <span class="op">=</span> tk.<span class="cl">Label</span>(root, text=<span class="st">""</span>, font=(<span class="st">"Courier"</span>, <span class="nm">18</span>, <span class="st">"bold"</span>),`, hl: '' },
+    { c: `                     bg=<span class="st">"#0000FF"</span>, fg=<span class="st">"white"</span>, width=<span class="nm">15</span>, height=<span class="nm">2</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
+    { c: `lcd_ekran.<span class="fn">pack</span>()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># Dugme sada simulira PIR senzor – drži = detektuje, pusti = slobodno</span>`, hl: '' },
+    { c: `btn_glavni <span class="op">=</span> tk.<span class="cl">Button</span>(root, text=<span class="st">"PIR SENZOR"</span>, bg=<span class="st">"red"</span>, fg=<span class="st">"white"</span>,`, hl: 'mod' },
+    { c: `                       font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>), width=<span class="nm">15</span>, height=<span class="nm">2</span>,`, hl: '' },
+    { c: `                       activebackground=<span class="st">"#ff6666"</span>)`, hl: 'mod' },
+    { c: `btn_glavni.<span class="fn">pack</span>(pady=<span class="nm">40</span>)`, hl: '' },
+    { c: `<span class="cm"># Vezujemo pritisak i puštanje za naše dve funkcije</span>`, hl: '' },
+    { c: `btn_glavni.<span class="fn">bind</span>(<span class="st">"&lt;ButtonPress&gt;"</span>, ukljuci)`, hl: 'add' },
+    { c: `btn_glavni.<span class="fn">bind</span>(<span class="st">"&lt;ButtonRelease&gt;"</span>, iskljuci)`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `root.<span class="fn">mainloop</span>()`, hl: '' },
+  ]
+},
+
+// ── KORAK 4 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 4',
+  sub:     'Serijski monitor – "Bezbedno"',
+  file:    '04_serijski_monitor.py',
+  explain: `<strong>Dodajemo serijski monitor</strong> koji prikazuje poruku kada zona postane prazna.<br><br>
+Zadatak kaže: kada objekat napusti oblast, na serijskom monitoru ispisati <code>"Bezbedno"</code>. U tkinteru serijski monitor simuliramo kao <code>Text</code> widget (scrollable polje). Copy-pastujemo LCD blok, malo ga izmenimo i dobijamo monitor. U funkciji <code>iskljuci()</code> dodajemo jednu liniju koja upisuje tekst u monitor.`,
+  lines: [
+    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `stanje_aktivno <span class="op">=</span> <span class="nm">False</span>`, hl: '' },
+    { c: `broj_aktiviranja <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">ukljuci</span>(event):`, hl: '' },
+    { c: `    <span class="kw">global</span> stanje_aktivno, broj_aktiviranja`, hl: '' },
+    { c: `    <span class="kw">if not</span> stanje_aktivno:`, hl: '' },
+    { c: `        broj_aktiviranja <span class="op">+=</span> <span class="nm">1</span>`, hl: '' },
+    { c: `        led_svetlo.<span class="fn">config</span>(bg=<span class="st">"yellow"</span>)`, hl: '' },
+    { c: `        led_zvucnik.<span class="fn">config</span>(bg=<span class="st">"orange"</span>)`, hl: '' },
+    { c: `        lcd_ekran.<span class="fn">config</span>(text=<span class="st">"UPOZORENJE "</span> <span class="op">+</span> <span class="fn">str</span>(broj_aktiviranja))`, hl: '' },
+    { c: `        btn_glavni.<span class="fn">config</span>(text=<span class="st">"DETEKTOVANO"</span>)`, hl: '' },
+    { c: `        stanje_aktivno <span class="op">=</span> <span class="nm">True</span>`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">iskljuci</span>(event):`, hl: '' },
+    { c: `    <span class="kw">global</span> stanje_aktivno`, hl: '' },
+    { c: `    <span class="kw">if</span> stanje_aktivno:`, hl: '' },
+    { c: `        led_svetlo.<span class="fn">config</span>(bg=<span class="st">"#333300"</span>)`, hl: '' },
+    { c: `        led_zvucnik.<span class="fn">config</span>(bg=<span class="st">"#331a00"</span>)`, hl: '' },
+    { c: `        lcd_ekran.<span class="fn">config</span>(text=<span class="st">""</span>)`, hl: '' },
+    { c: `        btn_glavni.<span class="fn">config</span>(text=<span class="st">"PIR SENZOR"</span>)`, hl: '' },
+    { c: `        stanje_aktivno <span class="op">=</span> <span class="nm">False</span>`, hl: '' },
+    { c: `        <span class="cm"># Upisujemo "Bezbedno" u serijski monitor</span>`, hl: '' },
+    { c: `        serijski_monitor.<span class="fn">insert</span>(tk.<span class="nm">END</span>, <span class="st">"Bezbedno\\n"</span>)`, hl: 'add' },
+    { c: `        serijski_monitor.<span class="fn">see</span>(tk.<span class="nm">END</span>)   <span class="cm"># scroll na kraj</span>`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `root <span class="op">=</span> tk.<span class="cl">Tk</span>()`, hl: '' },
+    { c: `root.<span class="fn">title</span>(<span class="st">"Alarmni sistem – PIR senzor"</span>)`, hl: '' },
+    { c: `root.<span class="fn">geometry</span>(<span class="st">"400x520"</span>)`, hl: 'mod' },
+    { c: `root.<span class="fn">configure</span>(bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `okvir_led <span class="op">=</span> tk.<span class="cl">Frame</span>(root, bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: `okvir_led.<span class="fn">pack</span>(pady=<span class="nm">30</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `okvir_svetlo <span class="op">=</span> tk.<span class="cl">Frame</span>(okvir_led, bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: `okvir_svetlo.<span class="fn">pack</span>(side=<span class="st">"left"</span>, padx=<span class="nm">20</span>)`, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(okvir_svetlo, text=<span class="st">"LED SVETLO"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>()`, hl: '' },
+    { c: `led_svetlo <span class="op">=</span> tk.<span class="cl">Label</span>(okvir_svetlo, width=<span class="nm">12</span>, height=<span class="nm">2</span>, bg=<span class="st">"#333300"</span>)`, hl: '' },
+    { c: `led_svetlo.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `okvir_zvucnik <span class="op">=</span> tk.<span class="cl">Frame</span>(okvir_led, bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: `okvir_zvucnik.<span class="fn">pack</span>(side=<span class="st">"left"</span>, padx=<span class="nm">20</span>)`, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(okvir_zvucnik, text=<span class="st">"LED ZVUČNIK"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>()`, hl: '' },
+    { c: `led_zvucnik <span class="op">=</span> tk.<span class="cl">Label</span>(okvir_zvucnik, width=<span class="nm">12</span>, height=<span class="nm">2</span>, bg=<span class="st">"#331a00"</span>)`, hl: '' },
+    { c: `led_zvucnik.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(root, text=<span class="st">"LCD DISPLEJ"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>(pady=(<span class="nm">20</span>, <span class="nm">5</span>))`, hl: '' },
+    { c: `lcd_ekran <span class="op">=</span> tk.<span class="cl">Label</span>(root, text=<span class="st">""</span>, font=(<span class="st">"Courier"</span>, <span class="nm">18</span>, <span class="st">"bold"</span>),`, hl: '' },
+    { c: `                     bg=<span class="st">"#0000FF"</span>, fg=<span class="st">"white"</span>, width=<span class="nm">15</span>, height=<span class="nm">2</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
+    { c: `lcd_ekran.<span class="fn">pack</span>()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># --- SERIJSKI MONITOR (copy-paste od LCD, izmenjen) ---</span>`, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(root, text=<span class="st">"SERIJSKI MONITOR"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>(pady=(<span class="nm">10</span>, <span class="nm">2</span>))`, hl: 'copy' },
+    { c: `serijski_monitor <span class="op">=</span> tk.<span class="cl">Text</span>(root, height=<span class="nm">3</span>, width=<span class="nm">30</span>,`, hl: 'copy' },
+    { c: `                          bg=<span class="st">"black"</span>, fg=<span class="st">"#00ff00"</span>, font=(<span class="st">"Courier"</span>, <span class="nm">11</span>))`, hl: 'mod' },
+    { c: `serijski_monitor.<span class="fn">pack</span>()`, hl: 'copy' },
+    { c: ``, hl: '' },
+    { c: `btn_glavni <span class="op">=</span> tk.<span class="cl">Button</span>(root, text=<span class="st">"PIR SENZOR"</span>, bg=<span class="st">"red"</span>, fg=<span class="st">"white"</span>,`, hl: '' },
+    { c: `                       font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>), width=<span class="nm">15</span>, height=<span class="nm">2</span>,`, hl: '' },
+    { c: `                       activebackground=<span class="st">"#ff6666"</span>)`, hl: '' },
+    { c: `btn_glavni.<span class="fn">pack</span>(pady=<span class="nm">20</span>)`, hl: 'mod' },
+    { c: `btn_glavni.<span class="fn">bind</span>(<span class="st">"&lt;ButtonPress&gt;"</span>, ukljuci)`, hl: '' },
+    { c: `btn_glavni.<span class="fn">bind</span>(<span class="st">"&lt;ButtonRelease&gt;"</span>, iskljuci)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `root.<span class="fn">mainloop</span>()`, hl: '' },
+  ]
+},
+
+// ── KORAK 5 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 5',
+  sub:     'Završni program – sve zajedno',
+  file:    '05_alarmni_sistem_final.py',
+  explain: `<strong>Završni program!</strong> Sve je na mestu, nema novih izmena – samo čist, komentarisan kod spreman za maturu.<br><br>
+Prođi kroz ceo kod i provjeri: PIR senzor (drži dugme = detektuje), LED svetlo i zvučnik se pale, LCD prikazuje <code>UPOZORENJE + broj</code>, a kada pustiš dugme – sve se gasi i monitor ispisuje <strong>Bezbedno</strong>. Pokreni i testiraj!`,
+  lines: [
+    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># ── GLOBALNE PROMENLJIVE ────────────────────────────────────────</span>`, hl: '' },
+    { c: `stanje_aktivno <span class="op">=</span> <span class="nm">False</span>   <span class="cm"># da li senzor trenutno detektuje</span>`, hl: '' },
+    { c: `broj_aktiviranja <span class="op">=</span> <span class="nm">0</span>     <span class="cm"># koliko puta je senzor ukupno aktiviran</span>`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># ── UKLJUČIVANJE – PIR je detektovao pokret ─────────────────────</span>`, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">ukljuci</span>(event):`, hl: '' },
+    { c: `    <span class="kw">global</span> stanje_aktivno, broj_aktiviranja`, hl: '' },
+    { c: `    <span class="kw">if not</span> stanje_aktivno:                 <span class="cm"># samo ako već nije aktivan</span>`, hl: '' },
+    { c: `        broj_aktiviranja <span class="op">+=</span> <span class="nm">1</span>              <span class="cm"># uvećaj brojač</span>`, hl: '' },
+    { c: `        led_svetlo.<span class="fn">config</span>(bg=<span class="st">"yellow"</span>)    <span class="cm"># upali svetleću diodu</span>`, hl: '' },
+    { c: `        led_zvucnik.<span class="fn">config</span>(bg=<span class="st">"orange"</span>)   <span class="cm"># upali zvučnik (LED simulacija)</span>`, hl: '' },
+    { c: `        <span class="cm"># Na LCD: "UPOZORENJE" + redni broj aktiviranja</span>`, hl: '' },
+    { c: `        lcd_ekran.<span class="fn">config</span>(text=<span class="st">"UPOZORENJE "</span> <span class="op">+</span> <span class="fn">str</span>(broj_aktiviranja))`, hl: '' },
+    { c: `        btn_glavni.<span class="fn">config</span>(text=<span class="st">"DETEKTOVANO"</span>)`, hl: '' },
+    { c: `        stanje_aktivno <span class="op">=</span> <span class="nm">True</span>`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># ── ISKLJUČIVANJE – objekat napustio zonu ───────────────────────</span>`, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">iskljuci</span>(event):`, hl: '' },
+    { c: `    <span class="kw">global</span> stanje_aktivno`, hl: '' },
+    { c: `    <span class="kw">if</span> stanje_aktivno:                      <span class="cm"># samo ako je bio aktivan</span>`, hl: '' },
+    { c: `        led_svetlo.<span class="fn">config</span>(bg=<span class="st">"#333300"</span>)   <span class="cm"># ugasi diodu</span>`, hl: '' },
+    { c: `        led_zvucnik.<span class="fn">config</span>(bg=<span class="st">"#331a00"</span>)  <span class="cm"># ugasi zvučnik</span>`, hl: '' },
+    { c: `        lcd_ekran.<span class="fn">config</span>(text=<span class="st">""</span>)          <span class="cm"># očisti LCD</span>`, hl: '' },
+    { c: `        btn_glavni.<span class="fn">config</span>(text=<span class="st">"PIR SENZOR"</span>)`, hl: '' },
+    { c: `        stanje_aktivno <span class="op">=</span> <span class="nm">False</span>`, hl: '' },
+    { c: `        <span class="cm"># Serijskim monitorom javljamo da je zona slobodna</span>`, hl: '' },
+    { c: `        serijski_monitor.<span class="fn">insert</span>(tk.<span class="nm">END</span>, <span class="st">"Bezbedno\\n"</span>)`, hl: '' },
+    { c: `        serijski_monitor.<span class="fn">see</span>(tk.<span class="nm">END</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># ── PROZOR ──────────────────────────────────────────────────────</span>`, hl: '' },
+    { c: `root <span class="op">=</span> tk.<span class="cl">Tk</span>()`, hl: '' },
+    { c: `root.<span class="fn">title</span>(<span class="st">"Alarmni sistem – PIR senzor"</span>)`, hl: '' },
+    { c: `root.<span class="fn">geometry</span>(<span class="st">"400x520"</span>)`, hl: '' },
+    { c: `root.<span class="fn">configure</span>(bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># ── LED DIODE ────────────────────────────────────────────────────</span>`, hl: '' },
+    { c: `okvir_led <span class="op">=</span> tk.<span class="cl">Frame</span>(root, bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: `okvir_led.<span class="fn">pack</span>(pady=<span class="nm">30</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `okvir_svetlo <span class="op">=</span> tk.<span class="cl">Frame</span>(okvir_led, bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: `okvir_svetlo.<span class="fn">pack</span>(side=<span class="st">"left"</span>, padx=<span class="nm">20</span>)`, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(okvir_svetlo, text=<span class="st">"LED SVETLO"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>()`, hl: '' },
+    { c: `led_svetlo <span class="op">=</span> tk.<span class="cl">Label</span>(okvir_svetlo, width=<span class="nm">12</span>, height=<span class="nm">2</span>, bg=<span class="st">"#333300"</span>)`, hl: '' },
+    { c: `led_svetlo.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `okvir_zvucnik <span class="op">=</span> tk.<span class="cl">Frame</span>(okvir_led, bg=<span class="st">"#1a1a1a"</span>)`, hl: '' },
+    { c: `okvir_zvucnik.<span class="fn">pack</span>(side=<span class="st">"left"</span>, padx=<span class="nm">20</span>)`, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(okvir_zvucnik, text=<span class="st">"LED ZVUČNIK"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>()`, hl: '' },
+    { c: `led_zvucnik <span class="op">=</span> tk.<span class="cl">Label</span>(okvir_zvucnik, width=<span class="nm">12</span>, height=<span class="nm">2</span>, bg=<span class="st">"#331a00"</span>)`, hl: '' },
+    { c: `led_zvucnik.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># ── LCD DISPLEJ ──────────────────────────────────────────────────</span>`, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(root, text=<span class="st">"LCD DISPLEJ"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>(pady=(<span class="nm">20</span>, <span class="nm">5</span>))`, hl: '' },
+    { c: `lcd_ekran <span class="op">=</span> tk.<span class="cl">Label</span>(root, text=<span class="st">""</span>, font=(<span class="st">"Courier"</span>, <span class="nm">18</span>, <span class="st">"bold"</span>),`, hl: '' },
+    { c: `                     bg=<span class="st">"#0000FF"</span>, fg=<span class="st">"white"</span>, width=<span class="nm">15</span>, height=<span class="nm">2</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
+    { c: `lcd_ekran.<span class="fn">pack</span>()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># ── SERIJSKI MONITOR ─────────────────────────────────────────────</span>`, hl: '' },
+    { c: `tk.<span class="cl">Label</span>(root, text=<span class="st">"SERIJSKI MONITOR"</span>, bg=<span class="st">"#1a1a1a"</span>, fg=<span class="st">"white"</span>).<span class="fn">pack</span>(pady=(<span class="nm">10</span>, <span class="nm">2</span>))`, hl: '' },
+    { c: `serijski_monitor <span class="op">=</span> tk.<span class="cl">Text</span>(root, height=<span class="nm">3</span>, width=<span class="nm">30</span>,`, hl: '' },
+    { c: `                          bg=<span class="st">"black"</span>, fg=<span class="st">"#00ff00"</span>, font=(<span class="st">"Courier"</span>, <span class="nm">11</span>))`, hl: '' },
+    { c: `serijski_monitor.<span class="fn">pack</span>()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="cm"># ── PIR SENZOR (dugme) ───────────────────────────────────────────</span>`, hl: '' },
+    { c: `btn_glavni <span class="op">=</span> tk.<span class="cl">Button</span>(root, text=<span class="st">"PIR SENZOR"</span>, bg=<span class="st">"red"</span>, fg=<span class="st">"white"</span>,`, hl: '' },
+    { c: `                       font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>), width=<span class="nm">15</span>, height=<span class="nm">2</span>,`, hl: '' },
+    { c: `                       activebackground=<span class="st">"#ff6666"</span>)`, hl: '' },
+    { c: `btn_glavni.<span class="fn">pack</span>(pady=<span class="nm">20</span>)`, hl: '' },
+    { c: `btn_glavni.<span class="fn">bind</span>(<span class="st">"&lt;ButtonPress&gt;"</span>, ukljuci)    <span class="cm"># pritisak = pokret detektovan</span>`, hl: '' },
+    { c: `btn_glavni.<span class="fn">bind</span>(<span class="st">"&lt;ButtonRelease&gt;"</span>, iskljuci)  <span class="cm"># puštanje = zona slobodna</span>`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `root.<span class="fn">mainloop</span>()`, hl: '' },
+  ]
+},
+
+]; // ── kraj STEPS ─────────────────────────────────────────────────────────────
+
+
+// ════════════════════════════════════════════════════════════════════════════
+//  ENGINE  –  ne menjati ispod ove linije
+// ════════════════════════════════════════════════════════════════════════════
+
+let cur = 0;
+
+function buildSidebar() {
+  document.getElementById('sidebar-reqs').innerHTML =
+    ZAHTEVI.map(z => `<div class="req-item">${z}</div>`).join('');
+
+  const el = document.getElementById('sidebar-steps');
+  el.innerHTML = STEPS.map((s, i) =>
+    `<div class="step-pill${i === 0 ? ' active' : ''}" onclick="goTo(${i})">
+       <span class="pill-num">${i + 1}</span>${s.name}
+     </div>`
+  ).join('');
+}
+
+function render() {
+  const s = STEPS[cur];
+
+  document.getElementById('nav-label').textContent = `Korak ${cur + 1} / ${STEPS.length}`;
+  document.getElementById('nav-name').textContent  = s.name;
+  document.getElementById('nav-sub').textContent   = s.sub;
+  document.getElementById('filename').textContent  = s.file;
+  document.getElementById('btn-prev').disabled = cur === 0;
+  document.getElementById('btn-next').disabled = cur === STEPS.length - 1;
+
+  const dc = document.getElementById('dots');
+  dc.innerHTML = '';
+  STEPS.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < cur ? ' done' : i === cur ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dc.appendChild(d);
+  });
+
+  document.querySelectorAll('.step-pill').forEach((p, i) =>
+    p.classList.toggle('active', i === cur));
+
+  document.getElementById('step-explain').innerHTML = s.explain || '';
+
+  document.getElementById('code-pre').innerHTML =
+    s.lines.map(l => {
+      const cls = l.hl ? ` hl-${l.hl}` : '';
+      return `<div class="ln${cls}"><span class="ln-code">${l.c}</span></div>`;
+    }).join('');
+
+  const cb = document.getElementById('copy-btn');
+  cb.textContent = 'copy';
+  cb.classList.remove('copied');
+  document.querySelector('.code-area').scrollTop = 0;
+}
+
+function next() { if (cur < STEPS.length - 1) { cur++; render(); } }
+function prev() { if (cur > 0)                { cur--; render(); } }
+function goTo(i){ cur = i; render(); }
+
+function copyCode() {
+  const text = document.getElementById('code-pre').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const cb = document.getElementById('copy-btn');
+    cb.textContent = 'copied ✓';
+    cb.classList.add('copied');
+    setTimeout(() => { cb.textContent = 'copy'; cb.classList.remove('copied'); }, 1800);
+  });
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  if (e.key === 'ArrowLeft')  prev();
+});
+
+buildSidebar();
+render();
+</script>
+</body>
+</html>
