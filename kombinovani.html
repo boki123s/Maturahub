@@ -313,11 +313,145 @@
     }
 
     @media(max-width: 900px){
-      .topbar,
-      .stats,
-      .controls { grid-template-columns: 1fr; }
-      .question-title { font-size: 20px; }
+      /* ── DESKTOP medium – ostaje slično ── */
+    }
+
+    @media(max-width: 600px){
+      body { padding: 10px; }
+
+      /* Topbar: kategorija šira (2fr), simulacija uža (1fr), u jednom redu */
+      .topbar {
+        grid-template-columns: 2fr 1fr;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      /* Kartice u topbaru – kompaktnije */
+      .topbar .card {
+        padding: 10px 12px;
+      }
+      .topbar .card h2 {
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .topbar .card select,
+      .topbar .card button {
+        font-size: 12px;
+        padding: 7px 8px;
+        margin-top: 6px;
+        border-radius: 8px;
+      }
+      .timer {
+        font-size: 17px;
+        margin-top: 4px;
+      }
+
+      /* Stats: jedan red sa 4 kolone, kompaktan */
+      .stats {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        margin-top: 10px;
+      }
+      .stat {
+        padding: 8px 4px;
+        border-radius: 12px;
+      }
+      .stat div:first-child {
+        font-size: 10px;
+        color: #94a3b8;
+      }
+      .big {
+        font-size: 20px;
+        margin-top: 4px;
+      }
+
+      /* Question box */
+      .question-box {
+        margin-top: 12px;
+        padding: 14px 12px;
+        border-radius: 16px;
+      }
+
+      /* Question header – broj pitanja i jump input */
+      .question-header {
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+      .question-header input[type="number"] {
+        width: 110px;
+        font-size: 12px;
+        padding: 7px 8px;
+      }
+
+      /* Tekst pitanja – manji font */
+      .question-title {
+        font-size: 14px;
+        line-height: 1.45;
+        margin-bottom: 10px;
+      }
+
+      /* Odgovori – po jedan u redu, kompaktni */
+      .answers {
+        gap: 7px;
+        margin-top: 12px;
+      }
+      .answer {
+        padding: 10px 12px;
+        border-radius: 10px;
+        font-size: 13px;
+        gap: 8px;
+        border-width: 1px;
+      }
+      .answer-checkbox {
+        width: 18px;
+        height: 18px;
+        font-size: 11px;
+        flex-shrink: 0;
+      }
+
+      /* Dugmad – sva tri u jednom redu */
+      .controls {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        margin-top: 12px;
+      }
+      .controls button {
+        font-size: 12px;
+        padding: 9px 4px;
+        border-radius: 9px;
+        margin-top: 0;
+      }
+
+      /* Matching – jedan ispod drugog */
       .matching-wrap { grid-template-columns: 1fr; }
+
+      /* Explanation */
+      .explanation {
+        margin-top: 14px;
+        padding: 12px;
+        font-size: 13px;
+        border-radius: 10px;
+      }
+
+      /* Input odgovor */
+      .input-answer-wrap input[type="text"] {
+        font-size: 14px;
+        padding: 11px 12px;
+      }
+
+      /* Badge tip pitanja */
+      .question-type-badge {
+        font-size: 10px;
+        padding: 3px 8px;
+        margin-bottom: 8px;
+      }
+
+      /* Naslov stranice */
+      h1 { font-size: 18px; margin-bottom: 12px; }
     }
   </style>
 </head>
@@ -411,7 +545,6 @@
       <h2>ℹ Informacije</h2>
       <br>
       <ul style="line-height:2; padding-left:20px;">
-		<li>ver. 1.01</li>
         <li>Ovaj sajt je uglavnom pravio AI, i nisam kontrolisao sva pitanja, pa moze da se desi da je nesto pogresno, ako jeste prijavite problem (dole)</li>
         <li>Ovo nije zvanican sajt tesle, vec samo projekat.</li>
         <li>Rađeno po priručniku za maturski ispit 2024. Elektrotehničar računara</li>
@@ -419,6 +552,7 @@
 		<li>Srećno na maturi :D</li>
 		<li>Kontakt na home page-u</li>
         <li><span onclick="openProblemModal()" style="text-decoration:underline;cursor:pointer;color:#cbd5e1;">Prijavi problem</span></li>
+		<li>ver. 1.02 - phone UI</li>
       </ul>
     </div>
 
