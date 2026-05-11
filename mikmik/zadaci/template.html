@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Korona Brojač – 7-Segment Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0d0e14;
+  --surface:  #13141f;
+  --card:     #181926;
+  --border:   #252640;
+  --accent:   #7c6af7;
+  --accent2:  #4e6ef2;
+  --accent3:  #a78bfa;
+  --green:    #33ff99;
+  --text:     #dde1f5;
+  --muted:    #6b7099;
+  --mono:     'JetBrains Mono', monospace;
+  --sans:     'Sora', sans-serif;
+
+  /* highlight boje */
+  --hl-add-bg:    rgba(52,211,153,.09);
+  --hl-add-bar:   #34d399;
+  --hl-del-bg:    rgba(239,68,68,.09);
+  --hl-del-bar:   #ef4444;
+  --hl-mod-bg:    rgba(251,191,36,.07);
+  --hl-mod-bar:   #fbbf24;
+  --hl-copy-bg:   rgba(236,72,153,.07);
+  --hl-copy-bar:  #ec4899;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.65;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.home-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  transition: color .15s;
+  flex-shrink: 0;
+}
+.home-btn:hover { color: var(--accent3); }
+.home-btn svg { width: 14px; height: 14px; }
+.header-center { flex: 1; text-align: center; }
+.header-center h1 { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -.01em; }
+.header-center h1 span { color: var(--accent3); }
+.header-chip {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--accent);
+  background: rgba(124,106,247,.1);
+  border: 1px solid rgba(124,106,247,.22);
+  border-radius: 20px;
+  padding: 2px 10px;
+  margin-top: 3px;
+  text-transform: uppercase;
+}
+.header-spacer { width: 80px; flex-shrink: 0; }
+
+/* ── LAYOUT ── */
+.layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100vh - 53px);
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.sidebar-head {
+  padding: 14px 16px 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  color: var(--accent);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sidebar-steps { padding: 12px 16px 16px; flex: 1; }
+.sidebar-steps > p {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* zahtevi */
+.sidebar-reqs { padding: 12px 16px 4px; border-bottom: 1px solid var(--border); }
+.req-item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
+}
+.req-item::before {
+  content: '→';
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 11px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* objašnjenje koraka */
+.step-explain {
+  padding: 10px 18px 9px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+}
+.step-explain strong { color: var(--accent3); font-weight: 600; }
+.step-explain code {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent3);
+  background: rgba(167,139,250,.1);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.step-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin-bottom: 3px;
+  cursor: pointer;
+  transition: background .15s;
+  font-size: 12px;
+  color: var(--muted);
+  user-select: none;
+}
+.step-pill:hover { background: rgba(255,255,255,.04); color: var(--text); }
+.step-pill.active { background: rgba(124,106,247,.12); color: var(--accent3); }
+.pill-num {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: rgba(124,106,247,.12);
+  border: 1px solid rgba(124,106,247,.25);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 10px; font-weight: 600;
+  color: var(--accent3);
+  flex-shrink: 0;
+}
+.step-pill.active .pill-num {
+  background: rgba(124,106,247,.28);
+  border-color: var(--accent);
+}
+
+/* ── LEGENDA ── */
+.legend {
+  border-top: 1px solid var(--border);
+  padding: 12px 16px 16px;
+  flex-shrink: 0;
+}
+.legend-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 9px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--text);
+}
+.legend-bar {
+  width: 3px; height: 16px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.legend-swatch {
+  width: 14px; height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.lb-add   { background: var(--hl-add-bar); }
+.lb-del   { background: var(--hl-del-bar); }
+.lb-mod   { background: var(--hl-mod-bar); }
+.lb-copy  { background: var(--hl-copy-bar); }
+.ls-add   { background: var(--hl-add-bg);  border: 1px solid var(--hl-add-bar); }
+.ls-del   { background: var(--hl-del-bg);  border: 1px solid var(--hl-del-bar); }
+.ls-mod   { background: var(--hl-mod-bg);  border: 1px solid var(--hl-mod-bar); }
+.ls-copy  { background: var(--hl-copy-bg); border: 1px solid var(--hl-copy-bar); }
+
+/* ── CONTENT ── */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* ── NAV ── */
+.step-nav {
+  display: flex;
+  align-items: center;
+  padding: 9px 18px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 12px;
+}
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: color .15s, border-color .15s, background .15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.nav-btn:hover:not(:disabled) {
+  color: var(--accent3);
+  border-color: rgba(124,106,247,.4);
+  background: rgba(124,106,247,.06);
+}
+.nav-btn:disabled { opacity: .3; cursor: default; }
+.nav-btn svg { width: 12px; height: 12px; }
+.step-info { flex: 1; text-align: center; min-width: 0; }
+.step-label { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: .08em; text-transform: uppercase; }
+.step-name  { font-size: 13px; font-weight: 600; color: #fff; }
+.step-sub   { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+.progress-dots { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background .2s, transform .2s;
+  cursor: pointer;
+}
+.dot.active { background: var(--accent); transform: scale(1.35); }
+.dot.done   { background: var(--accent2); }
+
+/* ── CODE AREA ── */
+.code-area { flex: 1; overflow-y: auto; }
+.code-wrap { background: #0a0b10; min-height: 100%; }
+.code-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 14px;
+  background: #0f1018;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.code-bar span { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+.copy-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.copy-btn:hover  { color: var(--accent3); border-color: rgba(124,106,247,.4); }
+.copy-btn.copied { color: var(--green);   border-color: rgba(51,255,153,.3); }
+
+/* mobile legenda strip – skrivena na desktopu */
+.mobile-legend {
+  display: none;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 7px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.ml-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+.ml-dot {
+  width: 9px; height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.mld-add  { background: var(--hl-add-bar); }
+.mld-del  { background: var(--hl-del-bar); }
+.mld-mod  { background: var(--hl-mod-bar); }
+.mld-copy { background: var(--hl-copy-bar); }
+
+pre {
+  margin: 0;
+  padding: 10px 0 28px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.55;
+  color: #c8cde8;
+  counter-reset: line;
+}
+.ln {
+  display: flex;
+  padding-right: 16px;
+}
+.ln::before {
+  counter-increment: line;
+  content: counter(line);
+  min-width: 38px;
+  padding: 0 10px 0 14px;
+  text-align: right;
+  color: #272940;
+  user-select: none;
+  flex-shrink: 0;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.ln-code { flex: 1; white-space: pre; }
+
+/* highlight tipovi */
+.ln.hl-add  { background: var(--hl-add-bg);  border-left: 2px solid var(--hl-add-bar);  }
+.ln.hl-del  { background: var(--hl-del-bg);  border-left: 2px solid var(--hl-del-bar);  }
+.ln.hl-mod  { background: var(--hl-mod-bg);  border-left: 2px solid var(--hl-mod-bar);  }
+.ln.hl-copy { background: var(--hl-copy-bg); border-left: 2px solid var(--hl-copy-bar); }
+.ln.hl-add::before  { color: rgba(52,211,153,.3); }
+.ln.hl-del::before  { color: rgba(239,68,68,.3); }
+.ln.hl-mod::before  { color: rgba(251,191,36,.3); }
+.ln.hl-copy::before { color: rgba(236,72,153,.3); }
+
+/* syntax */
+.kw { color: #a78bfa; }
+.fn { color: #60a5fa; }
+.st { color: #86efac; }
+.cm { color: #3a3d60; font-style: italic; }
+.nm { color: #fbbf24; }
+.cl { color: #f9a8d4; }
+.op { color: #7c6af7; }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── MOBILE ── */
+@media (max-width: 680px) {
+  .sidebar        { display: none; }
+  .layout         { height: calc(100vh - 49px); }
+  .step-sub       { display: none; }
+  .header-spacer  { width: 40px; }
+  pre             { font-size: 11.5px; }
+  .ln::before     { min-width: 28px; padding: 0 8px; }
+  .mobile-legend  { display: flex; }
+}
+@media (max-width: 420px) {
+  .progress-dots { display: none; }
+  .step-name     { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="home-btn">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+      <path d="M2 6.5L8 2l6 4.5V14H10v-3.5H6V14H2V6.5z"/>
+    </svg>
+    home
+  </a>
+  <div class="header-center">
+    <h1>Korona <span>Brojač</span></h1>
+    <div class="header-chip">Mikrokontroleri · CD4511 · 7-Segment · tkinter</div>
+  </div>
+  <div class="header-spacer"></div>
+</header>
+
+<div class="layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+
+    <div class="sidebar-head">// zahtev zadatka</div>
+    <div class="sidebar-reqs" id="sidebar-reqs">
+      <!-- generisano JS-om -->
+    </div>
+
+    <div class="sidebar-head" style="border-top: 1px solid var(--border); margin-top: 0;">// koraci</div>
+    <div class="sidebar-steps" id="sidebar-steps">
+      <!-- generisano JS-om -->
+    </div>
+
+    <!-- LEGENDA -->
+    <div class="legend">
+      <div class="legend-title">// legenda</div>
+
+      <div class="legend-item">
+        <div class="legend-bar lb-add"></div>
+        <div class="legend-swatch ls-add"></div>
+        Dodato
+      </div>
+      <div class="legend-item">
+        <div class="legend-bar lb-del"></div>
+        <div class="legend-swatch ls-del"></div>
+        Obrisano
+      </div>
+      <div class="legend-item">
+        <div class="legend-bar lb-mod"></div>
+        <div class="legend-swatch ls-mod"></div>
+        Izmenjeno
+      </div>
+      <div class="legend-item">
+        <div class="legend-bar lb-copy"></div>
+        <div class="legend-swatch ls-copy"></div>
+        Copy-paste
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ── CONTENT ── -->
+  <div class="content">
+
+    <div class="step-nav">
+      <button class="nav-btn" id="btn-prev" onclick="prev()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3L5 8l5 5"/></svg>
+        Prethodni
+      </button>
+      <div class="step-info">
+        <div class="step-label" id="nav-label"></div>
+        <div class="step-name"  id="nav-name"></div>
+        <div class="step-sub"   id="nav-sub"></div>
+      </div>
+      <div class="progress-dots" id="dots"></div>
+      <button class="nav-btn" id="btn-next" onclick="next()">
+        Sledeći
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3l5 5-5 5"/></svg>
+      </button>
+    </div>
+
+    <div class="step-explain" id="step-explain"></div>
+
+    <div class="code-area">
+      <div class="code-wrap">
+
+        <div class="code-bar">
+          <span id="filename"></span>
+          <button class="copy-btn" id="copy-btn" onclick="copyCode()">copy</button>
+        </div>
+
+        <!-- Legenda strip – vidljiva samo na mobilnom -->
+        <div class="mobile-legend">
+          <div class="ml-item"><div class="ml-dot mld-add"></div>Dodato</div>
+          <div class="ml-item"><div class="ml-dot mld-del"></div>Obrisano</div>
+          <div class="ml-item"><div class="ml-dot mld-mod"></div>Izmenjeno</div>
+          <div class="ml-item"><div class="ml-dot mld-copy"></div>Copy-paste</div>
+        </div>
+
+        <pre id="code-pre"></pre>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════════════════
+//  ZAHTEVI  –  lista zahteva zadatka (prikazana u sidebar-u)
+//  Slobodno menjaj tekst, dodaj ili ukloni stavke.
+// ════════════════════════════════════════════════════════════════════════════
+
+const ZAHTEVI = [
+  'Zahtev 1 – ovde upiši zahtev zadatka.',
+  'Zahtev 2 – ovde upiši zahtev zadatka.',
+  'Zahtev 3 – ovde upiši zahtev zadatka.',
+];
+
+// ════════════════════════════════════════════════════════════════════════════
+//  STEPS  –  svaki objekat je jedan korak
+//
+//  Polja:
+//    name    – naziv koraka  (prikazan u sidebar i nav)
+//    sub     – podnaslov     (ispod naziva u nav-u)
+//    file    – ime fajla     (prikazano u code-bar-u)
+//    explain – objašnjenje koraka (HTML, prikazano iznad koda)
+//              može da sadrži <strong> i <code> tagove
+//    lines   – niz linija koda; svaka linija:
+//                c   – sadržaj linije (može sadržati HTML span-ove za boje)
+//                hl  – tip highlajta:
+//                        'add'  → zeleno  – nova linija
+//                        'del'  → crveno  – obrisana linija
+//                        'mod'  → žuto    – izmenjena linija
+//                        'copy' → roze    – copy-paste iz prethodnog koraka
+//                        ''     → bez highlajta
+//
+//  Primer linije:
+//    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: 'copy' },
+//    { c: `brojac = 0`,      hl: 'add' },
+//    { c: `show_zero()`,     hl: 'del' },
+//    { c: `print(x)`,        hl: 'mod' },
+//    { c: `root.mainloop()`, hl: '' },
+// ════════════════════════════════════════════════════════════════════════════
+
+const STEPS = [
+
+// ── KORAK 1 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 1',
+  sub:     'naziv koraka 1',
+  file:    '01_naziv.py',
+  explain: 'Ovde upiši <strong>objašnjenje</strong> šta se radi u ovom koraku. Može sadržati <code>inline kod</code> i <strong>bold tekst</strong>.',
+  lines: [
+    { c: `<span class="cm"># Ovde ide kod koraka 1</span>`, hl: '' },
+    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`,  hl: 'copy' },
+    { c: `<span class="cm"># primer dodato</span>`,              hl: 'add' },
+    { c: `<span class="cm"># primer obrisano</span>`,            hl: 'del' },
+    { c: `<span class="cm"># primer izmenjeno</span>`,           hl: 'mod' },
+  ]
+},
+
+// ── KORAK 2 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 2',
+  sub:     'naziv koraka 2',
+  file:    '02_naziv.py',
+  explain: 'Objašnjenje koraka 2.',
+  lines: [
+    { c: `<span class="cm"># Ovde ide kod koraka 2</span>`, hl: '' },
+  ]
+},
+
+// ── KORAK 3 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 3',
+  sub:     'naziv koraka 3',
+  file:    '03_naziv.py',
+  explain: 'Objašnjenje koraka 3.',
+  lines: [
+    { c: `<span class="cm"># Ovde ide kod koraka 3</span>`, hl: '' },
+  ]
+},
+
+// ── KORAK 4 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 4',
+  sub:     'naziv koraka 4',
+  file:    '04_naziv.py',
+  explain: 'Objašnjenje koraka 4.',
+  lines: [
+    { c: `<span class="cm"># Ovde ide kod koraka 4</span>`, hl: '' },
+  ]
+},
+
+// ── KORAK 5 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 5',
+  sub:     'naziv koraka 5',
+  file:    '05_naziv.py',
+  explain: 'Objašnjenje koraka 5.',
+  lines: [
+    { c: `<span class="cm"># Ovde ide kod koraka 5</span>`, hl: '' },
+  ]
+},
+
+// ── KORAK 6 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 6',
+  sub:     'naziv koraka 6',
+  file:    '06_naziv.py',
+  explain: 'Objašnjenje koraka 6.',
+  lines: [
+    { c: `<span class="cm"># Ovde ide kod koraka 6</span>`, hl: '' },
+  ]
+},
+
+]; // ── kraj STEPS ─────────────────────────────────────────────────────────────
+
+
+// ════════════════════════════════════════════════════════════════════════════
+//  ENGINE  –  ne menjati ispod ove linije
+// ════════════════════════════════════════════════════════════════════════════
+
+let cur = 0;
+
+function buildSidebar() {
+  // zahtevi
+  document.getElementById('sidebar-reqs').innerHTML =
+    ZAHTEVI.map(z => `<div class="req-item">${z}</div>`).join('');
+
+  // koraci
+  const el = document.getElementById('sidebar-steps');
+  el.innerHTML = STEPS.map((s, i) =>
+    `<div class="step-pill${i === 0 ? ' active' : ''}" onclick="goTo(${i})">
+       <span class="pill-num">${i + 1}</span>${s.name}
+     </div>`
+  ).join('');
+}
+
+function render() {
+  const s = STEPS[cur];
+
+  document.getElementById('nav-label').textContent = `Korak ${cur + 1} / ${STEPS.length}`;
+  document.getElementById('nav-name').textContent  = s.name;
+  document.getElementById('nav-sub').textContent   = s.sub;
+  document.getElementById('filename').textContent  = s.file;
+  document.getElementById('btn-prev').disabled = cur === 0;
+  document.getElementById('btn-next').disabled = cur === STEPS.length - 1;
+
+  // progress dots
+  const dc = document.getElementById('dots');
+  dc.innerHTML = '';
+  STEPS.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < cur ? ' done' : i === cur ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dc.appendChild(d);
+  });
+
+  // sidebar active
+  document.querySelectorAll('.step-pill').forEach((p, i) =>
+    p.classList.toggle('active', i === cur));
+
+  document.getElementById('step-explain').innerHTML = s.explain || '';
+
+  // kod
+  document.getElementById('code-pre').innerHTML =
+    s.lines.map(l => {
+      const cls = l.hl ? ` hl-${l.hl}` : '';
+      return `<div class="ln${cls}"><span class="ln-code">${l.c}</span></div>`;
+    }).join('');
+
+  // reset copy dugme
+  const cb = document.getElementById('copy-btn');
+  cb.textContent = 'copy';
+  cb.classList.remove('copied');
+  document.querySelector('.code-area').scrollTop = 0;
+}
+
+function next() { if (cur < STEPS.length - 1) { cur++; render(); } }
+function prev() { if (cur > 0)                { cur--; render(); } }
+function goTo(i){ cur = i; render(); }
+
+function copyCode() {
+  const text = document.getElementById('code-pre').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const cb = document.getElementById('copy-btn');
+    cb.textContent = 'copied ✓';
+    cb.classList.add('copied');
+    setTimeout(() => { cb.textContent = 'copy'; cb.classList.remove('copied'); }, 1800);
+  });
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  if (e.key === 'ArrowLeft')  prev();
+});
+
+buildSidebar();
+render();
+</script>
+</body>
+</html>

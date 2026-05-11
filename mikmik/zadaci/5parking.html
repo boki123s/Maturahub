@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kontrola pristupa na parking prostoru</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0d0e14;
+  --surface:  #13141f;
+  --card:     #181926;
+  --border:   #252640;
+  --accent:   #7c6af7;
+  --accent2:  #4e6ef2;
+  --accent3:  #a78bfa;
+  --green:    #33ff99;
+  --text:     #dde1f5;
+  --muted:    #6b7099;
+  --mono:     'JetBrains Mono', monospace;
+  --sans:     'Sora', sans-serif;
+
+  --hl-add-bg:    rgba(52,211,153,.09);
+  --hl-add-bar:   #34d399;
+  --hl-del-bg:    rgba(239,68,68,.09);
+  --hl-del-bar:   #ef4444;
+  --hl-mod-bg:    rgba(251,191,36,.07);
+  --hl-mod-bar:   #fbbf24;
+  --hl-copy-bg:   rgba(236,72,153,.07);
+  --hl-copy-bar:  #ec4899;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.65;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.home-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  transition: color .15s;
+  flex-shrink: 0;
+}
+.home-btn:hover { color: var(--accent3); }
+.home-btn svg { width: 14px; height: 14px; }
+.header-center { flex: 1; text-align: center; }
+.header-center h1 { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -.01em; }
+.header-center h1 span { color: var(--accent3); }
+.header-chip {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--accent);
+  background: rgba(124,106,247,.1);
+  border: 1px solid rgba(124,106,247,.22);
+  border-radius: 20px;
+  padding: 2px 10px;
+  margin-top: 3px;
+  text-transform: uppercase;
+}
+.header-spacer { width: 80px; flex-shrink: 0; }
+
+.layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100vh - 53px);
+}
+
+.sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.sidebar-head {
+  padding: 14px 16px 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  color: var(--accent);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sidebar-steps { padding: 12px 16px 16px; flex: 1; }
+.sidebar-steps > p {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.sidebar-reqs { padding: 12px 16px 4px; border-bottom: 1px solid var(--border); }
+.req-item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
+}
+.req-item::before {
+  content: '→';
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 11px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.step-explain {
+  padding: 10px 18px 9px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+}
+.step-explain strong { color: var(--accent3); font-weight: 600; }
+.step-explain code {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent3);
+  background: rgba(167,139,250,.1);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.step-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin-bottom: 3px;
+  cursor: pointer;
+  transition: background .15s;
+  font-size: 12px;
+  color: var(--muted);
+  user-select: none;
+}
+.step-pill:hover { background: rgba(255,255,255,.04); color: var(--text); }
+.step-pill.active { background: rgba(124,106,247,.12); color: var(--accent3); }
+.pill-num {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: rgba(124,106,247,.12);
+  border: 1px solid rgba(124,106,247,.25);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 10px; font-weight: 600;
+  color: var(--accent3);
+  flex-shrink: 0;
+}
+.step-pill.active .pill-num {
+  background: rgba(124,106,247,.28);
+  border-color: var(--accent);
+}
+
+.legend {
+  border-top: 1px solid var(--border);
+  padding: 12px 16px 16px;
+  flex-shrink: 0;
+}
+.legend-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 9px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--text);
+}
+.legend-bar {
+  width: 3px; height: 16px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.legend-swatch {
+  width: 14px; height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.lb-add   { background: var(--hl-add-bar); }
+.lb-del   { background: var(--hl-del-bar); }
+.lb-mod   { background: var(--hl-mod-bar); }
+.lb-copy  { background: var(--hl-copy-bar); }
+.ls-add   { background: var(--hl-add-bg);  border: 1px solid var(--hl-add-bar); }
+.ls-del   { background: var(--hl-del-bg);  border: 1px solid var(--hl-del-bar); }
+.ls-mod   { background: var(--hl-mod-bg);  border: 1px solid var(--hl-mod-bar); }
+.ls-copy  { background: var(--hl-copy-bg); border: 1px solid var(--hl-copy-bar); }
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.step-nav {
+  display: flex;
+  align-items: center;
+  padding: 9px 18px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 12px;
+}
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: color .15s, border-color .15s, background .15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.nav-btn:hover:not(:disabled) {
+  color: var(--accent3);
+  border-color: rgba(124,106,247,.4);
+  background: rgba(124,106,247,.06);
+}
+.nav-btn:disabled { opacity: .3; cursor: default; }
+.nav-btn svg { width: 12px; height: 12px; }
+.step-info { flex: 1; text-align: center; min-width: 0; }
+.step-label { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: .08em; text-transform: uppercase; }
+.step-name  { font-size: 13px; font-weight: 600; color: #fff; }
+.step-sub   { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+.progress-dots { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background .2s, transform .2s;
+  cursor: pointer;
+}
+.dot.active { background: var(--accent); transform: scale(1.35); }
+.dot.done   { background: var(--accent2); }
+
+.code-area { flex: 1; overflow-y: auto; }
+.code-wrap { background: #0a0b10; min-height: 100%; }
+.code-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 14px;
+  background: #0f1018;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.code-bar span { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+.copy-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.copy-btn:hover  { color: var(--accent3); border-color: rgba(124,106,247,.4); }
+.copy-btn.copied { color: var(--green);   border-color: rgba(51,255,153,.3); }
+
+.mobile-legend {
+  display: none;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 7px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.ml-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+.ml-dot {
+  width: 9px; height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.mld-add  { background: var(--hl-add-bar); }
+.mld-del  { background: var(--hl-del-bar); }
+.mld-mod  { background: var(--hl-mod-bar); }
+.mld-copy { background: var(--hl-copy-bar); }
+
+pre {
+  margin: 0;
+  padding: 10px 0 28px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.55;
+  color: #c8cde8;
+  counter-reset: line;
+}
+.ln {
+  display: flex;
+  padding-right: 16px;
+}
+.ln::before {
+  counter-increment: line;
+  content: counter(line);
+  min-width: 38px;
+  padding: 0 10px 0 14px;
+  text-align: right;
+  color: #272940;
+  user-select: none;
+  flex-shrink: 0;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.ln-code { flex: 1; white-space: pre; }
+
+.ln.hl-add  { background: var(--hl-add-bg);  border-left: 2px solid var(--hl-add-bar);  }
+.ln.hl-del  { background: var(--hl-del-bg);  border-left: 2px solid var(--hl-del-bar);  }
+.ln.hl-mod  { background: var(--hl-mod-bg);  border-left: 2px solid var(--hl-mod-bar);  }
+.ln.hl-copy { background: var(--hl-copy-bg); border-left: 2px solid var(--hl-copy-bar); }
+.ln.hl-add::before  { color: rgba(52,211,153,.3); }
+.ln.hl-del::before  { color: rgba(239,68,68,.3); }
+.ln.hl-mod::before  { color: rgba(251,191,36,.3); }
+.ln.hl-copy::before { color: rgba(236,72,153,.3); }
+
+.kw { color: #a78bfa; }
+.fn { color: #60a5fa; }
+.st { color: #86efac; }
+.cm { color: #3a3d60; font-style: italic; }
+.nm { color: #fbbf24; }
+.cl { color: #f9a8d4; }
+.op { color: #7c6af7; }
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+@media (max-width: 680px) {
+  .sidebar        { display: none; }
+  .layout         { height: calc(100vh - 49px); }
+  .step-sub       { display: none; }
+  .header-spacer  { width: 40px; }
+  pre             { font-size: 11.5px; }
+  .ln::before     { min-width: 28px; padding: 0 8px; }
+  .mobile-legend  { display: flex; }
+}
+@media (max-width: 420px) {
+  .progress-dots { display: none; }
+  .step-name     { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="home-btn">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+      <path d="M2 6.5L8 2l6 4.5V14H10v-3.5H6V14H2V6.5z"/>
+    </svg>
+    home
+  </a>
+  <div class="header-center">
+    <h1>Kontrola pristupa na <span>parking prostoru</span></h1>
+    <div class="header-chip">4ETR · B16 · LED diode · 7-Segment · tkinter</div>
+  </div>
+  <div class="header-spacer"></div>
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-head">// zahtev zadatka</div>
+    <div class="sidebar-reqs" id="sidebar-reqs"></div>
+
+    <div class="sidebar-head" style="border-top: 1px solid var(--border); margin-top: 0;">// koraci</div>
+    <div class="sidebar-steps" id="sidebar-steps"></div>
+
+    <div class="legend">
+      <div class="legend-title">// legenda</div>
+      <div class="legend-item">
+        <div class="legend-bar lb-add"></div>
+        <div class="legend-swatch ls-add"></div>
+        Dodato
+      </div>
+      <div class="legend-item">
+        <div class="legend-bar lb-del"></div>
+        <div class="legend-swatch ls-del"></div>
+        Obrisano
+      </div>
+      <div class="legend-item">
+        <div class="legend-bar lb-mod"></div>
+        <div class="legend-swatch ls-mod"></div>
+        Izmenjeno
+      </div>
+      <div class="legend-item">
+        <div class="legend-bar lb-copy"></div>
+        <div class="legend-swatch ls-copy"></div>
+        Copy-paste
+      </div>
+    </div>
+  </aside>
+
+  <div class="content">
+    <div class="step-nav">
+      <button class="nav-btn" id="btn-prev" onclick="prev()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3L5 8l5 5"/></svg>
+        Prethodni
+      </button>
+      <div class="step-info">
+        <div class="step-label" id="nav-label"></div>
+        <div class="step-name"  id="nav-name"></div>
+        <div class="step-sub"   id="nav-sub"></div>
+      </div>
+      <div class="progress-dots" id="dots"></div>
+      <button class="nav-btn" id="btn-next" onclick="next()">
+        Sledeći
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3l5 5-5 5"/></svg>
+      </button>
+    </div>
+
+    <div class="step-explain" id="step-explain"></div>
+
+    <div class="code-area">
+      <div class="code-wrap">
+        <div class="code-bar">
+          <span id="filename"></span>
+          <button class="copy-btn" id="copy-btn" onclick="copyCode()">copy</button>
+        </div>
+        <div class="mobile-legend">
+          <div class="ml-item"><div class="ml-dot mld-add"></div>Dodato</div>
+          <div class="ml-item"><div class="ml-dot mld-del"></div>Obrisano</div>
+          <div class="ml-item"><div class="ml-dot mld-mod"></div>Izmenjeno</div>
+          <div class="ml-item"><div class="ml-dot mld-copy"></div>Copy-paste</div>
+        </div>
+        <pre id="code-pre"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ZAHTEVI = [
+  'Parking ima 5 slobodnih mesta — displej prikazuje broj slobodnih mesta.',
+  'TASTER1 = ulaz vozila: zelena LED svetli 500ms, smanjuje broj mesta (ramps up).',
+  'TASTER2 = izlaz vozila: crvena LED svetli 500ms, povećava broj mesta (ramps down).',
+  'Na parking se može ući samo ako ima slobodnih mesta (slobodna_mesta &gt; 0).',
+  'Dok traje animacija LED diode, tasteri ne reaguju (blokada).',
+];
+
+// ═══════════════════════════════════════════════════════════════════
+// Pomocna funkcija za skracivanje – inline span-ovi za boje
+// kw=keyword, fn=function, st=string, cm=comment, nm=number, op=operator
+// ═══════════════════════════════════════════════════════════════════
+function kw(t){ return `<span class="kw">${t}</span>`; }
+function fn(t){ return `<span class="fn">${t}</span>`; }
+function st(t){ return `<span class="st">${t}</span>`; }
+function cm(t){ return `<span class="cm">${t}</span>`; }
+function nm(t){ return `<span class="nm">${t}</span>`; }
+function op(t){ return `<span class="op">${t}</span>`; }
+
+const STEPS = [
+
+// ── KORAK 1 ─────────────────────────────────────────────────────────
+{
+  name:  'Korak 1',
+  sub:   'test program – polazna tačka',
+  file:  '01_test_program.py',
+  explain:
+    `Ovo je <strong>test program</strong> koji dobijamo na maturi – on već radi nešto slično onome što tražimo. '
+    Ima LED diode (zelena i crvena), 7-segmentni displej i dva tastera. '
+    <strong>Ideja:</strong> umesto da pišemo sve iz nule, iskoristićemo ovaj kod i malo ga izmeniti. '
+    Taster 1 treba da simulira <strong>ulaz vozila</strong> (zelena LED + displej smanjuje broj mesta), '
+    a Taster 2 <strong>izlaz vozila</strong> (crvena LED + displej povećava broj mesta). '
+    Početni broj slobodnih mesta je <code>5</code>.`,
+  lines: [
+    { c: `${kw('import')} tkinter ${kw('as')} tk`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Funkcija za Taster 1 ---')}`, hl: '' },
+    { c: `${kw('def')} ${fn('pritisnut_taster1')}():`, hl: '' },
+    { c: `    ${cm('# Ukljuci zelenu, iskljuci crvenu')}`, hl: '' },
+    { c: `    ${fn('led_zelena')}.${fn('config')}(bg=${st('"lightgreen"')})`, hl: '' },
+    { c: `    ${fn('led_crvena')}.${fn('config')}(bg=${st('"gray"')})`, hl: '' },
+    { c: `    ${cm('# Ispisi broj 0 na displeju (svi segmenti osim srednjeg)')}`, hl: '' },
+    { c: `    ${fn('osvezi_displej')}([${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('0')}])`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Funkcija za Taster 2 ---')}`, hl: '' },
+    { c: `${kw('def')} ${fn('pritisnut_taster2')}():`, hl: '' },
+    { c: `    ${cm('# Ukljuci crvenu, iskljuci zelenu')}`, hl: '' },
+    { c: `    ${fn('led_zelena')}.${fn('config')}(bg=${st('"gray"')})`, hl: '' },
+    { c: `    ${fn('led_crvena')}.${fn('config')}(bg=${st('"red"')})`, hl: '' },
+    { c: `    ${cm('# Ispisi broj 8 na displeju (svi segmenti ukljuceni)')}`, hl: '' },
+    { c: `    ${fn('osvezi_displej')}([${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}])`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Funkcija koja osvezava 7-segmentni displej ---')}`, hl: '' },
+    { c: `${kw('def')} ${fn('osvezi_displej')}(stanje):`, hl: '' },
+    { c: `    ${kw('for')} i ${kw('in')} ${fn('range')}(${nm('7')}):`, hl: '' },
+    { c: `        boja ${op('=')} ${st('"red"')} ${kw('if')} stanje[i] ${op('==')} ${nm('1')} ${kw('else')} ${st('"#303030"')}`, hl: '' },
+    { c: `        ${fn('platno')}.${fn('itemconfig')}(segmenti[i], fill${op('=')}boja)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Kreiranje prozora ---')}`, hl: '' },
+    { c: `root ${op('=')} tk.${fn('Tk')}()`, hl: '' },
+    { c: `root.${fn('title')}(${st('"Simulacija LED i 7-seg displeja"')})`, hl: '' },
+    { c: `root.${fn('geometry')}(${st('"300x400"')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- LED diode (Labels koji menjaju boju) ---')}`, hl: '' },
+    { c: `led_zelena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"ZELENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
+    { c: `led_zelena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: `led_crvena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"CRVENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
+    { c: `led_crvena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Canvas za 7-segmentni displej ---')}`, hl: '' },
+    { c: `platno ${op('=')} tk.${fn('Canvas')}(root, width${op('=')}${nm('150')}, height${op('=')}${nm('200')}, bg${op('=')}${st('"black"')})`, hl: '' },
+    { c: `platno.${fn('pack')}(pady${op('=')}${nm('20')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Segmenti displeja: a, b, c, d, e, f, g ---')}`, hl: '' },
+    { c: `segmenti ${op('=')} [`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('20')}, ${nm('110')}, ${nm('30')}, fill${op('=')}${st('"#303030"')}),  ${cm('# a (gore)')}`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('30')}, ${nm('120')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}), ${cm('# b (desno gore)')}`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('100')}, ${nm('120')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),${cm('# c (desno dole)')}`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('160')}, ${nm('110')}, ${nm('170')}, fill${op('=')}${st('"#303030"')}), ${cm('# d (dole)')}`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('100')}, ${nm('40')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),  ${cm('# e (levo dole)')}`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('30')}, ${nm('40')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}),    ${cm('# f (levo gore)')}`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('90')}, ${nm('110')}, ${nm('100')}, fill${op('=')}${st('"#303030"')})   ${cm('# g (sredina)')}`, hl: '' },
+    { c: `]`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Tasteri ---')}`, hl: '' },
+    { c: `btn1 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 1"')}, command${op('=')}pritisnut_taster1, width${op('=')}${nm('15')})`, hl: '' },
+    { c: `btn1.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: `btn2 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 2"')}, command${op('=')}pritisnut_taster2, width${op('=')}${nm('15')})`, hl: '' },
+    { c: `btn2.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `root.${fn('mainloop')}()`, hl: '' },
+  ]
+},
+
+// ── KORAK 2 ─────────────────────────────────────────────────────────
+{
+  name:  'Korak 2',
+  sub:   'slobodna mesta + mapa cifara',
+  file:  '02_slobodna_mesta.py',
+  explain:
+    `Dodajemo dve važne stvari. Prva je <strong>varijabla <code>slobodna_mesta = 5</code></strong> – '
+    ona pamti koliko mesta ima na parkingu. '
+    Druga je <strong>mapa cifara</strong> – rečnik koji za svaki broj (0–9) čuva koji segmenti treba da svetle. '
+    Na primer, broj <code>5</code> se prikazuje segmentima a, f, g, c, d (lista <code>[1,0,1,1,0,1,1]</code>). '
+    Na kraju dodajemo i poziv <code>osvezi_displej(cifre[slobodna_mesta])</code> da odmah na startu displej pokaže <strong>5</strong>.`,
+  lines: [
+    { c: `${kw('import')} tkinter ${kw('as')} tk`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Broj slobodnih mesta na parkingu ---')}`, hl: 'add' },
+    { c: `slobodna_mesta ${op('=')} ${nm('5')}`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Mapa segmenata za cifre 0-9 ---')}`, hl: 'add' },
+    { c: `${cm('# Svaka lista: [a, b, c, d, e, f, g] – 1=ukljucen, 0=iskljucen')}`, hl: 'add' },
+    { c: `cifre ${op('=')} {`, hl: 'add' },
+    { c: `    ${nm('0')}: [${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('0')}],  ${cm('# 0')}`, hl: 'add' },
+    { c: `    ${nm('1')}: [${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('0')},${nm('0')}],  ${cm('# 1')}`, hl: 'add' },
+    { c: `    ${nm('2')}: [${nm('1')},${nm('1')},${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('1')}],  ${cm('# 2')}`, hl: 'add' },
+    { c: `    ${nm('3')}: [${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('1')}],  ${cm('# 3')}`, hl: 'add' },
+    { c: `    ${nm('4')}: [${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('1')},${nm('1')}],  ${cm('# 4')}`, hl: 'add' },
+    { c: `    ${nm('5')}: [${nm('1')},${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('1')},${nm('1')}],  ${cm('# 5')}`, hl: 'add' },
+    { c: `}`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Funkcija za Taster 1 ---')}`, hl: '' },
+    { c: `${kw('def')} ${fn('pritisnut_taster1')}():`, hl: '' },
+    { c: `    ${fn('led_zelena')}.${fn('config')}(bg=${st('"lightgreen"')})`, hl: '' },
+    { c: `    ${fn('led_crvena')}.${fn('config')}(bg=${st('"gray"')})`, hl: '' },
+    { c: `    ${fn('osvezi_displej')}([${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('0')}])`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Funkcija za Taster 2 ---')}`, hl: '' },
+    { c: `${kw('def')} ${fn('pritisnut_taster2')}():`, hl: '' },
+    { c: `    ${fn('led_zelena')}.${fn('config')}(bg=${st('"gray"')})`, hl: '' },
+    { c: `    ${fn('led_crvena')}.${fn('config')}(bg=${st('"red"')})`, hl: '' },
+    { c: `    ${fn('osvezi_displej')}([${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}])`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Funkcija koja osvezava 7-segmentni displej ---')}`, hl: '' },
+    { c: `${kw('def')} ${fn('osvezi_displej')}(stanje):`, hl: '' },
+    { c: `    ${kw('for')} i ${kw('in')} ${fn('range')}(${nm('7')}):`, hl: '' },
+    { c: `        boja ${op('=')} ${st('"red"')} ${kw('if')} stanje[i] ${op('==')} ${nm('1')} ${kw('else')} ${st('"#303030"')}`, hl: '' },
+    { c: `        ${fn('platno')}.${fn('itemconfig')}(segmenti[i], fill${op('=')}boja)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `root ${op('=')} tk.${fn('Tk')}()`, hl: '' },
+    { c: `root.${fn('title')}(${st('"Simulacija LED i 7-seg displeja"')})`, hl: '' },
+    { c: `root.${fn('geometry')}(${st('"300x400"')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `led_zelena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"ZELENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
+    { c: `led_zelena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: `led_crvena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"CRVENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
+    { c: `led_crvena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `platno ${op('=')} tk.${fn('Canvas')}(root, width${op('=')}${nm('150')}, height${op('=')}${nm('200')}, bg${op('=')}${st('"black"')})`, hl: '' },
+    { c: `platno.${fn('pack')}(pady${op('=')}${nm('20')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `segmenti ${op('=')} [`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('20')}, ${nm('110')}, ${nm('30')}, fill${op('=')}${st('"#303030"')}),  ${cm('# a')}`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('30')}, ${nm('120')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}), ${cm('# b')}`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('100')}, ${nm('120')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),${cm('# c')}`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('160')}, ${nm('110')}, ${nm('170')}, fill${op('=')}${st('"#303030"')}), ${cm('# d')}`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('100')}, ${nm('40')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),  ${cm('# e')}`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('30')}, ${nm('40')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}),    ${cm('# f')}`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('90')}, ${nm('110')}, ${nm('100')}, fill${op('=')}${st('"#303030"')})   ${cm('# g')}`, hl: '' },
+    { c: `]`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `btn1 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 1"')}, command${op('=')}pritisnut_taster1, width${op('=')}${nm('15')})`, hl: '' },
+    { c: `btn1.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: `btn2 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 2"')}, command${op('=')}pritisnut_taster2, width${op('=')}${nm('15')})`, hl: '' },
+    { c: `btn2.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Na startu prikazujemo broj slobodnih mesta (5) ---')}`, hl: 'add' },
+    { c: `${fn('osvezi_displej')}(cifre[slobodna_mesta])`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `root.${fn('mainloop')}()`, hl: '' },
+  ]
+},
+
+// ── KORAK 3 ─────────────────────────────────────────────────────────
+{
+  name:  'Korak 3',
+  sub:   'taster 1 – ulaz vozila',
+  file:  '03_taster1_ulaz.py',
+  explain:
+    `Sada menjamo funkciju <code>pritisnut_taster1</code> da radi pravu logiku. '
+    Koristimo <code>global slobodna_mesta</code> da možemo da menjamo tu varijablu unutar funkcije. '
+    Ako ima slobodnih mesta (<code>slobodna_mesta > 0</code>), <strong>zelena LED svetli 500ms</strong> pa se gasi, '
+    i <strong>displej se smanjuje za 1</strong>. '
+    Za timer koristimo <code>root.after(500, ...)</code> – ista logika kao u test programu, samo sada '
+    pozivamo funkciju koja gasi LED i osvežava displej. Ako nema mesta – ne dešava se ništa.`,
+  lines: [
+    { c: `${kw('import')} tkinter ${kw('as')} tk`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `slobodna_mesta ${op('=')} ${nm('5')}`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `cifre ${op('=')} {`, hl: '' },
+    { c: `    ${nm('0')}: [${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('0')}],`, hl: '' },
+    { c: `    ${nm('1')}: [${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('0')},${nm('0')}],`, hl: '' },
+    { c: `    ${nm('2')}: [${nm('1')},${nm('1')},${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('1')}],`, hl: '' },
+    { c: `    ${nm('3')}: [${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('1')}],`, hl: '' },
+    { c: `    ${nm('4')}: [${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('1')},${nm('1')}],`, hl: '' },
+    { c: `    ${nm('5')}: [${nm('1')},${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('1')},${nm('1')}],`, hl: '' },
+    { c: `}`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Pomocna funkcija: gasi zelenu LED i osvezava displej ---')}`, hl: 'add' },
+    { c: `${kw('def')} ${fn('ugasi_zelenu')}():`, hl: 'add' },
+    { c: `    ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: 'add' },
+    { c: `    ${fn('osvezi_displej')}(cifre[slobodna_mesta])  ${cm('# osvezi displej na novi broj')}`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Taster 1: ulaz vozila ---')}`, hl: '' },
+    { c: `${kw('def')} ${fn('pritisnut_taster1')}():`, hl: '' },
+    { c: `    ${kw('global')} slobodna_mesta  ${cm('# koristimo globalnu varijablu')}`, hl: 'mod' },
+    { c: `    ${kw('if')} slobodna_mesta ${op('>')} ${nm('0')}:  ${cm('# ima slobodnih mesta?')}`, hl: 'mod' },
+    { c: `        slobodna_mesta ${op('-=')} ${nm('1')}  ${cm('# smanjujemo za 1')}`, hl: 'mod' },
+    { c: `        ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"lightgreen"')})  ${cm('# palimo zelenu')}`, hl: '' },
+    { c: `        ${fn('led_crvena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
+    { c: `        root.${fn('after')}(${nm('500')}, ugasi_zelenu)  ${cm('# gasimo zelenu posle 500ms')}`, hl: 'mod' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Taster 2: za sada nepromenjen ---')}`, hl: '' },
+    { c: `${kw('def')} ${fn('pritisnut_taster2')}():`, hl: '' },
+    { c: `    ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
+    { c: `    ${fn('led_crvena')}.${fn('config')}(bg${op('=')}${st('"red"')})`, hl: '' },
+    { c: `    ${fn('osvezi_displej')}([${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}])`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${kw('def')} ${fn('osvezi_displej')}(stanje):`, hl: '' },
+    { c: `    ${kw('for')} i ${kw('in')} ${fn('range')}(${nm('7')}):`, hl: '' },
+    { c: `        boja ${op('=')} ${st('"red"')} ${kw('if')} stanje[i] ${op('==')} ${nm('1')} ${kw('else')} ${st('"#303030"')}`, hl: '' },
+    { c: `        ${fn('platno')}.${fn('itemconfig')}(segmenti[i], fill${op('=')}boja)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `root ${op('=')} tk.${fn('Tk')}()`, hl: '' },
+    { c: `root.${fn('title')}(${st('"Simulacija LED i 7-seg displeja"')})`, hl: '' },
+    { c: `root.${fn('geometry')}(${st('"300x400"')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `led_zelena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"ZELENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
+    { c: `led_zelena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: `led_crvena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"CRVENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
+    { c: `led_crvena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `platno ${op('=')} tk.${fn('Canvas')}(root, width${op('=')}${nm('150')}, height${op('=')}${nm('200')}, bg${op('=')}${st('"black"')})`, hl: '' },
+    { c: `platno.${fn('pack')}(pady${op('=')}${nm('20')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `segmenti ${op('=')} [`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('20')}, ${nm('110')}, ${nm('30')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('30')}, ${nm('120')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('100')}, ${nm('120')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('160')}, ${nm('110')}, ${nm('170')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('100')}, ${nm('40')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('30')}, ${nm('40')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('90')}, ${nm('110')}, ${nm('100')}, fill${op('=')}${st('"#303030"')})`, hl: '' },
+    { c: `]`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `btn1 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 1"')}, command${op('=')}pritisnut_taster1, width${op('=')}${nm('15')})`, hl: '' },
+    { c: `btn1.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: `btn2 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 2"')}, command${op('=')}pritisnut_taster2, width${op('=')}${nm('15')})`, hl: '' },
+    { c: `btn2.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${fn('osvezi_displej')}(cifre[slobodna_mesta])`, hl: '' },
+    { c: `root.${fn('mainloop')}()`, hl: '' },
+  ]
+},
+
+// ── KORAK 4 ─────────────────────────────────────────────────────────
+{
+  name:  'Korak 4',
+  sub:   'taster 2 – izlaz vozila',
+  file:  '04_taster2_izlaz.py',
+  explain:
+    `Sada po istom šablonu menjamo <code>pritisnut_taster2</code>. '
+    Kopiramo logiku iz Tastera 1 i pravimo ogledalni efekat: '
+    <strong>crvena LED svetli 500ms</strong>, <code>slobodna_mesta</code> se <strong>povećava za 1</strong>, ali samo '
+    ako je manji od 5 (ne možemo imati više od 5 slobodnih mesta). '
+    Dodajemo <code>ugasi_crvenu</code> funkciju – copy-paste od <code>ugasi_zelenu</code>, samo sa crvenom LED. '
+    Sada oba tastera rade ispravno!`,
+  lines: [
+    { c: `${kw('import')} tkinter ${kw('as')} tk`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `slobodna_mesta ${op('=')} ${nm('5')}`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `cifre ${op('=')} {`, hl: '' },
+    { c: `    ${nm('0')}: [${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('0')}],`, hl: '' },
+    { c: `    ${nm('1')}: [${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('0')},${nm('0')}],`, hl: '' },
+    { c: `    ${nm('2')}: [${nm('1')},${nm('1')},${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('1')}],`, hl: '' },
+    { c: `    ${nm('3')}: [${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('1')}],`, hl: '' },
+    { c: `    ${nm('4')}: [${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('1')},${nm('1')}],`, hl: '' },
+    { c: `    ${nm('5')}: [${nm('1')},${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('1')},${nm('1')}],`, hl: '' },
+    { c: `}`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${kw('def')} ${fn('ugasi_zelenu')}():`, hl: '' },
+    { c: `    ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
+    { c: `    ${fn('osvezi_displej')}(cifre[slobodna_mesta])`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Copy-paste od ugasi_zelenu, samo za crvenu ---')}`, hl: 'copy' },
+    { c: `${kw('def')} ${fn('ugasi_crvenu')}():`, hl: 'copy' },
+    { c: `    ${fn('led_crvena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: 'copy' },
+    { c: `    ${fn('osvezi_displej')}(cifre[slobodna_mesta])`, hl: 'copy' },
+    { c: ``, hl: '' },
+    { c: `${kw('def')} ${fn('pritisnut_taster1')}():`, hl: '' },
+    { c: `    ${kw('global')} slobodna_mesta`, hl: '' },
+    { c: `    ${kw('if')} slobodna_mesta ${op('>')} ${nm('0')}:`, hl: '' },
+    { c: `        slobodna_mesta ${op('-=')} ${nm('1')}`, hl: '' },
+    { c: `        ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"lightgreen"')})`, hl: '' },
+    { c: `        ${fn('led_crvena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
+    { c: `        root.${fn('after')}(${nm('500')}, ugasi_zelenu)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${cm('# --- Taster 2: izlaz vozila – ista logika, suprotno ---')}`, hl: '' },
+    { c: `${kw('def')} ${fn('pritisnut_taster2')}():`, hl: '' },
+    { c: `    ${kw('global')} slobodna_mesta`, hl: 'mod' },
+    { c: `    ${kw('if')} slobodna_mesta ${op('<')} ${nm('5')}:  ${cm('# manje od max (5)?')}`, hl: 'mod' },
+    { c: `        slobodna_mesta ${op('+=')} ${nm('1')}  ${cm('# povecavamo za 1')}`, hl: 'mod' },
+    { c: `        ${fn('led_crvena')}.${fn('config')}(bg${op('=')}${st('"red"')})  ${cm('# palimo crvenu')}`, hl: 'mod' },
+    { c: `        ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
+    { c: `        root.${fn('after')}(${nm('500')}, ugasi_crvenu)  ${cm('# gasimo crvenu posle 500ms')}`, hl: 'mod' },
+    { c: ``, hl: '' },
+    { c: `${kw('def')} ${fn('osvezi_displej')}(stanje):`, hl: '' },
+    { c: `    ${kw('for')} i ${kw('in')} ${fn('range')}(${nm('7')}):`, hl: '' },
+    { c: `        boja ${op('=')} ${st('"red"')} ${kw('if')} stanje[i] ${op('==')} ${nm('1')} ${kw('else')} ${st('"#303030"')}`, hl: '' },
+    { c: `        ${fn('platno')}.${fn('itemconfig')}(segmenti[i], fill${op('=')}boja)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `root ${op('=')} tk.${fn('Tk')}()`, hl: '' },
+    { c: `root.${fn('title')}(${st('"Simulacija LED i 7-seg displeja"')})`, hl: '' },
+    { c: `root.${fn('geometry')}(${st('"300x400"')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `led_zelena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"ZELENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
+    { c: `led_zelena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: `led_crvena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"CRVENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
+    { c: `led_crvena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `platno ${op('=')} tk.${fn('Canvas')}(root, width${op('=')}${nm('150')}, height${op('=')}${nm('200')}, bg${op('=')}${st('"black"')})`, hl: '' },
+    { c: `platno.${fn('pack')}(pady${op('=')}${nm('20')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `segmenti ${op('=')} [`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('20')}, ${nm('110')}, ${nm('30')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('30')}, ${nm('120')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('100')}, ${nm('120')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('160')}, ${nm('110')}, ${nm('170')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('100')}, ${nm('40')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('30')}, ${nm('40')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('90')}, ${nm('110')}, ${nm('100')}, fill${op('=')}${st('"#303030"')})`, hl: '' },
+    { c: `]`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `btn1 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 1"')}, command${op('=')}pritisnut_taster1, width${op('=')}${nm('15')})`, hl: '' },
+    { c: `btn1.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: `btn2 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 2"')}, command${op('=')}pritisnut_taster2, width${op('=')}${nm('15')})`, hl: '' },
+    { c: `btn2.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${fn('osvezi_displej')}(cifre[slobodna_mesta])`, hl: '' },
+    { c: `root.${fn('mainloop')}()`, hl: '' },
+  ]
+},
+
+// ── KORAK 5 ─────────────────────────────────────────────────────────
+{
+  name:  'Korak 5',
+  sub:   'blokada tastera tokom animacije',
+  file:  '05_parking_final.py',
+  explain:
+    `Poslednji detalj: dok LED svetli 500ms, korisnik može ponovo da pritisne taster i napravi grešku. '
+    Dodajemo varijablu <code>blokiran = False</code> – dok je LED upaljena, blokira se pritisak tastera. '
+    Na početku svake funkcije proveravamo <code>if blokiran</code> i izlazimo odmah (<code>return</code>). '
+    Kada se LED upali, postavljamo <code>blokiran = True</code>, a kada se ugasi, vraćamo <code>blokiran = False</code>. '
+    <strong>Program je sada kompletan!</strong> Sve zahteve smo ispunili sa minimalnim promenama test programa.`,
+  lines: [
+    { c: `${kw('import')} tkinter ${kw('as')} tk`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `slobodna_mesta ${op('=')} ${nm('5')}`, hl: '' },
+    { c: `${cm('# --- Blokada: sprecava pritisak dok LED svetli ---')}`, hl: 'add' },
+    { c: `blokiran ${op('=')} ${kw('False')}`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `cifre ${op('=')} {`, hl: '' },
+    { c: `    ${nm('0')}: [${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('0')}],`, hl: '' },
+    { c: `    ${nm('1')}: [${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('0')},${nm('0')}],`, hl: '' },
+    { c: `    ${nm('2')}: [${nm('1')},${nm('1')},${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('1')}],`, hl: '' },
+    { c: `    ${nm('3')}: [${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('1')}],`, hl: '' },
+    { c: `    ${nm('4')}: [${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('1')},${nm('1')}],`, hl: '' },
+    { c: `    ${nm('5')}: [${nm('1')},${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('1')},${nm('1')}],`, hl: '' },
+    { c: `}`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${kw('def')} ${fn('ugasi_zelenu')}():`, hl: '' },
+    { c: `    ${kw('global')} blokiran`, hl: 'add' },
+    { c: `    ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
+    { c: `    ${fn('osvezi_displej')}(cifre[slobodna_mesta])`, hl: '' },
+    { c: `    blokiran ${op('=')} ${kw('False')}  ${cm('# otkljucavamo tastere')}`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `${kw('def')} ${fn('ugasi_crvenu')}():`, hl: '' },
+    { c: `    ${kw('global')} blokiran`, hl: 'add' },
+    { c: `    ${fn('led_crvena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
+    { c: `    ${fn('osvezi_displej')}(cifre[slobodna_mesta])`, hl: '' },
+    { c: `    blokiran ${op('=')} ${kw('False')}  ${cm('# otkljucavamo tastere')}`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `${kw('def')} ${fn('pritisnut_taster1')}():`, hl: '' },
+    { c: `    ${kw('global')} slobodna_mesta, blokiran`, hl: 'mod' },
+    { c: `    ${kw('if')} blokiran: ${kw('return')}  ${cm('# ignorisi ako je blokiran')}`, hl: 'add' },
+    { c: `    ${kw('if')} slobodna_mesta ${op('>')} ${nm('0')}:`, hl: '' },
+    { c: `        slobodna_mesta ${op('-=')} ${nm('1')}`, hl: '' },
+    { c: `        blokiran ${op('=')} ${kw('True')}  ${cm('# zakljucavamo tastere')}`, hl: 'add' },
+    { c: `        ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"lightgreen"')})`, hl: '' },
+    { c: `        ${fn('led_crvena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
+    { c: `        root.${fn('after')}(${nm('500')}, ugasi_zelenu)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${kw('def')} ${fn('pritisnut_taster2')}():`, hl: '' },
+    { c: `    ${kw('global')} slobodna_mesta, blokiran`, hl: 'mod' },
+    { c: `    ${kw('if')} blokiran: ${kw('return')}  ${cm('# ignorisi ako je blokiran')}`, hl: 'add' },
+    { c: `    ${kw('if')} slobodna_mesta ${op('<')} ${nm('5')}:`, hl: '' },
+    { c: `        slobodna_mesta ${op('+=')} ${nm('1')}`, hl: '' },
+    { c: `        blokiran ${op('=')} ${kw('True')}  ${cm('# zakljucavamo tastere')}`, hl: 'add' },
+    { c: `        ${fn('led_crvena')}.${fn('config')}(bg${op('=')}${st('"red"')})`, hl: '' },
+    { c: `        ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
+    { c: `        root.${fn('after')}(${nm('500')}, ugasi_crvenu)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${kw('def')} ${fn('osvezi_displej')}(stanje):`, hl: '' },
+    { c: `    ${kw('for')} i ${kw('in')} ${fn('range')}(${nm('7')}):`, hl: '' },
+    { c: `        boja ${op('=')} ${st('"red"')} ${kw('if')} stanje[i] ${op('==')} ${nm('1')} ${kw('else')} ${st('"#303030"')}`, hl: '' },
+    { c: `        ${fn('platno')}.${fn('itemconfig')}(segmenti[i], fill${op('=')}boja)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `root ${op('=')} tk.${fn('Tk')}()`, hl: '' },
+    { c: `root.${fn('title')}(${st('"Kontrola pristupa na parking prostoru"')})`, hl: 'mod' },
+    { c: `root.${fn('geometry')}(${st('"300x400"')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `led_zelena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"ZELENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
+    { c: `led_zelena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: `led_crvena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"CRVENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
+    { c: `led_crvena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `platno ${op('=')} tk.${fn('Canvas')}(root, width${op('=')}${nm('150')}, height${op('=')}${nm('200')}, bg${op('=')}${st('"black"')})`, hl: '' },
+    { c: `platno.${fn('pack')}(pady${op('=')}${nm('20')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `segmenti ${op('=')} [`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('20')}, ${nm('110')}, ${nm('30')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('30')}, ${nm('120')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('100')}, ${nm('120')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('160')}, ${nm('110')}, ${nm('170')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('100')}, ${nm('40')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('30')}, ${nm('40')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
+    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('90')}, ${nm('110')}, ${nm('100')}, fill${op('=')}${st('"#303030"')})`, hl: '' },
+    { c: `]`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `btn1 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 1 – Ulaz"')}, command${op('=')}pritisnut_taster1, width${op('=')}${nm('15')})`, hl: 'mod' },
+    { c: `btn1.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: `btn2 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 2 – Izlaz"')}, command${op('=')}pritisnut_taster2, width${op('=')}${nm('15')})`, hl: 'mod' },
+    { c: `btn2.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `${fn('osvezi_displej')}(cifre[slobodna_mesta])`, hl: '' },
+    { c: `root.${fn('mainloop')}()`, hl: '' },
+  ]
+},
+
+]; // kraj STEPS
+
+// ═══════════════════════════════════════════════════════════════════
+//  ENGINE
+// ═══════════════════════════════════════════════════════════════════
+let cur = 0;
+
+function buildSidebar() {
+  document.getElementById('sidebar-reqs').innerHTML =
+    ZAHTEVI.map(z => `<div class="req-item">${z}</div>`).join('');
+
+  const el = document.getElementById('sidebar-steps');
+  el.innerHTML = STEPS.map((s, i) =>
+    `<div class="step-pill${i === 0 ? ' active' : ''}" onclick="goTo(${i})">
+       <span class="pill-num">${i + 1}</span>${s.name}
+     </div>`
+  ).join('');
+}
+
+function render() {
+  const s = STEPS[cur];
+
+  document.getElementById('nav-label').textContent = `Korak ${cur + 1} / ${STEPS.length}`;
+  document.getElementById('nav-name').textContent  = s.name;
+  document.getElementById('nav-sub').textContent   = s.sub;
+  document.getElementById('filename').textContent  = s.file;
+  document.getElementById('btn-prev').disabled = cur === 0;
+  document.getElementById('btn-next').disabled = cur === STEPS.length - 1;
+
+  const dc = document.getElementById('dots');
+  dc.innerHTML = '';
+  STEPS.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < cur ? ' done' : i === cur ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dc.appendChild(d);
+  });
+
+  document.querySelectorAll('.step-pill').forEach((p, i) =>
+    p.classList.toggle('active', i === cur));
+
+  document.getElementById('step-explain').innerHTML = s.explain || '';
+
+  document.getElementById('code-pre').innerHTML =
+    s.lines.map(l => {
+      const cls = l.hl ? ` hl-${l.hl}` : '';
+      return `<div class="ln${cls}"><span class="ln-code">${l.c}</span></div>`;
+    }).join('');
+
+  const cb = document.getElementById('copy-btn');
+  cb.textContent = 'copy';
+  cb.classList.remove('copied');
+  document.querySelector('.code-area').scrollTop = 0;
+}
+
+function next() { if (cur < STEPS.length - 1) { cur++; render(); } }
+function prev() { if (cur > 0)                { cur--; render(); } }
+function goTo(i){ cur = i; render(); }
+
+function copyCode() {
+  const text = document.getElementById('code-pre').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const cb = document.getElementById('copy-btn');
+    cb.textContent = 'copied ✓';
+    cb.classList.add('copied');
+    setTimeout(() => { cb.textContent = 'copy'; cb.classList.remove('copied'); }, 1800);
+  });
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  if (e.key === 'ArrowLeft')  prev();
+});
+
+buildSidebar();
+render();
+</script>
+</body>
+</html>

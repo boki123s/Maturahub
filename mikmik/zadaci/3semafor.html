@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Korona Brojač – 7-Segment Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0d0e14;
+  --surface:  #13141f;
+  --card:     #181926;
+  --border:   #252640;
+  --accent:   #7c6af7;
+  --accent2:  #4e6ef2;
+  --accent3:  #a78bfa;
+  --green:    #33ff99;
+  --text:     #dde1f5;
+  --muted:    #6b7099;
+  --mono:     'JetBrains Mono', monospace;
+  --sans:     'Sora', sans-serif;
+
+  /* highlight boje */
+  --hl-add-bg:    rgba(52,211,153,.09);
+  --hl-add-bar:   #34d399;
+  --hl-del-bg:    rgba(239,68,68,.09);
+  --hl-del-bar:   #ef4444;
+  --hl-mod-bg:    rgba(251,191,36,.07);
+  --hl-mod-bar:   #fbbf24;
+  --hl-copy-bg:   rgba(236,72,153,.07);
+  --hl-copy-bar:  #ec4899;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.65;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.home-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  transition: color .15s;
+  flex-shrink: 0;
+}
+.home-btn:hover { color: var(--accent3); }
+.home-btn svg { width: 14px; height: 14px; }
+.header-center { flex: 1; text-align: center; }
+.header-center h1 { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -.01em; }
+.header-center h1 span { color: var(--accent3); }
+.header-chip {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--accent);
+  background: rgba(124,106,247,.1);
+  border: 1px solid rgba(124,106,247,.22);
+  border-radius: 20px;
+  padding: 2px 10px;
+  margin-top: 3px;
+  text-transform: uppercase;
+}
+.header-spacer { width: 80px; flex-shrink: 0; }
+
+/* ── LAYOUT ── */
+.layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100vh - 53px);
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.sidebar-head {
+  padding: 14px 16px 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  color: var(--accent);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sidebar-steps { padding: 12px 16px 16px; flex: 1; }
+.sidebar-steps > p {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* zahtevi */
+.sidebar-reqs { padding: 12px 16px 4px; border-bottom: 1px solid var(--border); }
+.req-item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
+}
+.req-item::before {
+  content: '→';
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 11px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* objašnjenje koraka */
+.step-explain {
+  padding: 10px 18px 9px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+}
+.step-explain strong { color: var(--accent3); font-weight: 600; }
+.step-explain code {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent3);
+  background: rgba(167,139,250,.1);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.step-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin-bottom: 3px;
+  cursor: pointer;
+  transition: background .15s;
+  font-size: 12px;
+  color: var(--muted);
+  user-select: none;
+}
+.step-pill:hover { background: rgba(255,255,255,.04); color: var(--text); }
+.step-pill.active { background: rgba(124,106,247,.12); color: var(--accent3); }
+.pill-num {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: rgba(124,106,247,.12);
+  border: 1px solid rgba(124,106,247,.25);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 10px; font-weight: 600;
+  color: var(--accent3);
+  flex-shrink: 0;
+}
+.step-pill.active .pill-num {
+  background: rgba(124,106,247,.28);
+  border-color: var(--accent);
+}
+
+/* ── LEGENDA ── */
+.legend {
+  border-top: 1px solid var(--border);
+  padding: 12px 16px 16px;
+  flex-shrink: 0;
+}
+.legend-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 9px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--text);
+}
+.legend-bar {
+  width: 3px; height: 16px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.legend-swatch {
+  width: 14px; height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.lb-add   { background: var(--hl-add-bar); }
+.lb-del   { background: var(--hl-del-bar); }
+.lb-mod   { background: var(--hl-mod-bar); }
+.lb-copy  { background: var(--hl-copy-bar); }
+.ls-add   { background: var(--hl-add-bg);  border: 1px solid var(--hl-add-bar); }
+.ls-del   { background: var(--hl-del-bg);  border: 1px solid var(--hl-del-bar); }
+.ls-mod   { background: var(--hl-mod-bg);  border: 1px solid var(--hl-mod-bar); }
+.ls-copy  { background: var(--hl-copy-bg); border: 1px solid var(--hl-copy-bar); }
+
+/* ── CONTENT ── */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* ── NAV ── */
+.step-nav {
+  display: flex;
+  align-items: center;
+  padding: 9px 18px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 12px;
+}
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: color .15s, border-color .15s, background .15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.nav-btn:hover:not(:disabled) {
+  color: var(--accent3);
+  border-color: rgba(124,106,247,.4);
+  background: rgba(124,106,247,.06);
+}
+.nav-btn:disabled { opacity: .3; cursor: default; }
+.nav-btn svg { width: 12px; height: 12px; }
+.step-info { flex: 1; text-align: center; min-width: 0; }
+.step-label { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: .08em; text-transform: uppercase; }
+.step-name  { font-size: 13px; font-weight: 600; color: #fff; }
+.step-sub   { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+.progress-dots { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background .2s, transform .2s;
+  cursor: pointer;
+}
+.dot.active { background: var(--accent); transform: scale(1.35); }
+.dot.done   { background: var(--accent2); }
+
+/* ── CODE AREA ── */
+.code-area { flex: 1; overflow-y: auto; }
+.code-wrap { background: #0a0b10; min-height: 100%; }
+.code-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 14px;
+  background: #0f1018;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.code-bar span { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+.copy-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.copy-btn:hover  { color: var(--accent3); border-color: rgba(124,106,247,.4); }
+.copy-btn.copied { color: var(--green);   border-color: rgba(51,255,153,.3); }
+
+/* mobile legenda strip – skrivena na desktopu */
+.mobile-legend {
+  display: none;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 7px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.ml-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+.ml-dot {
+  width: 9px; height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.mld-add  { background: var(--hl-add-bar); }
+.mld-del  { background: var(--hl-del-bar); }
+.mld-mod  { background: var(--hl-mod-bar); }
+.mld-copy { background: var(--hl-copy-bar); }
+
+pre {
+  margin: 0;
+  padding: 10px 0 28px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.55;
+  color: #c8cde8;
+  counter-reset: line;
+}
+.ln {
+  display: flex;
+  padding-right: 16px;
+}
+.ln::before {
+  counter-increment: line;
+  content: counter(line);
+  min-width: 38px;
+  padding: 0 10px 0 14px;
+  text-align: right;
+  color: #272940;
+  user-select: none;
+  flex-shrink: 0;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.ln-code { flex: 1; white-space: pre; }
+
+/* highlight tipovi */
+.ln.hl-add  { background: var(--hl-add-bg);  border-left: 2px solid var(--hl-add-bar);  }
+.ln.hl-del  { background: var(--hl-del-bg);  border-left: 2px solid var(--hl-del-bar);  }
+.ln.hl-mod  { background: var(--hl-mod-bg);  border-left: 2px solid var(--hl-mod-bar);  }
+.ln.hl-copy { background: var(--hl-copy-bg); border-left: 2px solid var(--hl-copy-bar); }
+.ln.hl-add::before  { color: rgba(52,211,153,.3); }
+.ln.hl-del::before  { color: rgba(239,68,68,.3); }
+.ln.hl-mod::before  { color: rgba(251,191,36,.3); }
+.ln.hl-copy::before { color: rgba(236,72,153,.3); }
+
+/* syntax */
+.kw { color: #a78bfa; }
+.fn { color: #60a5fa; }
+.st { color: #86efac; }
+.cm { color: #3a3d60; font-style: italic; }
+.nm { color: #fbbf24; }
+.cl { color: #f9a8d4; }
+.op { color: #7c6af7; }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── MOBILE ── */
+@media (max-width: 680px) {
+  .sidebar        { display: none; }
+  .layout         { height: calc(100vh - 49px); }
+  .step-sub       { display: none; }
+  .header-spacer  { width: 40px; }
+  pre             { font-size: 11.5px; }
+  .ln::before     { min-width: 28px; padding: 0 8px; }
+  .mobile-legend  { display: flex; }
+}
+@media (max-width: 420px) {
+  .progress-dots { display: none; }
+  .step-name     { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="home-btn">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+      <path d="M2 6.5L8 2l6 4.5V14H10v-3.5H6V14H2V6.5z"/>
+    </svg>
+    home
+  </a>
+  <div class="header-center">
+    <h1>Model <span>Semafora</span></h1>
+    <div class="header-chip">4ETP-B1 · LED diode · 7-Segment · tkinter</div>
+  </div>
+  <div class="header-spacer"></div>
+</header>
+
+<div class="layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+
+    <div class="sidebar-head">// zahtev zadatka</div>
+    <div class="sidebar-reqs" id="sidebar-reqs">
+      <!-- generisano JS-om -->
+    </div>
+
+    <div class="sidebar-head" style="border-top: 1px solid var(--border); margin-top: 0;">// koraci</div>
+    <div class="sidebar-steps" id="sidebar-steps">
+      <!-- generisano JS-om -->
+    </div>
+
+    <!-- LEGENDA -->
+    <div class="legend">
+      <div class="legend-title">// legenda</div>
+
+      <div class="legend-item">
+        <div class="legend-bar lb-add"></div>
+        <div class="legend-swatch ls-add"></div>
+        Dodato
+      </div>
+      <div class="legend-item">
+        <div class="legend-bar lb-del"></div>
+        <div class="legend-swatch ls-del"></div>
+        Obrisano
+      </div>
+      <div class="legend-item">
+        <div class="legend-bar lb-mod"></div>
+        <div class="legend-swatch ls-mod"></div>
+        Izmenjeno
+      </div>
+      <div class="legend-item">
+        <div class="legend-bar lb-copy"></div>
+        <div class="legend-swatch ls-copy"></div>
+        Copy-paste
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ── CONTENT ── -->
+  <div class="content">
+
+    <div class="step-nav">
+      <button class="nav-btn" id="btn-prev" onclick="prev()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3L5 8l5 5"/></svg>
+        Prethodni
+      </button>
+      <div class="step-info">
+        <div class="step-label" id="nav-label"></div>
+        <div class="step-name"  id="nav-name"></div>
+        <div class="step-sub"   id="nav-sub"></div>
+      </div>
+      <div class="progress-dots" id="dots"></div>
+      <button class="nav-btn" id="btn-next" onclick="next()">
+        Sledeći
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3l5 5-5 5"/></svg>
+      </button>
+    </div>
+
+    <div class="step-explain" id="step-explain"></div>
+
+    <div class="code-area">
+      <div class="code-wrap">
+
+        <div class="code-bar">
+          <span id="filename"></span>
+          <button class="copy-btn" id="copy-btn" onclick="copyCode()">copy</button>
+        </div>
+
+        <!-- Legenda strip – vidljiva samo na mobilnom -->
+        <div class="mobile-legend">
+          <div class="ml-item"><div class="ml-dot mld-add"></div>Dodato</div>
+          <div class="ml-item"><div class="ml-dot mld-del"></div>Obrisano</div>
+          <div class="ml-item"><div class="ml-dot mld-mod"></div>Izmenjeno</div>
+          <div class="ml-item"><div class="ml-dot mld-copy"></div>Copy-paste</div>
+        </div>
+
+        <pre id="code-pre"></pre>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════════════════
+//  ZAHTEVI  –  lista zahteva zadatka (prikazana u sidebar-u)
+//  Slobodno menjaj tekst, dodaj ili ukloni stavke.
+// ════════════════════════════════════════════════════════════════════════════
+
+const ZAHTEVI = [
+  'Pritiskom na START/STOP taster pokrenuti semafor koji na 7-segmentnom displeju prikazuje preostalo vreme zelenog i crvenog svetla.',
+  'Raspored faza po dijagramu: Crvena 8s → Žuta 2s → Zelena 7s → Zelena treperi 3s → Žuta 2s → (ponovi).',
+  'Ponovnim pritiskom na START/STOP semafor se isključuje. Sledeća aktivacija je moguća samo ako se prethodno pritisne START/STOP.',
+];
+
+// ════════════════════════════════════════════════════════════════════════════
+//  STEPS  –  svaki objekat je jedan korak
+//
+//  Polja:
+//    name    – naziv koraka  (prikazan u sidebar i nav)
+//    sub     – podnaslov     (ispod naziva u nav-u)
+//    file    – ime fajla     (prikazano u code-bar-u)
+//    explain – objašnjenje koraka (HTML, prikazano iznad koda)
+//              može da sadrži <strong> i <code> tagove
+//    lines   – niz linija koda; svaka linija:
+//                c   – sadržaj linije (može sadržati HTML span-ove za boje)
+//                hl  – tip highlajta:
+//                        'add'  → zeleno  – nova linija
+//                        'del'  → crveno  – obrisana linija
+//                        'mod'  → žuto    – izmenjena linija
+//                        'copy' → roze    – copy-paste iz prethodnog koraka
+//                        ''     → bez highlajta
+//
+//  Primer linije:
+//    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: 'copy' },
+//    { c: `brojac = 0`,      hl: 'add' },
+//    { c: `show_zero()`,     hl: 'del' },
+//    { c: `print(x)`,        hl: 'mod' },
+//    { c: `root.mainloop()`, hl: '' },
+// ════════════════════════════════════════════════════════════════════════════
+
+const STEPS = [
+
+// ── KORAK 1 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 1',
+  sub:     'Test program – polazna tačka',
+  file:    '05_Model_semafora_Test.py',
+  explain: `Ovo je <strong>test program</strong> koji smo dobili. Pritiskom na dugme START/STOP pale se sve tri LED diode i ispisuje se "88" na displeju. Ponovnim pritiskom sve se gasi.<br><br>
+Naš zadatak je da od ovog programa napravimo <strong>pravi semafor</strong> koji radi po vremenskom dijagramu: <strong>Crvena 8s → Žuta 2s → Zelena 7s → Zelena treperi 3s → Žuta 2s</strong>, i tako u krug. Displej treba da odbrojava preostalo vreme samo tokom crvene i zelene faze.<br><br>
+Ideja: koristićemo <code>self.after()</code> – tkinter funkciju koja poziva neku drugu funkciju posle određenog broja milisekundi. Nju ćemo koristiti umesto petlje, jer tkinter ne voli <code>time.sleep()</code> unutar programa.`,
+  lines: [
+    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="kw">class</span> <span class="cl">SimulatorStartStop</span>(tk.Tk):`, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">super</span>().__init__()`, hl: '' },
+    { c: `        <span class="kw">self</span>.title(<span class="st">"START/STOP Simulator"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.geometry(<span class="st">"400x450"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.configure(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># LOGIČKO STANJE (Sve je ugašeno na početku)</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">False</span>`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- UI: 7-SEGMENTNI DISPLEJ (Dve cifre) ---</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.okvir_displej <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"black"</span>, bd=<span class="nm">10</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.okvir_displej.pack(pady=<span class="nm">20</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88 <span class="op">=</span> tk.Label(<span class="kw">self</span>.okvir_displej, text=<span class="st">"  "</span>, fg=<span class="st">"#550000"</span>,`, hl: '' },
+    { c: `                                  bg=<span class="st">"black"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">60</span>, <span class="st">"bold"</span>), width=<span class="nm">4</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88.pack()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- UI: LED DIODE ---</span>`, hl: '' },
+    { c: `        led_frame <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: `        led_frame.pack(pady=<span class="nm">10</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="kw">self</span>.leds <span class="op">=</span> []`, hl: '' },
+    { c: `        boje <span class="op">=</span> [<span class="st">"red"</span>, <span class="st">"yellow"</span>, <span class="st">"green"</span>]`, hl: '' },
+    { c: `        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):`, hl: '' },
+    { c: `            l <span class="op">=</span> tk.Canvas(led_frame, width=<span class="nm">40</span>, height=<span class="nm">40</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: '' },
+    { c: `            l.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">35</span>, <span class="nm">35</span>, fill=<span class="st">"#444444"</span>, tags=<span class="st">f"led{i}"</span>)`, hl: '' },
+    { c: `            l.grid(row=<span class="nm">0</span>, column=i, padx=<span class="nm">20</span>)`, hl: '' },
+    { c: `            <span class="kw">self</span>.leds.append(l)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- UI: TASTER START/STOP ---</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_control <span class="op">=</span> tk.Button(<span class="kw">self</span>, text=<span class="st">"START / STOP"</span>, command=<span class="kw">self</span>.toggle_sistem,`, hl: '' },
+    { c: `                                    bg=<span class="st">"#3498db"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>),`, hl: '' },
+    { c: `                                    width=<span class="nm">20</span>, height=<span class="nm">2</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_control.pack(pady=<span class="nm">30</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        tk.Label(<span class="kw">self</span>, text=<span class="st">"Klikni za promenu stanja"</span>, fg=<span class="st">"white"</span>, bg=<span class="st">"#2c3e50"</span>).pack()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">toggle_sistem</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="cm">"""Logika tastera: Menja stanje iz UKLJUČENO u ISKLJUČENO"""</span>`, hl: '' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen:`, hl: '' },
+    { c: `            <span class="cm"># UKLJUČI SVE</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">True</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.labela_88.config(text=<span class="st">"88"</span>, fg=<span class="st">"#ff0000"</span>) <span class="cm"># Upali 88</span>`, hl: '' },
+    { c: `            <span class="kw">for</span> i, color <span class="kw">in</span> <span class="fn">enumerate</span>([<span class="st">"red"</span>, <span class="st">"yellow"</span>, <span class="st">"green"</span>]):`, hl: '' },
+    { c: `                <span class="kw">self</span>.leds[i].itemconfig(<span class="st">f"led{i}"</span>, fill=color) <span class="cm"># Upali LED</span>`, hl: '' },
+    { c: `            <span class="fn">print</span>(<span class="st">"Sistem: UKLJUČEN (88 + 3 LED)"</span>)`, hl: '' },
+    { c: `        <span class="kw">else</span>:`, hl: '' },
+    { c: `            <span class="cm"># ISKLJUČI SVE</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">False</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.labela_88.config(text=<span class="st">"  "</span>, fg=<span class="st">"#550000"</span>) <span class="cm"># Ugasi displej</span>`, hl: '' },
+    { c: `            <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):`, hl: '' },
+    { c: `                <span class="kw">self</span>.leds[i].itemconfig(<span class="st">f"led{i}"</span>, fill=<span class="st">"#444444"</span>) <span class="cm"># Ugasi LED</span>`, hl: '' },
+    { c: `            <span class="fn">print</span>(<span class="st">"Sistem: ISKLJUČEN"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:`, hl: '' },
+    { c: `    app <span class="op">=</span> <span class="fn">SimulatorStartStop</span>()`, hl: '' },
+    { c: `    app.mainloop()`, hl: '' },
+  ]
+},
+
+// ── KORAK 2 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 2',
+  sub:     'Dodajemo varijable i gasimo staru logiku',
+  file:    '05_Model_semafora_K2.py',
+  explain: `Prvo dodamo <strong>varijablu za odbrojavanje</strong> (<code>self.tajmer</code>) i <strong>varijablu za čuvanje after() poziva</strong> (<code>self.after_id</code>) u <code>__init__</code>.<br><br>
+Zatim menjamo <code>toggle_sistem</code>: kada uključimo, više ne palimo sve tri LED odjednom – samo palimo <strong>crvenu LED</strong> i pozivamo novu funkciju <code>self.faza_crvena()</code> koja će se brinuti o odbrojavanju. Deo koji je gasio sve LED ostavljamo isti – ali dodajemo <code>self.after_cancel()</code> da prekinemo odbrojavanje ako korisnik pritisne STOP.<br><br>
+<strong>Ključna ideja:</strong> <code>self.after_id</code> čuva "raspored" koji smo zakazali sa <code>after()</code>, a <code>after_cancel()</code> taj raspored otkazuje – kao da otkazujemo alarm.`,
+  lines: [
+    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="kw">class</span> <span class="cl">SimulatorStartStop</span>(tk.Tk):`, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">super</span>().__init__()`, hl: '' },
+    { c: `        <span class="kw">self</span>.title(<span class="st">"START/STOP Simulator"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.geometry(<span class="st">"400x450"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.configure(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># LOGIČKO STANJE (Sve je ugašeno na početku)</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">False</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.tajmer <span class="op">=</span> <span class="nm">0</span>          <span class="cm"># Čuvaće preostale sekunde trenutne faze</span>`, hl: 'add' },
+    { c: `        <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">None</span>   <span class="cm"># Čuvaće ID zakazanog after() poziva</span>`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- UI: 7-SEGMENTNI DISPLEJ (Dve cifre) ---</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.okvir_displej <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"black"</span>, bd=<span class="nm">10</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.okvir_displej.pack(pady=<span class="nm">20</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88 <span class="op">=</span> tk.Label(<span class="kw">self</span>.okvir_displej, text=<span class="st">"  "</span>, fg=<span class="st">"#550000"</span>,`, hl: '' },
+    { c: `                                  bg=<span class="st">"black"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">60</span>, <span class="st">"bold"</span>), width=<span class="nm">4</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88.pack()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- UI: LED DIODE ---</span>`, hl: '' },
+    { c: `        led_frame <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: `        led_frame.pack(pady=<span class="nm">10</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="kw">self</span>.leds <span class="op">=</span> []`, hl: '' },
+    { c: `        boje <span class="op">=</span> [<span class="st">"red"</span>, <span class="st">"yellow"</span>, <span class="st">"green"</span>]`, hl: '' },
+    { c: `        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):`, hl: '' },
+    { c: `            l <span class="op">=</span> tk.Canvas(led_frame, width=<span class="nm">40</span>, height=<span class="nm">40</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: '' },
+    { c: `            l.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">35</span>, <span class="nm">35</span>, fill=<span class="st">"#444444"</span>, tags=<span class="st">f"led{i}"</span>)`, hl: '' },
+    { c: `            l.grid(row=<span class="nm">0</span>, column=i, padx=<span class="nm">20</span>)`, hl: '' },
+    { c: `            <span class="kw">self</span>.leds.append(l)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- UI: TASTER START/STOP ---</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_control <span class="op">=</span> tk.Button(<span class="kw">self</span>, text=<span class="st">"START / STOP"</span>, command=<span class="kw">self</span>.toggle_sistem,`, hl: '' },
+    { c: `                                    bg=<span class="st">"#3498db"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>),`, hl: '' },
+    { c: `                                    width=<span class="nm">20</span>, height=<span class="nm">2</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_control.pack(pady=<span class="nm">30</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        tk.Label(<span class="kw">self</span>, text=<span class="st">"Klikni za promenu stanja"</span>, fg=<span class="st">"white"</span>, bg=<span class="st">"#2c3e50"</span>).pack()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">toggle_sistem</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="cm">"""Logika tastera: Menja stanje iz UKLJUČENO u ISKLJUČENO"""</span>`, hl: '' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen:`, hl: '' },
+    { c: `            <span class="cm"># UKLJUČI – startujemo semafor od crvene faze</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">True</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.leds[<span class="nm">0</span>].itemconfig(<span class="st">"led0"</span>, fill=<span class="st">"red"</span>)  <span class="cm"># Upali samo CRVENU</span>`, hl: 'mod' },
+    { c: `            <span class="kw">self</span>.faza_crvena()  <span class="cm"># Pokreni odbrojavanje crvene faze</span>`, hl: 'mod' },
+    { c: `        <span class="kw">else</span>:`, hl: '' },
+    { c: `            <span class="cm"># ISKLJUČI SVE</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">False</span>`, hl: '' },
+    { c: `            <span class="kw">if</span> <span class="kw">self</span>.after_id:                          <span class="cm"># Ako ima zakazan after()</span>`, hl: 'add' },
+    { c: `                <span class="kw">self</span>.after_cancel(<span class="kw">self</span>.after_id)       <span class="cm"># Otkaži ga (zaustavi tajmer)</span>`, hl: 'add' },
+    { c: `            <span class="kw">self</span>.labela_88.config(text=<span class="st">"  "</span>, fg=<span class="st">"#550000"</span>) <span class="cm"># Ugasi displej</span>`, hl: '' },
+    { c: `            <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):`, hl: '' },
+    { c: `                <span class="kw">self</span>.leds[i].itemconfig(<span class="st">f"led{i}"</span>, fill=<span class="st">"#444444"</span>) <span class="cm"># Ugasi LED</span>`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">faza_crvena</span>(<span class="kw">self</span>):`, hl: 'add' },
+    { c: `        <span class="cm">"""Ova funkcija će odbrojavati crvenu fazu – biće napisana u sledećem koraku"""</span>`, hl: 'add' },
+    { c: `        <span class="kw">pass</span>`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:`, hl: '' },
+    { c: `    app <span class="op">=</span> <span class="fn">SimulatorStartStop</span>()`, hl: '' },
+    { c: `    app.mainloop()`, hl: '' },
+  ]
+},
+
+// ── KORAK 3 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 3',
+  sub:     'Odbrojavanje crvene faze (8s)',
+  file:    '05_Model_semafora_K3.py',
+  explain: `Sada pišemo funkciju <code>faza_crvena()</code>. Ona treba da odbrojava od <strong>8 do 0</strong> i svake sekunde da ažurira displej.<br><br>
+Trik je sledeći: funkcija se <strong>sama poziva</strong> svakih 1000ms koristeći <code>self.after(1000, self.faza_crvena)</code>. Svaki put kada se pozove, smanji tajmer za 1. Kada tajmer dođe do 0, znači da je crvena faza gotova.<br><br>
+Na početku postavljamo <code>self.tajmer = 8</code> direktno u <code>toggle_sistem</code>, jer se crvena uvek startuje od 8. Displej prikazuje vrednost sa <code>f"{self.tajmer:02d}"</code> – to znači: uvek dve cifre (npr. <strong>08, 07...</strong>).`,
+  lines: [
+    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="kw">class</span> <span class="cl">SimulatorStartStop</span>(tk.Tk):`, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">super</span>().__init__()`, hl: '' },
+    { c: `        <span class="kw">self</span>.title(<span class="st">"START/STOP Simulator"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.geometry(<span class="st">"400x450"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.configure(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">False</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.tajmer <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">None</span>`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="kw">self</span>.okvir_displej <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"black"</span>, bd=<span class="nm">10</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.okvir_displej.pack(pady=<span class="nm">20</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88 <span class="op">=</span> tk.Label(<span class="kw">self</span>.okvir_displej, text=<span class="st">"  "</span>, fg=<span class="st">"#550000"</span>,`, hl: '' },
+    { c: `                                  bg=<span class="st">"black"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">60</span>, <span class="st">"bold"</span>), width=<span class="nm">4</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88.pack()`, hl: '' },
+    { c: `        led_frame <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: `        led_frame.pack(pady=<span class="nm">10</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.leds <span class="op">=</span> []`, hl: '' },
+    { c: `        boje <span class="op">=</span> [<span class="st">"red"</span>, <span class="st">"yellow"</span>, <span class="st">"green"</span>]`, hl: '' },
+    { c: `        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):`, hl: '' },
+    { c: `            l <span class="op">=</span> tk.Canvas(led_frame, width=<span class="nm">40</span>, height=<span class="nm">40</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: '' },
+    { c: `            l.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">35</span>, <span class="nm">35</span>, fill=<span class="st">"#444444"</span>, tags=<span class="st">f"led{i}"</span>)`, hl: '' },
+    { c: `            l.grid(row=<span class="nm">0</span>, column=i, padx=<span class="nm">20</span>)`, hl: '' },
+    { c: `            <span class="kw">self</span>.leds.append(l)`, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_control <span class="op">=</span> tk.Button(<span class="kw">self</span>, text=<span class="st">"START / STOP"</span>, command=<span class="kw">self</span>.toggle_sistem,`, hl: '' },
+    { c: `                                    bg=<span class="st">"#3498db"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>),`, hl: '' },
+    { c: `                                    width=<span class="nm">20</span>, height=<span class="nm">2</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_control.pack(pady=<span class="nm">30</span>)`, hl: '' },
+    { c: `        tk.Label(<span class="kw">self</span>, text=<span class="st">"Klikni za promenu stanja"</span>, fg=<span class="st">"white"</span>, bg=<span class="st">"#2c3e50"</span>).pack()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">toggle_sistem</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen:`, hl: '' },
+    { c: `            <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">True</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.tajmer <span class="op">=</span> <span class="nm">8</span>              <span class="cm"># Crvena traje 8 sekundi</span>`, hl: 'mod' },
+    { c: `            <span class="kw">self</span>.leds[<span class="nm">0</span>].itemconfig(<span class="st">"led0"</span>, fill=<span class="st">"red"</span>)`, hl: '' },
+    { c: `            <span class="kw">self</span>.faza_crvena()`, hl: '' },
+    { c: `        <span class="kw">else</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">False</span>`, hl: '' },
+    { c: `            <span class="kw">if</span> <span class="kw">self</span>.after_id:`, hl: '' },
+    { c: `                <span class="kw">self</span>.after_cancel(<span class="kw">self</span>.after_id)`, hl: '' },
+    { c: `            <span class="kw">self</span>.labela_88.config(text=<span class="st">"  "</span>, fg=<span class="st">"#550000"</span>)`, hl: '' },
+    { c: `            <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):`, hl: '' },
+    { c: `                <span class="kw">self</span>.leds[i].itemconfig(<span class="st">f"led{i}"</span>, fill=<span class="st">"#444444"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">faza_crvena</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="cm">"""Odbrojava crvenu fazu od 8s do 0"""</span>`, hl: 'mod' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen:  <span class="cm"># Ako je STOP pritisnut, izađi</span>`, hl: 'mod' },
+    { c: `            <span class="kw">return</span>`, hl: 'mod' },
+    { c: `        <span class="cm"># Prikaži preostalo vreme na displeju (uvek dve cifre: 08, 07...)</span>`, hl: 'mod' },
+    { c: `        <span class="kw">self</span>.labela_88.config(text=<span class="st">f"</span><span class="nm">{self.tajmer:02d}</span><span class="st">"</span>, fg=<span class="st">"#ff0000"</span>)`, hl: 'mod' },
+    { c: `        <span class="kw">if</span> <span class="kw">self</span>.tajmer <span class="op">&gt;</span> <span class="nm">0</span>:`, hl: 'mod' },
+    { c: `            <span class="kw">self</span>.tajmer <span class="op">-=</span> <span class="nm">1</span>  <span class="cm"># Smanji tajmer za 1</span>`, hl: 'mod' },
+    { c: `            <span class="cm"># Zakaži sledeći poziv ove iste funkcije za 1000ms (1 sekunda)</span>`, hl: 'mod' },
+    { c: `            <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">self</span>.after(<span class="nm">1000</span>, <span class="kw">self</span>.faza_crvena)`, hl: 'mod' },
+    { c: `        <span class="kw">else</span>:`, hl: 'mod' },
+    { c: `            <span class="cm"># Tajmer je 0 – crvena faza gotova, nastavi na žutu</span>`, hl: 'mod' },
+    { c: `            <span class="fn">print</span>(<span class="st">"Crvena gotova → prelaz na žutu"</span>)  <span class="cm"># Biće zamenjeno u K4</span>`, hl: 'mod' },
+    { c: ``, hl: '' },
+    { c: `<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:`, hl: '' },
+    { c: `    app <span class="op">=</span> <span class="fn">SimulatorStartStop</span>()`, hl: '' },
+    { c: `    app.mainloop()`, hl: '' },
+  ]
+},
+
+// ── KORAK 4 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 4',
+  sub:     'Žuta (2s) → Zelena faza (7s)',
+  file:    '05_Model_semafora_K4.py',
+  explain: `Sada dodajemo funkcije za <strong>žutu</strong> i <strong>zelenu</strong> fazu, copy-pasteovanjem i lakim izmenama funkcije <code>faza_crvena</code>.<br><br>
+  <code>faza_zuta()</code>: Gasi crvenu LED, pali žutu, i koristi <code>self.after(2000, ...)</code> da posle 2 sekunde pređe na zelenu. Displej se gasi tokom žute faze.<br><br>
+  <code>faza_zelena()</code>: Gasi žutu, pali zelenu LED, odbrojava 7 sekundi (isto kao crvena, samo s drugom bojom i od 7). Na kraju (tajmer = 0) poziva sledeću fazu – trepćanje zelene.<br><br>
+  Na kraju <code>faza_crvena()</code> menjamo <code>print</code> sa pozivom <code>self.faza_zuta()</code>.`,
+  lines: [
+    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="kw">class</span> <span class="cl">SimulatorStartStop</span>(tk.Tk):`, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">super</span>().__init__()`, hl: '' },
+    { c: `        <span class="kw">self</span>.title(<span class="st">"START/STOP Simulator"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.geometry(<span class="st">"400x450"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.configure(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">False</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.tajmer <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">None</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.okvir_displej <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"black"</span>, bd=<span class="nm">10</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.okvir_displej.pack(pady=<span class="nm">20</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88 <span class="op">=</span> tk.Label(<span class="kw">self</span>.okvir_displej, text=<span class="st">"  "</span>, fg=<span class="st">"#550000"</span>,`, hl: '' },
+    { c: `                                  bg=<span class="st">"black"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">60</span>, <span class="st">"bold"</span>), width=<span class="nm">4</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88.pack()`, hl: '' },
+    { c: `        led_frame <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: `        led_frame.pack(pady=<span class="nm">10</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.leds <span class="op">=</span> []`, hl: '' },
+    { c: `        boje <span class="op">=</span> [<span class="st">"red"</span>, <span class="st">"yellow"</span>, <span class="st">"green"</span>]`, hl: '' },
+    { c: `        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):`, hl: '' },
+    { c: `            l <span class="op">=</span> tk.Canvas(led_frame, width=<span class="nm">40</span>, height=<span class="nm">40</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: '' },
+    { c: `            l.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">35</span>, <span class="nm">35</span>, fill=<span class="st">"#444444"</span>, tags=<span class="st">f"led{i}"</span>)`, hl: '' },
+    { c: `            l.grid(row=<span class="nm">0</span>, column=i, padx=<span class="nm">20</span>)`, hl: '' },
+    { c: `            <span class="kw">self</span>.leds.append(l)`, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_control <span class="op">=</span> tk.Button(<span class="kw">self</span>, text=<span class="st">"START / STOP"</span>, command=<span class="kw">self</span>.toggle_sistem,`, hl: '' },
+    { c: `                                    bg=<span class="st">"#3498db"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>),`, hl: '' },
+    { c: `                                    width=<span class="nm">20</span>, height=<span class="nm">2</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_control.pack(pady=<span class="nm">30</span>)`, hl: '' },
+    { c: `        tk.Label(<span class="kw">self</span>, text=<span class="st">"Klikni za promenu stanja"</span>, fg=<span class="st">"white"</span>, bg=<span class="st">"#2c3e50"</span>).pack()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">toggle_sistem</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen:`, hl: '' },
+    { c: `            <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">True</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.tajmer <span class="op">=</span> <span class="nm">8</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.leds[<span class="nm">0</span>].itemconfig(<span class="st">"led0"</span>, fill=<span class="st">"red"</span>)`, hl: '' },
+    { c: `            <span class="kw">self</span>.faza_crvena()`, hl: '' },
+    { c: `        <span class="kw">else</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">False</span>`, hl: '' },
+    { c: `            <span class="kw">if</span> <span class="kw">self</span>.after_id:`, hl: '' },
+    { c: `                <span class="kw">self</span>.after_cancel(<span class="kw">self</span>.after_id)`, hl: '' },
+    { c: `            <span class="kw">self</span>.labela_88.config(text=<span class="st">"  "</span>, fg=<span class="st">"#550000"</span>)`, hl: '' },
+    { c: `            <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):`, hl: '' },
+    { c: `                <span class="kw">self</span>.leds[i].itemconfig(<span class="st">f"led{i}"</span>, fill=<span class="st">"#444444"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">faza_crvena</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen: <span class="kw">return</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88.config(text=<span class="st">f"</span><span class="nm">{self.tajmer:02d}</span><span class="st">"</span>, fg=<span class="st">"#ff0000"</span>)`, hl: '' },
+    { c: `        <span class="kw">if</span> <span class="kw">self</span>.tajmer <span class="op">&gt;</span> <span class="nm">0</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.tajmer <span class="op">-=</span> <span class="nm">1</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">self</span>.after(<span class="nm">1000</span>, <span class="kw">self</span>.faza_crvena)`, hl: '' },
+    { c: `        <span class="kw">else</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.faza_zuta()  <span class="cm"># Crvena gotova → pređi na žutu</span>`, hl: 'mod' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">faza_zuta</span>(<span class="kw">self</span>):`, hl: 'add' },
+    { c: `        <span class="cm">"""Žuta faza traje 2 sekunde, displej se gasi"""</span>`, hl: 'add' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen: <span class="kw">return</span>`, hl: 'add' },
+    { c: `        <span class="kw">self</span>.leds[<span class="nm">0</span>].itemconfig(<span class="st">"led0"</span>, fill=<span class="st">"#444444"</span>)  <span class="cm"># Ugasi crvenu</span>`, hl: 'add' },
+    { c: `        <span class="kw">self</span>.leds[<span class="nm">1</span>].itemconfig(<span class="st">"led1"</span>, fill=<span class="st">"yellow"</span>)   <span class="cm"># Upali žutu</span>`, hl: 'add' },
+    { c: `        <span class="kw">self</span>.labela_88.config(text=<span class="st">"  "</span>, fg=<span class="st">"#550000"</span>)    <span class="cm"># Displej ugašen</span>`, hl: 'add' },
+    { c: `        <span class="cm"># Posle 2000ms (2s) pređi na zelenu fazu</span>`, hl: 'add' },
+    { c: `        <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">self</span>.after(<span class="nm">2000</span>, <span class="kw">self</span>.faza_zelena)`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">faza_zelena</span>(<span class="kw">self</span>):`, hl: 'copy' },
+    { c: `        <span class="cm">"""Odbrojava zelenu fazu od 7s do 0 (kao crvena, samo boja i broj se menjaju)"""</span>`, hl: 'copy' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen: <span class="kw">return</span>`, hl: 'copy' },
+    { c: `        <span class="kw">if</span> <span class="kw">self</span>.tajmer <span class="op">==</span> <span class="nm">7</span>:  <span class="cm"># Prvi poziv – upali zelenu, ugasi žutu</span>`, hl: 'copy' },
+    { c: `            <span class="kw">self</span>.leds[<span class="nm">1</span>].itemconfig(<span class="st">"led1"</span>, fill=<span class="st">"#444444"</span>)  <span class="cm"># Ugasi žutu</span>`, hl: 'copy' },
+    { c: `            <span class="kw">self</span>.leds[<span class="nm">2</span>].itemconfig(<span class="st">"led2"</span>, fill=<span class="st">"green"</span>)    <span class="cm"># Upali zelenu</span>`, hl: 'copy' },
+    { c: `        <span class="kw">self</span>.labela_88.config(text=<span class="st">f"</span><span class="nm">{self.tajmer:02d}</span><span class="st">"</span>, fg=<span class="st">"#00cc00"</span>)  <span class="cm"># Zelena boja na displeju</span>`, hl: 'copy' },
+    { c: `        <span class="kw">if</span> <span class="kw">self</span>.tajmer <span class="op">&gt;</span> <span class="nm">0</span>:`, hl: 'copy' },
+    { c: `            <span class="kw">self</span>.tajmer <span class="op">-=</span> <span class="nm">1</span>`, hl: 'copy' },
+    { c: `            <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">self</span>.after(<span class="nm">1000</span>, <span class="kw">self</span>.faza_zelena)`, hl: 'copy' },
+    { c: `        <span class="kw">else</span>:`, hl: 'copy' },
+    { c: `            <span class="fn">print</span>(<span class="st">"Zelena gotova → trepćanje"</span>)  <span class="cm"># Biće zamenjeno u K5</span>`, hl: 'copy' },
+    { c: ``, hl: '' },
+    { c: `<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:`, hl: '' },
+    { c: `    app <span class="op">=</span> <span class="fn">SimulatorStartStop</span>()`, hl: '' },
+    { c: `    app.mainloop()`, hl: '' },
+  ]
+},
+
+// ── KORAK 5 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 5',
+  sub:     'Zelena trepće (3s) → Žuta (2s)',
+  file:    '05_Model_semafora_K5.py',
+  explain: `Po dijagramu, posle zelene faze, zelena LED treba da <strong>trepće 3 sekunde</strong> (kratko pali-gasi). Mi ćemo to uraditi svakih 300ms (0.3s), što daje oko 5 treptaja u 3 sekunde. Koristimo poseban brojač <code>self.treptaj_brojac</code> koji broji do 10 (10 × 300ms = 3s).<br><br>
+Svaki put kada se <code>faza_trepcanje()</code> pozove, proverimo da li je broj <strong>paran ili neparan</strong> – ako je paran, LED je upaljena, ako je neparan, LED je ugašena. To pravimo sa <code>self.treptaj_brojac % 2</code>.<br><br>
+Na kraju trepćanja (<code>treptaj_brojac == 0</code>) pozivamo <code>faza_zuta_kraj()</code>. Ova funkcija je ista kao <code>faza_zuta</code> – samo što na kraju umesto na zelenu, prelazi na crvenu i ponovo počinje ciklus!`,
+  lines: [
+    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="kw">class</span> <span class="cl">SimulatorStartStop</span>(tk.Tk):`, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">super</span>().__init__()`, hl: '' },
+    { c: `        <span class="kw">self</span>.title(<span class="st">"START/STOP Simulator"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.geometry(<span class="st">"400x450"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.configure(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">False</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.tajmer <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">None</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.treptaj_brojac <span class="op">=</span> <span class="nm">0</span>  <span class="cm"># Broji treptaje zelene LED</span>`, hl: 'add' },
+    { c: `        <span class="kw">self</span>.okvir_displej <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"black"</span>, bd=<span class="nm">10</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.okvir_displej.pack(pady=<span class="nm">20</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88 <span class="op">=</span> tk.Label(<span class="kw">self</span>.okvir_displej, text=<span class="st">"  "</span>, fg=<span class="st">"#550000"</span>,`, hl: '' },
+    { c: `                                  bg=<span class="st">"black"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">60</span>, <span class="st">"bold"</span>), width=<span class="nm">4</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88.pack()`, hl: '' },
+    { c: `        led_frame <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: `        led_frame.pack(pady=<span class="nm">10</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.leds <span class="op">=</span> []`, hl: '' },
+    { c: `        boje <span class="op">=</span> [<span class="st">"red"</span>, <span class="st">"yellow"</span>, <span class="st">"green"</span>]`, hl: '' },
+    { c: `        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):`, hl: '' },
+    { c: `            l <span class="op">=</span> tk.Canvas(led_frame, width=<span class="nm">40</span>, height=<span class="nm">40</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: '' },
+    { c: `            l.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">35</span>, <span class="nm">35</span>, fill=<span class="st">"#444444"</span>, tags=<span class="st">f"led{i}"</span>)`, hl: '' },
+    { c: `            l.grid(row=<span class="nm">0</span>, column=i, padx=<span class="nm">20</span>)`, hl: '' },
+    { c: `            <span class="kw">self</span>.leds.append(l)`, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_control <span class="op">=</span> tk.Button(<span class="kw">self</span>, text=<span class="st">"START / STOP"</span>, command=<span class="kw">self</span>.toggle_sistem,`, hl: '' },
+    { c: `                                    bg=<span class="st">"#3498db"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>),`, hl: '' },
+    { c: `                                    width=<span class="nm">20</span>, height=<span class="nm">2</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_control.pack(pady=<span class="nm">30</span>)`, hl: '' },
+    { c: `        tk.Label(<span class="kw">self</span>, text=<span class="st">"Klikni za promenu stanja"</span>, fg=<span class="st">"white"</span>, bg=<span class="st">"#2c3e50"</span>).pack()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">toggle_sistem</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen:`, hl: '' },
+    { c: `            <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">True</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.tajmer <span class="op">=</span> <span class="nm">8</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.leds[<span class="nm">0</span>].itemconfig(<span class="st">"led0"</span>, fill=<span class="st">"red"</span>)`, hl: '' },
+    { c: `            <span class="kw">self</span>.faza_crvena()`, hl: '' },
+    { c: `        <span class="kw">else</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">False</span>`, hl: '' },
+    { c: `            <span class="kw">if</span> <span class="kw">self</span>.after_id:`, hl: '' },
+    { c: `                <span class="kw">self</span>.after_cancel(<span class="kw">self</span>.after_id)`, hl: '' },
+    { c: `            <span class="kw">self</span>.labela_88.config(text=<span class="st">"  "</span>, fg=<span class="st">"#550000"</span>)`, hl: '' },
+    { c: `            <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):`, hl: '' },
+    { c: `                <span class="kw">self</span>.leds[i].itemconfig(<span class="st">f"led{i}"</span>, fill=<span class="st">"#444444"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">faza_crvena</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen: <span class="kw">return</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88.config(text=<span class="st">f"</span><span class="nm">{self.tajmer:02d}</span><span class="st">"</span>, fg=<span class="st">"#ff0000"</span>)`, hl: '' },
+    { c: `        <span class="kw">if</span> <span class="kw">self</span>.tajmer <span class="op">&gt;</span> <span class="nm">0</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.tajmer <span class="op">-=</span> <span class="nm">1</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">self</span>.after(<span class="nm">1000</span>, <span class="kw">self</span>.faza_crvena)`, hl: '' },
+    { c: `        <span class="kw">else</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.faza_zuta()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">faza_zuta</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen: <span class="kw">return</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.leds[<span class="nm">0</span>].itemconfig(<span class="st">"led0"</span>, fill=<span class="st">"#444444"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.leds[<span class="nm">1</span>].itemconfig(<span class="st">"led1"</span>, fill=<span class="st">"yellow"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88.config(text=<span class="st">"  "</span>, fg=<span class="st">"#550000"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">self</span>.after(<span class="nm">2000</span>, <span class="kw">self</span>.faza_zelena)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">faza_zelena</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen: <span class="kw">return</span>`, hl: '' },
+    { c: `        <span class="kw">if</span> <span class="kw">self</span>.tajmer <span class="op">==</span> <span class="nm">7</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.leds[<span class="nm">1</span>].itemconfig(<span class="st">"led1"</span>, fill=<span class="st">"#444444"</span>)`, hl: '' },
+    { c: `            <span class="kw">self</span>.leds[<span class="nm">2</span>].itemconfig(<span class="st">"led2"</span>, fill=<span class="st">"green"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88.config(text=<span class="st">f"</span><span class="nm">{self.tajmer:02d}</span><span class="st">"</span>, fg=<span class="st">"#00cc00"</span>)`, hl: '' },
+    { c: `        <span class="kw">if</span> <span class="kw">self</span>.tajmer <span class="op">&gt;</span> <span class="nm">0</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.tajmer <span class="op">-=</span> <span class="nm">1</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">self</span>.after(<span class="nm">1000</span>, <span class="kw">self</span>.faza_zelena)`, hl: '' },
+    { c: `        <span class="kw">else</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.treptaj_brojac <span class="op">=</span> <span class="nm">10</span>   <span class="cm"># 10 × 300ms = 3s trepćanja</span>`, hl: 'mod' },
+    { c: `            <span class="kw">self</span>.faza_trepcanje()       <span class="cm"># Pokreni trepćanje zelene</span>`, hl: 'mod' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">faza_trepcanje</span>(<span class="kw">self</span>):`, hl: 'add' },
+    { c: `        <span class="cm">"""Zelena trepće 3s: svakih 300ms se pali/gasi (10 puta ukupno)"""</span>`, hl: 'add' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen: <span class="kw">return</span>`, hl: 'add' },
+    { c: `        <span class="kw">if</span> <span class="kw">self</span>.treptaj_brojac <span class="op">%</span> <span class="nm">2</span> <span class="op">==</span> <span class="nm">0</span>:  <span class="cm"># Paran broj → upali</span>`, hl: 'add' },
+    { c: `            <span class="kw">self</span>.leds[<span class="nm">2</span>].itemconfig(<span class="st">"led2"</span>, fill=<span class="st">"green"</span>)`, hl: 'add' },
+    { c: `        <span class="kw">else</span>:                             <span class="cm"># Neparan broj → ugasi</span>`, hl: 'add' },
+    { c: `            <span class="kw">self</span>.leds[<span class="nm">2</span>].itemconfig(<span class="st">"led2"</span>, fill=<span class="st">"#444444"</span>)`, hl: 'add' },
+    { c: `        <span class="kw">if</span> <span class="kw">self</span>.treptaj_brojac <span class="op">&gt;</span> <span class="nm">0</span>:`, hl: 'add' },
+    { c: `            <span class="kw">self</span>.treptaj_brojac <span class="op">-=</span> <span class="nm">1</span>`, hl: 'add' },
+    { c: `            <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">self</span>.after(<span class="nm">300</span>, <span class="kw">self</span>.faza_trepcanje)`, hl: 'add' },
+    { c: `        <span class="kw">else</span>:`, hl: 'add' },
+    { c: `            <span class="fn">print</span>(<span class="st">"Trepćanje gotovo → žuta pa crvena"</span>)  <span class="cm"># Biće zamenjeno u K6</span>`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:`, hl: '' },
+    { c: `    app <span class="op">=</span> <span class="fn">SimulatorStartStop</span>()`, hl: '' },
+    { c: `    app.mainloop()`, hl: '' },
+  ]
+},
+
+// ── KORAK 6 ──────────────────────────────────────────────────────────────────
+{
+  name:    'Korak 6',
+  sub:     'Zatvaramo krug – Žuta → Crvena → ponovi',
+  file:    '05_Model_semafora_FINAL.py',
+  explain: `Poslednji korak! Dodajemo <code>faza_zuta_kraj()</code> – ovo je <strong>copy-paste</strong> od <code>faza_zuta()</code>, sa samo jednom izmenom: na kraju ne poziva <code>faza_zelena()</code>, nego <code>faza_crvena()</code>.<br><br>
+Ali pre poziva <code>faza_crvena()</code>, moramo da <strong>resetujemo tajmer na 8</strong> i da <strong>upalimo crvenu LED</strong> – ista logika kao kada pritisnemo START.<br><br>
+Time je <strong>krug zatvoren</strong>: Crvena 8s → Žuta 2s → Zelena 7s → Trepćanje 3s → Žuta 2s → Crvena 8s → ... i sve se ponavlja dok korisnik ne pritisne STOP. Semafor je gotov! 🎉`,
+  lines: [
+    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `<span class="kw">class</span> <span class="cl">SimulatorStartStop</span>(tk.Tk):`, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">super</span>().__init__()`, hl: '' },
+    { c: `        <span class="kw">self</span>.title(<span class="st">"Model Semafora"</span>)`, hl: 'mod' },
+    { c: `        <span class="kw">self</span>.geometry(<span class="st">"400x450"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.configure(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">False</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.tajmer <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">None</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.treptaj_brojac <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.okvir_displej <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"black"</span>, bd=<span class="nm">10</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.okvir_displej.pack(pady=<span class="nm">20</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88 <span class="op">=</span> tk.Label(<span class="kw">self</span>.okvir_displej, text=<span class="st">"  "</span>, fg=<span class="st">"#550000"</span>,`, hl: '' },
+    { c: `                                  bg=<span class="st">"black"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">60</span>, <span class="st">"bold"</span>), width=<span class="nm">4</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88.pack()`, hl: '' },
+    { c: `        led_frame <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: `        led_frame.pack(pady=<span class="nm">10</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.leds <span class="op">=</span> []`, hl: '' },
+    { c: `        boje <span class="op">=</span> [<span class="st">"red"</span>, <span class="st">"yellow"</span>, <span class="st">"green"</span>]`, hl: '' },
+    { c: `        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):`, hl: '' },
+    { c: `            l <span class="op">=</span> tk.Canvas(led_frame, width=<span class="nm">40</span>, height=<span class="nm">40</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: '' },
+    { c: `            l.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">35</span>, <span class="nm">35</span>, fill=<span class="st">"#444444"</span>, tags=<span class="st">f"led{i}"</span>)`, hl: '' },
+    { c: `            l.grid(row=<span class="nm">0</span>, column=i, padx=<span class="nm">20</span>)`, hl: '' },
+    { c: `            <span class="kw">self</span>.leds.append(l)`, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_control <span class="op">=</span> tk.Button(<span class="kw">self</span>, text=<span class="st">"START / STOP"</span>, command=<span class="kw">self</span>.toggle_sistem,`, hl: '' },
+    { c: `                                    bg=<span class="st">"#3498db"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>),`, hl: '' },
+    { c: `                                    width=<span class="nm">20</span>, height=<span class="nm">2</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_control.pack(pady=<span class="nm">30</span>)`, hl: '' },
+    { c: `        tk.Label(<span class="kw">self</span>, text=<span class="st">"Klikni za promenu stanja"</span>, fg=<span class="st">"white"</span>, bg=<span class="st">"#2c3e50"</span>).pack()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">toggle_sistem</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen:`, hl: '' },
+    { c: `            <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">True</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.tajmer <span class="op">=</span> <span class="nm">8</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.leds[<span class="nm">0</span>].itemconfig(<span class="st">"led0"</span>, fill=<span class="st">"red"</span>)`, hl: '' },
+    { c: `            <span class="kw">self</span>.faza_crvena()`, hl: '' },
+    { c: `        <span class="kw">else</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.sistem_ukljucen <span class="op">=</span> <span class="kw">False</span>`, hl: '' },
+    { c: `            <span class="kw">if</span> <span class="kw">self</span>.after_id:`, hl: '' },
+    { c: `                <span class="kw">self</span>.after_cancel(<span class="kw">self</span>.after_id)`, hl: '' },
+    { c: `            <span class="kw">self</span>.labela_88.config(text=<span class="st">"  "</span>, fg=<span class="st">"#550000"</span>)`, hl: '' },
+    { c: `            <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):`, hl: '' },
+    { c: `                <span class="kw">self</span>.leds[i].itemconfig(<span class="st">f"led{i}"</span>, fill=<span class="st">"#444444"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">faza_crvena</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen: <span class="kw">return</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88.config(text=<span class="st">f"</span><span class="nm">{self.tajmer:02d}</span><span class="st">"</span>, fg=<span class="st">"#ff0000"</span>)`, hl: '' },
+    { c: `        <span class="kw">if</span> <span class="kw">self</span>.tajmer <span class="op">&gt;</span> <span class="nm">0</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.tajmer <span class="op">-=</span> <span class="nm">1</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">self</span>.after(<span class="nm">1000</span>, <span class="kw">self</span>.faza_crvena)`, hl: '' },
+    { c: `        <span class="kw">else</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.faza_zuta()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">faza_zuta</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen: <span class="kw">return</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.leds[<span class="nm">0</span>].itemconfig(<span class="st">"led0"</span>, fill=<span class="st">"#444444"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.leds[<span class="nm">1</span>].itemconfig(<span class="st">"led1"</span>, fill=<span class="st">"yellow"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88.config(text=<span class="st">"  "</span>, fg=<span class="st">"#550000"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">self</span>.after(<span class="nm">2000</span>, <span class="kw">self</span>.faza_zelena)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">faza_zelena</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen: <span class="kw">return</span>`, hl: '' },
+    { c: `        <span class="kw">if</span> <span class="kw">self</span>.tajmer <span class="op">==</span> <span class="nm">7</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.leds[<span class="nm">1</span>].itemconfig(<span class="st">"led1"</span>, fill=<span class="st">"#444444"</span>)`, hl: '' },
+    { c: `            <span class="kw">self</span>.leds[<span class="nm">2</span>].itemconfig(<span class="st">"led2"</span>, fill=<span class="st">"green"</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.labela_88.config(text=<span class="st">f"</span><span class="nm">{self.tajmer:02d}</span><span class="st">"</span>, fg=<span class="st">"#00cc00"</span>)`, hl: '' },
+    { c: `        <span class="kw">if</span> <span class="kw">self</span>.tajmer <span class="op">&gt;</span> <span class="nm">0</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.tajmer <span class="op">-=</span> <span class="nm">1</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">self</span>.after(<span class="nm">1000</span>, <span class="kw">self</span>.faza_zelena)`, hl: '' },
+    { c: `        <span class="kw">else</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.treptaj_brojac <span class="op">=</span> <span class="nm">10</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.faza_trepcanje()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">faza_trepcanje</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen: <span class="kw">return</span>`, hl: '' },
+    { c: `        <span class="kw">if</span> <span class="kw">self</span>.treptaj_brojac <span class="op">%</span> <span class="nm">2</span> <span class="op">==</span> <span class="nm">0</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.leds[<span class="nm">2</span>].itemconfig(<span class="st">"led2"</span>, fill=<span class="st">"green"</span>)`, hl: '' },
+    { c: `        <span class="kw">else</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.leds[<span class="nm">2</span>].itemconfig(<span class="st">"led2"</span>, fill=<span class="st">"#444444"</span>)`, hl: '' },
+    { c: `        <span class="kw">if</span> <span class="kw">self</span>.treptaj_brojac <span class="op">&gt;</span> <span class="nm">0</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.treptaj_brojac <span class="op">-=</span> <span class="nm">1</span>`, hl: '' },
+    { c: `            <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">self</span>.after(<span class="nm">300</span>, <span class="kw">self</span>.faza_trepcanje)`, hl: '' },
+    { c: `        <span class="kw">else</span>:`, hl: '' },
+    { c: `            <span class="kw">self</span>.faza_zuta_kraj()  <span class="cm"># Trepćanje gotovo → poslednja žuta</span>`, hl: 'mod' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">faza_zuta_kraj</span>(<span class="kw">self</span>):`, hl: 'copy' },
+    { c: `        <span class="cm">"""Isto kao faza_zuta, ali na kraju vraća na crvenu (zatvara krug)"""</span>`, hl: 'copy' },
+    { c: `        <span class="kw">if not</span> <span class="kw">self</span>.sistem_ukljucen: <span class="kw">return</span>`, hl: 'copy' },
+    { c: `        <span class="kw">self</span>.leds[<span class="nm">2</span>].itemconfig(<span class="st">"led2"</span>, fill=<span class="st">"#444444"</span>)  <span class="cm"># Ugasi zelenu</span>`, hl: 'copy' },
+    { c: `        <span class="kw">self</span>.leds[<span class="nm">1</span>].itemconfig(<span class="st">"led1"</span>, fill=<span class="st">"yellow"</span>)   <span class="cm"># Upali žutu</span>`, hl: 'copy' },
+    { c: `        <span class="kw">self</span>.labela_88.config(text=<span class="st">"  "</span>, fg=<span class="st">"#550000"</span>)`, hl: 'copy' },
+    { c: `        <span class="cm"># Posle 2s upali crvenu i resetuj tajmer – krug se ponavlja!</span>`, hl: 'copy' },
+    { c: `        <span class="kw">self</span>.tajmer <span class="op">=</span> <span class="nm">8</span>                                    <span class="cm"># Reset tajmera</span>`, hl: 'copy' },
+    { c: `        <span class="kw">self</span>.leds[<span class="nm">0</span>].itemconfig(<span class="st">"led0"</span>, fill=<span class="st">"red"</span>)       <span class="cm"># Upali crvenu odmah</span>`, hl: 'copy' },
+    { c: `        <span class="kw">self</span>.after_id <span class="op">=</span> <span class="kw">self</span>.after(<span class="nm">2000</span>, <span class="kw">self</span>.faza_crvena)  <span class="cm"># Posle 2s → crvena</span>`, hl: 'copy' },
+    { c: ``, hl: '' },
+    { c: `<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:`, hl: '' },
+    { c: `    app <span class="op">=</span> <span class="fn">SimulatorStartStop</span>()`, hl: '' },
+    { c: `    app.mainloop()`, hl: '' },
+  ]
+},
+
+]; // ── kraj STEPS ─────────────────────────────────────────────────────────────
+
+
+// ════════════════════════════════════════════════════════════════════════════
+//  ENGINE  –  ne menjati ispod ove linije
+// ════════════════════════════════════════════════════════════════════════════
+
+let cur = 0;
+
+function buildSidebar() {
+  // zahtevi
+  document.getElementById('sidebar-reqs').innerHTML =
+    ZAHTEVI.map(z => `<div class="req-item">${z}</div>`).join('');
+
+  // koraci
+  const el = document.getElementById('sidebar-steps');
+  el.innerHTML = STEPS.map((s, i) =>
+    `<div class="step-pill${i === 0 ? ' active' : ''}" onclick="goTo(${i})">
+       <span class="pill-num">${i + 1}</span>${s.name}
+     </div>`
+  ).join('');
+}
+
+function render() {
+  const s = STEPS[cur];
+
+  document.getElementById('nav-label').textContent = `Korak ${cur + 1} / ${STEPS.length}`;
+  document.getElementById('nav-name').textContent  = s.name;
+  document.getElementById('nav-sub').textContent   = s.sub;
+  document.getElementById('filename').textContent  = s.file;
+  document.getElementById('btn-prev').disabled = cur === 0;
+  document.getElementById('btn-next').disabled = cur === STEPS.length - 1;
+
+  // progress dots
+  const dc = document.getElementById('dots');
+  dc.innerHTML = '';
+  STEPS.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < cur ? ' done' : i === cur ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dc.appendChild(d);
+  });
+
+  // sidebar active
+  document.querySelectorAll('.step-pill').forEach((p, i) =>
+    p.classList.toggle('active', i === cur));
+
+  document.getElementById('step-explain').innerHTML = s.explain || '';
+
+  // kod
+  document.getElementById('code-pre').innerHTML =
+    s.lines.map(l => {
+      const cls = l.hl ? ` hl-${l.hl}` : '';
+      return `<div class="ln${cls}"><span class="ln-code">${l.c}</span></div>`;
+    }).join('');
+
+  // reset copy dugme
+  const cb = document.getElementById('copy-btn');
+  cb.textContent = 'copy';
+  cb.classList.remove('copied');
+  document.querySelector('.code-area').scrollTop = 0;
+}
+
+function next() { if (cur < STEPS.length - 1) { cur++; render(); } }
+function prev() { if (cur > 0)                { cur--; render(); } }
+function goTo(i){ cur = i; render(); }
+
+function copyCode() {
+  const text = document.getElementById('code-pre').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const cb = document.getElementById('copy-btn');
+    cb.textContent = 'copied ✓';
+    cb.classList.add('copied');
+    setTimeout(() => { cb.textContent = 'copy'; cb.classList.remove('copied'); }, 1800);
+  });
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  if (e.key === 'ArrowLeft')  prev();
+});
+
+buildSidebar();
+render();
+</script>
+</body>
+</html>

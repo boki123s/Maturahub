@@ -431,7 +431,7 @@
   <span class="intro-tag">// Python vežbe</span>
   <h2>Nauči programiranje koje ne znas jer eto</h2>
   <p>
-    Ako nekome treba 5 iz mika, ovo je jedini nacin, ovde je pojednostavljeno i lako za razumeti.
+    Ako nekome treba 5 iz mika, ovo je jedini nacin, ovde je pojednostavljeno i lako za razumeti. ***** Ovi zadaci sa ljubicastim okvirom i zvezdicom su dostupni, ostali nisu jos uvek.
   </p>
   <div class="intro-divider"></div>
 </section>
@@ -451,22 +451,82 @@
 <script>
 const tasks = [
 {
-    name: "Baci kockicu",
-    desc: "Korisnik klikće na dugme koje baca virtuelnu kocku.",
+    name: "Alarmni sistem",
+    desc: "Aktivacija svetlosnih i zvučnih signala uz ispis poruke na LCD ekranu. Koristi jednostavne funkcije.",
+    tag: "Težina ★",
+    link: "zadaci/11alarm.html",
+    featured: false
+  },
+  {
+    name: "Led rasveta",
+    desc: "Kontrola više LED dioda. Iako je logika prosta, kod koristi klase što otežava razumevanje.",
+    tag: "Težina ★★",
+    link: "zadaci/7led_rasveta.html",
+    featured: false
+  },
+  {
+    name: "Kontrola pristupa na parking",
+    desc: "Simulacija rampe i 7-seg displeja. Težina je u preciznom crtanju grafičkih elemenata.",
+    tag: "Težina ★★",
+    link: "zadaci/5parking.html",
+    featured: true
+  },
+  {
+    name: "Sistem za regulaciju temperature",
+    desc: "Očitavanje vrednosti sa slajdera i dinamički ispis na simulirani LCD ekran.",
+    tag: "Težina ★★",
+    link: "zadaci/13temperatura.html",
+    featured: false
+  },
+  {
+    name: "Stoperica",
+    desc: "Merenje vremena i rad sa događajima pritiska tastera u realnom vremenu.",
+    tag: "Težina ★★",
+    link: "zadaci/21stoperica.html",
+    featured: false
+  },
+  {
+    name: "Korona brojac",
+    desc: "Logika digitalnog brojača. Zahteva poznavanje BCD dekodera i rad sa rečnicima.",
     tag: "Težina ★★★",
+    link: "zadaci/2korona.html",
+    featured: true
+  },
+  {
+    name: "Merenje razdaljine",
+    desc: "Simulacija ultrazvučnog senzora. Kompleksna matematika i rad sa stanjima programa.",
+    tag: "Težina ★★★",
+    link: "zadaci/17razdaljina.html",
+    featured: false
+  },
+  {
+    name: "Baci kockicu",
+    desc: "Generisanje nasumičnog broja uz korišćenje klasa i StringVar varijabli.",
+    tag: "Težina ★★★★",
     link: "zadaci/1baci_kocku.html",
     featured: true
   },
-  { name: "Korona brojac", desc: "Nije još uvek dostupan.", tag: "Težina ★★" },
-  { name: "Model semafora za auto", desc: "Nije još uvek dostupan.", tag: "Težina ★★★" },
-  { name: "Led rasveta", desc: "Nije još uvek dostupan.", tag: "Težina ★" },
-  { name: "Kontrola pristupa na parking", desc: "Nije još uvek dostupan.", tag: "Težina ★★" },
-  { name: "Alarmni sistem", desc: "Nije još uvek dostupan.", tag: "Težina ★" },
-  { name: "Sistem za regulaciju temperature", desc: "Nije još uvek dostupan.", tag: "Težina ★★" },
-  { name: "Kontrola prava pristupa", desc: "Nije još uvek dostupan.", tag: "Težina ★★★" },
-  { name: "Merenje razdaljine", desc: "Nije još uvek dostupan.", tag: "Težina ★★★" },
-  { name: "Sifrovanje porta", desc: "Nije još uvek dostupan.", tag: "Težina ★★★" },
-  { name: "Stoperica", desc: "Nije još uvek dostupan.", tag: "Težina ★★" }
+  {
+    name: "Model semafora za auto",
+    desc: "Složena automatika semafora. Kod je u potpunosti objektno orijentisan (OOP).",
+    tag: "Težina ★★★★",
+    link: "zadaci/3semafor.html",
+    featured: true
+  },
+  {
+    name: "Kontrola prava pristupa",
+    desc: "Rad sa matricom tastera. Koristi lambda funkcije unutar petlji što je napredan koncept.",
+    tag: "Težina ★★★★",
+    link: "zadaci/15pristup.html",
+    featured: false
+  },
+  {
+    name: "Sifrovanje porta",
+    desc: "Napredna manipulacija portovima i listama objekata na platnu (Canvas).",
+    tag: "Težina ★★★★",
+    link: "zadaci/19sifrovanje.html",
+    featured: false
+  }
 ];
 
 const grid = document.getElementById('tasksGrid');
