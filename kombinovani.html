@@ -823,6 +823,7 @@ questionCategory.innerText = categoryNames[q.category] || "";
       if (currentQuestion > 0) {
         currentQuestion--;
         renderQuestion();
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
     }
 
