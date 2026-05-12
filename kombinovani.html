@@ -12,11 +12,99 @@
       font-family: Arial, sans-serif;
     }
 
+    /* ── Theme variables ─────────────────────────────────── */
+    :root {
+      --bg: #0f172a;
+      --color: #ffffff;
+      --card-bg: rgba(255,255,255,0.06);
+      --card-border: rgba(255,255,255,0.08);
+      --input-bg: #1e293b;
+      --input-color: #ffffff;
+      --answer-bg: #1e293b;
+      --answer-border: transparent;
+      --explanation-bg: rgba(255,255,255,0.04);
+      --stat-bg: rgba(255,255,255,0.06);
+      --match-bg: #0f172a;
+      --match-border: #334155;
+      --match-item-bg: #1e293b;
+      --match-item-border: #334155;
+      --table-header-bg: rgba(255,255,255,0.07);
+      --table-border: rgba(255,255,255,0.06);
+    }
+
+    body.light-mode {
+      --bg: #f1f5f9;
+      --color: #0f172a;
+      --card-bg: rgba(0,0,0,0.04);
+      --card-border: rgba(0,0,0,0.08);
+      --input-bg: #e2e8f0;
+      --input-color: #0f172a;
+      --answer-bg: #e2e8f0;
+      --answer-border: transparent;
+      --explanation-bg: rgba(0,0,0,0.04);
+      --stat-bg: rgba(0,0,0,0.05);
+      --match-bg: #f8fafc;
+      --match-border: #cbd5e1;
+      --match-item-bg: #e2e8f0;
+      --match-item-border: #cbd5e1;
+      --table-header-bg: rgba(0,0,0,0.06);
+      --table-border: rgba(0,0,0,0.08);
+    }
+
+    body.light-mode .prijavi-link {
+      color: #1d4ed8 !important;
+    }
+    body.light-mode .answer.correct  { border-color: #16a34a; background: #bbf7d0; color: #14532d; }
+    body.light-mode .answer.correct .answer-checkbox { background: #16a34a; border-color: #16a34a; color: white; }
+    body.light-mode .input-answer-wrap input.input-correct { border-color: #16a34a; background: #bbf7d0; color: #14532d; }
+    body.light-mode .match-select.match-correct { border-color: #16a34a; background: #bbf7d0; color: #14532d; }
+    body.light-mode .explanation h3.correct-title { color: #15803d; }
+    #themeToggle {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 1000;
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      border: none;
+      background: var(--input-bg);
+      color: var(--color);
+      font-size: 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+      margin-top: 0;
+      width: 52px;
+      padding: 0;
+    }
+    #themeToggle:hover {
+      transform: scale(1.1) rotate(12deg);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+      background: var(--match-item-border);
+    }
+    #themeToggle .icon {
+      transition: opacity 0.25s, transform 0.35s;
+      display: block;
+      line-height: 1;
+    }
+    #themeToggle.spinning .icon {
+      animation: spinOnce 0.4s ease;
+    }
+    @keyframes spinOnce {
+      from { transform: rotate(0deg) scale(0.7); opacity: 0.3; }
+      to   { transform: rotate(360deg) scale(1); opacity: 1; }
+    }
+
     body {
-      background: #0f172a;
-      color: white;
+      background: var(--bg);
+      color: var(--color);
       min-height: 100vh;
       padding: 20px;
+      transition: background 0.35s, color 0.35s;
     }
 
     .container {
@@ -32,11 +120,12 @@
     }
 
     .card {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
       border-radius: 20px;
       padding: 20px;
       backdrop-filter: blur(10px);
+      transition: background 0.35s, border-color 0.35s;
     }
 
     select, button {
@@ -45,9 +134,10 @@
       border-radius: 12px;
       border: none;
       margin-top: 10px;
-      background: #1e293b;
-      color: white;
+      background: var(--input-bg);
+      color: var(--input-color);
       font-size: 15px;
+      transition: background 0.3s, color 0.3s;
     }
 
     button {
@@ -58,7 +148,7 @@
 
     button:hover {
       transform: scale(1.02);
-      background: #334155;
+      background: var(--match-item-border);
     }
 
     /* Dugme za sledeće kada je odgovor netačan */
@@ -68,15 +158,16 @@
     }
     button.btn-blocked:hover {
       transform: none;
-      background: #1e293b;
+      background: var(--input-bg);
     }
 
     .question-box {
       margin-top: 20px;
       padding: 30px;
-      background: rgba(255,255,255,0.06);
+      background: var(--card-bg);
       border-radius: 25px;
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid var(--card-border);
+      transition: background 0.35s, border-color 0.35s;
     }
 
     .question-header {
@@ -92,8 +183,8 @@
       padding: 10px 14px;
       border-radius: 12px;
       border: none;
-      background: #1e293b;
-      color: white;
+      background: var(--input-bg);
+      color: var(--input-color);
       font-size: 15px;
       flex-shrink: 0;
     }
@@ -128,12 +219,12 @@
 
     /* ── Multiple / Multi ─────────────────────────────────── */
     .answer {
-      background: #1e293b;
+      background: var(--answer-bg);
       padding: 18px;
       border-radius: 15px;
-      border: 2px solid transparent;
+      border: 2px solid var(--answer-border);
       cursor: pointer;
-      transition: 0.2s;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -172,12 +263,12 @@
       flex: 1;
       padding: 16px 18px;
       border-radius: 15px;
-      border: 2px solid #334155;
-      background: #1e293b;
-      color: white;
+      border: 2px solid var(--match-border);
+      background: var(--input-bg);
+      color: var(--input-color);
       font-size: 17px;
       outline: none;
-      transition: 0.2s;
+      transition: border-color 0.2s, background 0.3s;
     }
     .input-answer-wrap input[type="text"]:focus {
       border-color: #fb923c;
@@ -199,13 +290,12 @@
       gap: 10px;
     }
     .match-left-item {
-      background: #1e293b;
+      background: var(--match-item-bg);
       padding: 14px 16px;
       border-radius: 12px;
-      border: 2px solid #334155;
+      border: 2px solid var(--match-item-border);
       font-size: 15px;
       line-height: 1.4;
-      /* jednaka visina kao i select red */
       display: flex;
       align-items: center;
     }
@@ -218,12 +308,12 @@
       flex: 1;
       padding: 10px 12px;
       border-radius: 12px;
-      border: 2px solid #334155;
-      background: #0f172a;
-      color: white;
+      border: 2px solid var(--match-border);
+      background: var(--match-bg);
+      color: var(--input-color);
       font-size: 14px;
       cursor: pointer;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, background 0.3s;
       margin-top: 0;
       width: 100%;
     }
@@ -249,11 +339,12 @@
 
     .explanation {
       margin-top: 25px;
-      background: rgba(255,255,255,0.04);
+      background: var(--explanation-bg);
       padding: 20px;
       border-radius: 15px;
       display: none;
       line-height: 1.6;
+      transition: background 0.35s;
     }
 
     /* Boja naslova u objašnjenju */
@@ -270,11 +361,11 @@
     .match-explanation-table th {
       text-align: left;
       padding: 8px 14px;
-      background: rgba(255,255,255,0.07);
+      background: var(--table-header-bg);
     }
     .match-explanation-table td {
       padding: 10px 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid var(--table-border);
       vertical-align: top;
     }
     .match-arrow { color: #c084fc; font-size: 18px; }
@@ -287,10 +378,11 @@
     }
 
     .stat {
-      background: rgba(255,255,255,0.06);
+      background: var(--stat-bg);
       padding: 20px;
       border-radius: 20px;
       text-align: center;
+      transition: background 0.35s;
     }
 
     .big {
@@ -451,11 +543,27 @@
       }
 
       /* Naslov stranice */
-      h1 { font-size: 18px; margin-bottom: 12px; }
+      h1 { font-size: 14px; margin-bottom: 12px; padding-right: 60px; }
+
+      /* Theme toggle – manji na mobilnom */
+      #themeToggle {
+        position: fixed;
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+        top: 10px;
+        right: 10px;
+        border-radius: 10px;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Dark/Light mode toggle -->
+  <button id="themeToggle" title="Promeni temu" onclick="toggleTheme()">
+    <span class="icon" id="themeIcon">🌙</span>
+  </button>
+
   <div class="container">
 
     <h1 style="margin-bottom:20px;">🎓 Matura - Elektrotehničar računara</h1>
@@ -551,7 +659,7 @@
 		<li>!!! Tehnicka dokumentacija ima jedno nenumerisano pitanje, i zato je posle pomereno sve za 1</li>
 		<li>Srećno na maturi :D</li>
 		<li>Kontakt na home page-u</li>
-        <li><span onclick="openProblemModal()" style="text-decoration:underline;cursor:pointer;color:#cbd5e1;">Prijavi problem</span></li>
+        <li><span onclick="openProblemModal()" class="prijavi-link" style="text-decoration:underline;cursor:pointer;color:#cbd5e1;">Prijavi problem</span></li>
 		<li>ver. 1.02 - phone UI</li>
       </ul>
     </div>
@@ -1085,6 +1193,26 @@ document.getElementById("jumpInput").addEventListener("change", function(e) {
       const modal = document.getElementById("problemModal");
       if (e.target === modal) closeProblemModal();
     });
+
+    // ── Dark / Light mode ─────────────────────────────────────
+    function toggleTheme() {
+      const btn  = document.getElementById("themeToggle");
+      const icon = document.getElementById("themeIcon");
+      const isLight = document.body.classList.toggle("light-mode");
+      icon.textContent = isLight ? "☀️" : "🌙";
+      btn.classList.remove("spinning");
+      void btn.offsetWidth;
+      btn.classList.add("spinning");
+      localStorage.setItem("theme", isLight ? "light" : "dark");
+    }
+
+    (function() {
+      const saved = localStorage.getItem("theme");
+      if (saved === "light") {
+        document.body.classList.add("light-mode");
+        document.getElementById("themeIcon").textContent = "☀️";
+      }
+    })();
 
   </script>
 </body>

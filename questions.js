@@ -1111,20 +1111,20 @@ const questions = [
   },
 
   {
-    id: 82,
-    category: "os",
-    type: "multiple",
-    question: "82. Podešavate računar sa dva OS (Windows 11 i Windows 10) na posebnim particijama. Da biste obezbedili da se podrazumevano uvek pokreće Windows 11:",
-    answers: [
-      "Pokrenućete program Bcdedit.exe sa opcijom /default",
-      "Pokrenućete program Bcdedit.exe sa opcijom /bootcd",
-      "Kreiraćete Boot.ini fajl na korenskom direktorijumu Windows 10 particije",
-      "Kreiraćete Boot.ini fajl na korenskom direktorijumu Windows 7 particije"
-    ],
-    correct: 0,
-    explanation: "bcdedit /default {ID} postavlja podrazumevani OS koji se učitava pri pokretanju. Koristi se za upravljanje boot konfiguracionim podacima.",
-    image: ""
-  },
+  id: 82,
+  category: "os",
+  type: "multiple",
+  question: "82. Podešavate računar na kome treba da imate dva operativna sistema Windows 11 i Windows 10 koji su instalirani na posebnim particijama. Da biste obezbedili da se podrazumevano uvek pokreće Windows 11:",
+  answers: [
+    "Pokrenućete program Bcdedit.exe sa opcijom /default",
+    "Pokrenućete program Bcdedit.exe sa opcijom /bootcd",
+    "Kreiraćete Boot.ini fajl na korenskom direktorijumu Windows 10 particije",
+    "Kreiraćete Boot.ini fajl na korenskom direktorijumu Windows 7 particije"
+  ],
+  correct: 0,
+  explanation: "bcdedit /default {ID} postavlja podrazumevani OS koji se učitava pri pokretanju. Koristi se za upravljanje boot konfiguracionim podacima.",
+  image: ""
+},
 
   {
     id: 83,
@@ -1193,20 +1193,20 @@ const questions = [
   },
 
   {
-    id: 87,
-    category: "os",
-    type: "multiple",
-    question: "87. Otvarate Disk Management i vidite da je disk 0 potpuno zauzet. Da biste kreirali novu particiju na disku 0:",
-    answers: [
-      "Smanjićete volumen C",
-      "Kompresovati ćete volumen C",
-      "Konvertovati ćete Disk 0 u dinamički disk",
-      "Kreiraćete i inicijalizovati virtuelni hard disk (VHD)"
-    ],
-    correct: 0,
-    explanation: "Opcija 'Shrink Volume' (Smanji volumen) u Disk Management-u smanjuje veličinu postojeće particije i oslobađa nealokovani prostor za kreiranje nove particije.",
-    image: "slike/87.png"
-  },
+  id: 87,
+  category: "os",
+  type: "multiple",
+  question: "87. Otvarate Disk Management na računaru koji servisirate i zatičete situaciju kao na slici. Da biste kreirali novu particiju na disku 0:",
+  answers: [
+    "Smanjićete volumen C",
+    "Kompresovati ćete volumen C",
+    "Konvertovati ćete Disk 0 u dinamički disk",
+    "Kreiraćete i inicijalizovati virtuelni hard disk (VHD)"
+  ],
+  correct: 0,
+  explanation: "Opcija 'Shrink Volume' smanjuje veličinu postojeće particije i oslobađa nealokovani prostor za kreiranje nove particije.",
+  image: "slike/87.png"
+},
 
   {
     id: 88,
@@ -1982,20 +1982,20 @@ const questions = [
   },
 
   {
-    id: 163,
-    category: "odrzavanje",
-    type: "multiple",
-    question: "163. Pokrenuli ste zahtevnu aplikaciju i u Performance Monitor-u nadgledate parametar Procesor -> % Processor Time. Proglasićete procesor za usko grlo u sistemu ukoliko je vrednost ovog parametra:",
-    answers: [
-      "Preko 5%",
-      "Preko 50%",
-      "Preko 60%",
-      "Preko 85%"
-    ],
-    correct: 3,
-    explanation: "Vrednost % Processor Time iznad 85% tokom dužeg perioda ukazuje da je CPU usko grlo — pri kraćim skokovima to je normalno.",
-    image: ""
-  },
+  id: 163,
+  category: "odrzavanje",
+  type: "multiple",
+  question: "163. U preduzeću u kome radite odeljenje Računovodstva treba da počne sa korišćenjem processorski zahtevne aplikacije. Pokušavate da utvrdite da li računarima u odeljenju morate da nadogradite procesor. Na jednom od računara pokrećete aplikaciju i u Performance Monitor-u nadgledate parametar Procesor -> % Processor Time. Proglasićete procesor za usko grlo u sistemu ukoliko je vrednost ovog parametra:",
+  answers: [
+    "Preko 5%",
+    "Preko 50%",
+    "Preko 60%",
+    "Preko 85%"
+  ],
+  correct: 3,
+  explanation: "Vrednost % Processor Time iznad 85% tokom dužeg perioda ukazuje da je CPU usko grlo — pri kraćim skokovima to je normalno.",
+  image: ""
+},
 
   {
     id: 164,
@@ -2172,21 +2172,21 @@ const questions = [
     image: ""
   },
 
-  {
-    id: 175,
-    category: "odrzavanje",
-    type: "multiple",
-    question: "175. Administrirate mrežu u preduzeću. Zaposleni u odeljenju Prodaje se žale da se aplikacija sporije učitava. Performance Monitor pokazuje veliku aktivnost čvrstog diska. Da biste bili sigurni da disk predstavlja usko grlo u sistemu, morate da koristeci Perforamnce Monitor analizirati rad i:",
-    answers: [
-      "Procesora",
-      "Mreže",
-      "Memorije",
-      "Aplikacija"
-    ],
-    correct: 2,
-    explanation: "Velika aktivnost diska može biti posledica nedovoljne RAM memorije (paging/swap). Analiza memorije je sledeći korak da se potvrdi usko grlo.",
-    image: ""
-  },
+{
+  id: 175,
+  category: "odrzavanje",
+  type: "multiple",
+  question: "175. Administrirate mrežu u preduzeću. Zaposleni u odeljenju Prodaje žale se da se aplikacija sa kojom rade sporije učitava. Koristili ste Performance Monitor na jednom od računara i ustanovili da postoji velika aktivnost čvrstog diska. Da biste bili sigurni da disk predstavlja usko grlo u sistemu, morate da, koristeći Performance Monitor, analizirate rad i:",
+  answers: [
+    "Procesora",
+    "Mreže",
+    "Memorije",
+    "Aplikacija"
+  ],
+  correct: 2,
+  explanation: "Velika aktivnost diska može biti posledica nedovoljne RAM memorije (paging/swap). Analiza memorije je sledeći korak da se potvrdi usko grlo.",
+  image: ""
+},
 
   {
     id: 176,
@@ -2410,21 +2410,21 @@ const questions = [
     image: ""
   },
 
-  {
-    id: 189,
-    category: "odrzavanje",
-    type: "multi",
-    question: "189. Računar (Intel Celeron 4 jezgra, 4GB RAM, dva SSD diska, stranična datoteka 1.5GB na C:) se usporava samo kada je pokrenuta aplikacija za obračun plata. Performance Monitor pokazuje 100% CPU i greške straničenja čak i kada aplikacija NIJE pokrenuta. Da biste otklonili problem: (izaberi sve tačne odgovore)",
-    answers: [
-      "Nadogradite procesor",
-      "Dodate RAM memoriju",
-      "Konfigurišete sistem tako da se stranična datoteka nalazi na D i E diskovima",
-      "Povećate veličinu stranične datoteke na 3 GB"
-    ],
-    correct: [0,1],
-    explanation: "Greške straničenja i van rada aplikacije ukazuju na trajni nedostatak RAM-a. Dodavanje RAM-a je pravo rešenje.",
-    image: ""
-  },
+{
+  id: 189,
+  category: "odrzavanje",
+  type: "multi",
+  question: "189. Šef računovodstva preduzeća prijavljuje problem u radu računara na kome je instalirana baza podataka za obradu plata. Kada se pokrene aplikacija za obračun plata, računar se znatno uspori i ne može da se pokrene ni jedan drugi program. Računar je sledeće konfiguracije: Intel Celeron sa 4 jezgra, 4 GB RAM memorije, dva SSD diska, disk 0 ima oznaku C:, disk 1 ima oznaku D:, stranična datoteka od 1.5 GB smeštena je na C particiji, PSI 1Gbps mrežnu karticu. Kada je aplikacija pokrenuta uočavate: da je procenat korišćenja svih procesora 100% i da postoji znatan broj grešaka straničenja. Kada aplikacija nije pokrenuta: prosečna iskorišćenost procesora je 30% i i dalje postoji značajan broj grešaka straničenja. Na osnovu dobijenih izveštaja zaključujete da je najbolje rešenje za optimizaciju rada računara da: (izaberi sve tačne odgovore)",
+  answers: [
+    "Nadogradite procesor",
+    "Dodate RAM memoriju",
+    "Konfigurišete sistem tako da se stranična datoteka nalazi na D i E diskovima",
+    "Povećate veličinu stranične datoteke na 3 GB"
+  ],
+  correct: [0, 1],
+  explanation: "Greške straničenja i van rada aplikacije ukazuju na trajni nedostatak RAM-a. Dodavanje RAM-a je pravo rešenje.",
+  image: ""
+},
 
   {
     id: 190,
