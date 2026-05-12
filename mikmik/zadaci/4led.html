@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Korona Brojač – 7-Segment Simulator</title>
+<title>LED Rasveta – Simulator</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -20,7 +20,6 @@
   --mono:     'JetBrains Mono', monospace;
   --sans:     'Sora', sans-serif;
 
-  /* highlight boje */
   --hl-add-bg:    rgba(52,211,153,.09);
   --hl-add-bar:   #34d399;
   --hl-del-bg:    rgba(239,68,68,.09);
@@ -44,7 +43,6 @@ body {
   flex-direction: column;
 }
 
-/* ── HEADER ── */
 header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -85,7 +83,6 @@ header {
 }
 .header-spacer { width: 80px; flex-shrink: 0; }
 
-/* ── LAYOUT ── */
 .layout {
   display: flex;
   flex: 1;
@@ -93,7 +90,6 @@ header {
   height: calc(100vh - 53px);
 }
 
-/* ── SIDEBAR ── */
 .sidebar {
   width: 230px;
   flex-shrink: 0;
@@ -123,7 +119,6 @@ header {
   margin-bottom: 8px;
 }
 
-/* zahtevi */
 .sidebar-reqs { padding: 12px 16px 4px; border-bottom: 1px solid var(--border); }
 .req-item {
   display: flex;
@@ -142,7 +137,6 @@ header {
   margin-top: 1px;
 }
 
-/* objašnjenje koraka */
 .step-explain {
   padding: 10px 18px 9px;
   background: var(--surface);
@@ -192,7 +186,6 @@ header {
   border-color: var(--accent);
 }
 
-/* ── LEGENDA ── */
 .legend {
   border-top: 1px solid var(--border);
   padding: 12px 16px 16px;
@@ -233,7 +226,6 @@ header {
 .ls-mod   { background: var(--hl-mod-bg);  border: 1px solid var(--hl-mod-bar); }
 .ls-copy  { background: var(--hl-copy-bg); border: 1px solid var(--hl-copy-bar); }
 
-/* ── CONTENT ── */
 .content {
   flex: 1;
   display: flex;
@@ -242,7 +234,6 @@ header {
   min-width: 0;
 }
 
-/* ── NAV ── */
 .step-nav {
   display: flex;
   align-items: center;
@@ -290,7 +281,6 @@ header {
 .dot.active { background: var(--accent); transform: scale(1.35); }
 .dot.done   { background: var(--accent2); }
 
-/* ── CODE AREA ── */
 .code-area { flex: 1; overflow-y: auto; }
 .code-wrap { background: #0a0b10; min-height: 100%; }
 .code-bar {
@@ -319,7 +309,6 @@ header {
 .copy-btn:hover  { color: var(--accent3); border-color: rgba(124,106,247,.4); }
 .copy-btn.copied { color: var(--green);   border-color: rgba(51,255,153,.3); }
 
-/* mobile legenda strip – skrivena na desktopu */
 .mobile-legend {
   display: none;
   gap: 12px;
@@ -373,7 +362,6 @@ pre {
 }
 .ln-code { flex: 1; white-space: pre; }
 
-/* highlight tipovi */
 .ln.hl-add  { background: var(--hl-add-bg);  border-left: 2px solid var(--hl-add-bar);  }
 .ln.hl-del  { background: var(--hl-del-bg);  border-left: 2px solid var(--hl-del-bar);  }
 .ln.hl-mod  { background: var(--hl-mod-bg);  border-left: 2px solid var(--hl-mod-bar);  }
@@ -383,7 +371,6 @@ pre {
 .ln.hl-mod::before  { color: rgba(251,191,36,.3); }
 .ln.hl-copy::before { color: rgba(236,72,153,.3); }
 
-/* syntax */
 .kw { color: #a78bfa; }
 .fn { color: #60a5fa; }
 .st { color: #86efac; }
@@ -392,12 +379,10 @@ pre {
 .cl { color: #f9a8d4; }
 .op { color: #7c6af7; }
 
-/* scrollbar */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-/* ── MOBILE ── */
 @media (max-width: 680px) {
   .sidebar        { display: none; }
   .layout         { height: calc(100vh - 49px); }
@@ -416,7 +401,7 @@ pre {
 <body>
 
 <header>
-  <a href="index.html" class="home-btn">
+  <a href="javascript:history.back()" class="home-btn">
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
       <path d="M2 6.5L8 2l6 4.5V14H10v-3.5H6V14H2V6.5z"/>
     </svg>
@@ -424,30 +409,22 @@ pre {
   </a>
   <div class="header-center">
     <h1>LED <span>Rasveta</span></h1>
-    <div class="header-chip">4ETP-B6 · LED diode · Intenzitet · tkinter</div>
+    <div class="header-chip">4ETR · B6 · tkinter · intenzitet</div>
   </div>
   <div class="header-spacer"></div>
 </header>
 
 <div class="layout">
 
-  <!-- ── SIDEBAR ── -->
   <aside class="sidebar">
-
     <div class="sidebar-head">// zahtev zadatka</div>
-    <div class="sidebar-reqs" id="sidebar-reqs">
-      <!-- generisano JS-om -->
-    </div>
+    <div class="sidebar-reqs" id="sidebar-reqs"></div>
 
     <div class="sidebar-head" style="border-top: 1px solid var(--border); margin-top: 0;">// koraci</div>
-    <div class="sidebar-steps" id="sidebar-steps">
-      <!-- generisano JS-om -->
-    </div>
+    <div class="sidebar-steps" id="sidebar-steps"></div>
 
-    <!-- LEGENDA -->
     <div class="legend">
       <div class="legend-title">// legenda</div>
-
       <div class="legend-item">
         <div class="legend-bar lb-add"></div>
         <div class="legend-swatch ls-add"></div>
@@ -469,12 +446,9 @@ pre {
         Copy-paste
       </div>
     </div>
-
   </aside>
 
-  <!-- ── CONTENT ── -->
   <div class="content">
-
     <div class="step-nav">
       <button class="nav-btn" id="btn-prev" onclick="prev()">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3L5 8l5 5"/></svg>
@@ -496,37 +470,29 @@ pre {
 
     <div class="code-area">
       <div class="code-wrap">
-
         <div class="code-bar">
           <span id="filename"></span>
           <button class="copy-btn" id="copy-btn" onclick="copyCode()">copy</button>
         </div>
-
-        <!-- Legenda strip – vidljiva samo na mobilnom -->
         <div class="mobile-legend">
           <div class="ml-item"><div class="ml-dot mld-add"></div>Dodato</div>
           <div class="ml-item"><div class="ml-dot mld-del"></div>Obrisano</div>
           <div class="ml-item"><div class="ml-dot mld-mod"></div>Izmenjeno</div>
           <div class="ml-item"><div class="ml-dot mld-copy"></div>Copy-paste</div>
         </div>
-
         <pre id="code-pre"></pre>
       </div>
     </div>
-
   </div>
 </div>
 
 <script>
-// ════════════════════════════════════════════════════════════════════════════
-//  ZAHTEVI  –  lista zahteva zadatka (prikazana u sidebar-u)
-//  Slobodno menjaj tekst, dodaj ili ukloni stavke.
-// ════════════════════════════════════════════════════════════════════════════
 
 const ZAHTEVI = [
-  'Intenzitet osvetljenja tri svetleće diode menja se pomoću dva tastera: UVEĆAJ i SMANJI.',
-  'Vrednost intenziteta se menja za 10% pritiskom na jedan od tastera.',
-  'Početni intenzitet osvetljenja svetleće diode je 0% (diode ne svetle). Minimum je 0%, maksimum 100%.',
+  'Program omogućava menjanje intenziteta osvetljaja tri svetleće diode.',
+  'Intenzitet se menja pomoću dva tastera: UVEĆAJ i SMANJI.',
+  'Vrednost intenziteta se menja za 10% prilikom pritiska na taster.',
+  'Početni intenzitet je 0% – diode ne svetle.',
 ];
 
 const STEPS = [
@@ -534,11 +500,9 @@ const STEPS = [
 // ── KORAK 1 ──────────────────────────────────────────────────────────────────
 {
   name:    'Korak 1',
-  sub:     'Test program – polazna tačka',
+  sub:     'Test program',
   file:    '07_Led_rasveta_Test.py',
-  explain: `Ovo je <strong>test program</strong> koji smo dobili. Taster UVEĆAJ pali sve tri LED diode, a taster SMANJI ih gasi. Diode su ili potpuno uključene ili potpuno isključene – nema stepena.<br><br>
-Naš zadatak je da dodamo <strong>intenzitet</strong> – vrednost od 0% do 100% koja se menja za 10% po pritisku. Svaka LED dioda treba da bude <strong>tamnija ili svetlija</strong> zavisno od intenziteta.<br><br>
-Ideja: čuvamo varijablu <code>self.intenzitet</code> (0 do 100). Kada treba da prikažemo boju, izračunamo koliko je crvena/žuta/zelena "svetla" na osnovu tog procenta i stavimo tu boju na LED. Boje u tkinteru se zadaju kao <code>#RRGGBB</code> – dva heks broja za svaku komponentu (0–255).`,
+  explain: '<strong>Polazna tačka – test program.</strong> Ovo je kod koji smo dobili. Program već ima prozor, tri LED diode i dva tastera. Taster <code>UVEĆAJ</code> pali sve diode u punoj boji, a <code>SMANJI</code> ih gasi. Naš zadatak je da <strong>dodamo intenzitet</strong> – diode treba da svetle jače kako pritiskamo UVEĆAJ, a slabije kako pritiskamo SMANJI, u koracima od 10%.',
   lines: [
     { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
     { c: ``, hl: '' },
@@ -552,28 +516,28 @@ Ideja: čuvamo varijablu <code>self.intenzitet</code> (0 do 100). Kada treba da 
     { c: `        <span class="cm"># --- UI: LED DIODE ---</span>`, hl: '' },
     { c: `        tk.Label(<span class="kw">self</span>, text=<span class="st">"Status LED dioda:"</span>, fg=<span class="st">"white"</span>, bg=<span class="st">"#2c3e50"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>)).pack(pady=<span class="nm">20</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `        <span class="kw">self</span>.led_okviri <span class="op">=</span> []`, hl: '' },
-    { c: `        <span class="kw">self</span>.led_objekti <span class="op">=</span> []`, hl: '' },
-    { c: `        led_boje <span class="op">=</span> [<span class="st">"red"</span>, <span class="st">"yellow"</span>, <span class="st">"green"</span>]`, hl: '' },
+    { c: `        <span class="kw">self</span>.led_okviri = []`, hl: '' },
+    { c: `        <span class="kw">self</span>.led_objekti = []`, hl: '' },
+    { c: `        led_boje = [<span class="st">"red"</span>, <span class="st">"yellow"</span>, <span class="st">"green"</span>]`, hl: '' },
     { c: ``, hl: '' },
-    { c: `        f_leds <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: `        f_leds = tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
     { c: `        f_leds.pack(pady=<span class="nm">10</span>)`, hl: '' },
     { c: ``, hl: '' },
     { c: `        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):`, hl: '' },
-    { c: `            c <span class="op">=</span> tk.Canvas(f_leds, width=<span class="nm">60</span>, height=<span class="nm">60</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: '' },
-    { c: `            oval <span class="op">=</span> c.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">55</span>, <span class="nm">55</span>, fill=<span class="st">"#444444"</span>, outline=<span class="st">"white"</span>)`, hl: '' },
+    { c: `            c = tk.Canvas(f_leds, width=<span class="nm">60</span>, height=<span class="nm">60</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: '' },
+    { c: `            oval = c.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">55</span>, <span class="nm">55</span>, fill=<span class="st">"#444444"</span>, outline=<span class="st">"white"</span>)`, hl: '' },
     { c: `            c.grid(row=<span class="nm">0</span>, column=i, padx=<span class="nm">15</span>)`, hl: '' },
     { c: `            <span class="kw">self</span>.led_objekti.append((c, oval, led_boje[i]))`, hl: '' },
     { c: ``, hl: '' },
     { c: `        <span class="cm"># --- UI: TASTERI ---</span>`, hl: '' },
-    { c: `        btn_frame <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: `        btn_frame = tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
     { c: `        btn_frame.pack(pady=<span class="nm">40</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `        <span class="kw">self</span>.btn_uvecaj <span class="op">=</span> tk.Button(btn_frame, text=<span class="st">"UVEĆAJ"</span>, command=<span class="kw">self</span>.upali_sve,`, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_uvecaj = tk.Button(btn_frame, text=<span class="st">"UVEĆAJ"</span>, command=<span class="kw">self</span>.upali_sve,`, hl: '' },
     { c: `                                   bg=<span class="st">"#27ae60"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>), width=<span class="nm">12</span>)`, hl: '' },
     { c: `        <span class="kw">self</span>.btn_uvecaj.grid(row=<span class="nm">0</span>, column=<span class="nm">0</span>, padx=<span class="nm">10</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `        <span class="kw">self</span>.btn_smanji <span class="op">=</span> tk.Button(btn_frame, text=<span class="st">"SMANJI"</span>, command=<span class="kw">self</span>.ugasi_sve,`, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_smanji = tk.Button(btn_frame, text=<span class="st">"SMANJI"</span>, command=<span class="kw">self</span>.ugasi_sve,`, hl: '' },
     { c: `                                   bg=<span class="st">"#c0392b"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>), width=<span class="nm">12</span>)`, hl: '' },
     { c: `        <span class="kw">self</span>.btn_smanji.grid(row=<span class="nm">0</span>, column=<span class="nm">1</span>, padx=<span class="nm">10</span>)`, hl: '' },
     { c: ``, hl: '' },
@@ -589,8 +553,8 @@ Ideja: čuvamo varijablu <code>self.intenzitet</code> (0 do 100). Kada treba da 
     { c: `            canvas.itemconfig(oval, fill=<span class="st">"#444444"</span>)`, hl: '' },
     { c: `        <span class="fn">print</span>(<span class="st">"Komanda: SMANJI -> LED OFF"</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:`, hl: '' },
-    { c: `    app <span class="op">=</span> <span class="fn">SimulatorLeds</span>()`, hl: '' },
+    { c: `<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:`, hl: '' },
+    { c: `    app = <span class="fn">SimulatorLeds</span>()`, hl: '' },
     { c: `    app.mainloop()`, hl: '' },
   ]
 },
@@ -598,11 +562,9 @@ Ideja: čuvamo varijablu <code>self.intenzitet</code> (0 do 100). Kada treba da 
 // ── KORAK 2 ──────────────────────────────────────────────────────────────────
 {
   name:    'Korak 2',
-  sub:     'Dodajemo intenzitet i menjamo logiku tastera',
-  file:    '07_Led_rasveta_K2.py',
-  explain: `Dodajemo varijablu <code>self.intenzitet = 0</code> – ona čuva trenutni nivo osvetljenja od <strong>0 do 100</strong>.<br><br>
-Menjamo funkcije <code>upali_sve</code> i <code>ugasi_sve</code>: umesto da pale/gase LED, sada samo <strong>menjaju intenzitet za 10</strong> gore ili dole. Koristimo <code>min()</code> i <code>max()</code> da osiguramo da vrednost nikad ne izađe iz opsega 0–100 – to su funkcije koje smo već videli u Pajtonu.<br><br>
-Za sada ćemo samo ispisati vrednost u konzoli da proverimo da li radi. LED diode ćemo ažurirati u sledećem koraku.`,
+  sub:     'Dodajemo intenzitet i boja_niz',
+  file:    '07_Led_rasveta_Korak2.py',
+  explain: '<strong>Dodajemo dve nove promenljive u <code>__init__</code>.</strong> Prva je <code>self.intenzitet = 0</code> – čuva trenutni nivo osvetljaja od 0 do 10 (gde 10 = 100%). Druga je <code>self.boja_niz</code> – lista od 11 heksadecimalnih vrednosti koje predstavljaju 0%, 10%, 20%... sve do 100% (retardirano je da ucimo napamet ove random znakove, pa mozemo i koristiti (recunam da znate hexadecimalne brojeve i kako idu,) f0 e0 c0, a0, 90, otprilike da budu 10% nije ni bitno na kraju dana)osvetljaja. Pošto je to lista na nivou objekta (<code>self.</code>), možemo je koristiti i u funkcijama kasnije. Takođe menjamo <code>fill</code> pri crtanju ovala da odmah koristi <code>boja_niz[0]</code>, tj. diode kreću ugašene.',
   lines: [
     { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
     { c: ``, hl: '' },
@@ -613,41 +575,52 @@ Za sada ćemo samo ispisati vrednost u konzoli da proverimo da li radi. LED diod
     { c: `        <span class="kw">self</span>.geometry(<span class="st">"400x400"</span>)`, hl: '' },
     { c: `        <span class="kw">self</span>.configure(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `        <span class="cm"># Intenzitet osvetljenja: 0 = ugašeno, 100 = maksimum</span>`, hl: 'add' },
-    { c: `        <span class="kw">self</span>.intenzitet <span class="op">=</span> <span class="nm">0</span>`, hl: 'add' },
+    { c: `        <span class="cm"># --- PROMENLJIVE ZA INTENZITET ---</span>`, hl: 'add' },
+    { c: `        <span class="kw">self</span>.intenzitet = <span class="nm">0</span>  <span class="cm"># pocinje od 0 (ugaseno)</span>`, hl: 'add' },
+    { c: `        <span class="kw">self</span>.boja_niz = [<span class="st">"00"</span>, <span class="st">"1a"</span>, <span class="st">"33"</span>, <span class="st">"4d"</span>, <span class="st">"66"</span>, <span class="st">"80"</span>, <span class="st">"99"</span>, <span class="st">"b3"</span>, <span class="st">"cc"</span>, <span class="st">"e6"</span>, <span class="st">"ff"</span>]`, hl: 'add' },
     { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- UI: LED DIODE ---</span>`, hl: '' },
     { c: `        tk.Label(<span class="kw">self</span>, text=<span class="st">"Status LED dioda:"</span>, fg=<span class="st">"white"</span>, bg=<span class="st">"#2c3e50"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>)).pack(pady=<span class="nm">20</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.led_okviri <span class="op">=</span> []`, hl: '' },
-    { c: `        <span class="kw">self</span>.led_objekti <span class="op">=</span> []`, hl: '' },
-    { c: `        led_boje <span class="op">=</span> [<span class="st">"red"</span>, <span class="st">"yellow"</span>, <span class="st">"green"</span>]`, hl: '' },
-    { c: `        f_leds <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="kw">self</span>.led_okviri = []`, hl: '' },
+    { c: `        <span class="kw">self</span>.led_objekti = []`, hl: '' },
+    { c: `        led_boje = [<span class="st">"red"</span>, <span class="st">"yellow"</span>, <span class="st">"green"</span>]`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        f_leds = tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
     { c: `        f_leds.pack(pady=<span class="nm">10</span>)`, hl: '' },
+    { c: ``, hl: '' },
     { c: `        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):`, hl: '' },
-    { c: `            c <span class="op">=</span> tk.Canvas(f_leds, width=<span class="nm">60</span>, height=<span class="nm">60</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: '' },
-    { c: `            oval <span class="op">=</span> c.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">55</span>, <span class="nm">55</span>, fill=<span class="st">"#444444"</span>, outline=<span class="st">"white"</span>)`, hl: '' },
+    { c: `            c = tk.Canvas(f_leds, width=<span class="nm">60</span>, height=<span class="nm">60</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: '' },
+    { c: `            oval = c.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">55</span>, <span class="nm">55</span>, fill=<span class="st">"#"</span> + <span class="kw">self</span>.boja_niz[<span class="nm">0</span>] + <span class="st">"0000"</span>, outline=<span class="st">"white"</span>)`, hl: 'mod' },
     { c: `            c.grid(row=<span class="nm">0</span>, column=i, padx=<span class="nm">15</span>)`, hl: '' },
     { c: `            <span class="kw">self</span>.led_objekti.append((c, oval, led_boje[i]))`, hl: '' },
-    { c: `        btn_frame <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- UI: TASTERI ---</span>`, hl: '' },
+    { c: `        btn_frame = tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
     { c: `        btn_frame.pack(pady=<span class="nm">40</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.btn_uvecaj <span class="op">=</span> tk.Button(btn_frame, text=<span class="st">"UVEĆAJ"</span>, command=<span class="kw">self</span>.upali_sve,`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_uvecaj = tk.Button(btn_frame, text=<span class="st">"UVEĆAJ"</span>, command=<span class="kw">self</span>.upali_sve,`, hl: '' },
     { c: `                                   bg=<span class="st">"#27ae60"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>), width=<span class="nm">12</span>)`, hl: '' },
     { c: `        <span class="kw">self</span>.btn_uvecaj.grid(row=<span class="nm">0</span>, column=<span class="nm">0</span>, padx=<span class="nm">10</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.btn_smanji <span class="op">=</span> tk.Button(btn_frame, text=<span class="st">"SMANJI"</span>, command=<span class="kw">self</span>.ugasi_sve,`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_smanji = tk.Button(btn_frame, text=<span class="st">"SMANJI"</span>, command=<span class="kw">self</span>.ugasi_sve,`, hl: '' },
     { c: `                                   bg=<span class="st">"#c0392b"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>), width=<span class="nm">12</span>)`, hl: '' },
     { c: `        <span class="kw">self</span>.btn_smanji.grid(row=<span class="nm">0</span>, column=<span class="nm">1</span>, padx=<span class="nm">10</span>)`, hl: '' },
     { c: ``, hl: '' },
     { c: `    <span class="kw">def</span> <span class="fn">upali_sve</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="cm">"""Povećaj intenzitet za 10%, maksimum je 100"""</span>`, hl: 'mod' },
-    { c: `        <span class="kw">self</span>.intenzitet <span class="op">=</span> <span class="fn">min</span>(<span class="nm">100</span>, <span class="kw">self</span>.intenzitet <span class="op">+</span> <span class="nm">10</span>)  <span class="cm"># Ne može preko 100</span>`, hl: 'mod' },
-    { c: `        <span class="fn">print</span>(<span class="st">f"Intenzitet: </span><span class="nm">{self.intenzitet}</span><span class="st">%"</span>)  <span class="cm"># Provera u konzoli</span>`, hl: 'mod' },
+    { c: `        <span class="cm">"""Logika: Taster UVEĆAJ pali sve diode"""</span>`, hl: '' },
+    { c: `        <span class="kw">for</span> canvas, oval, boja <span class="kw">in</span> <span class="kw">self</span>.led_objekti:`, hl: '' },
+    { c: `            canvas.itemconfig(oval, fill=boja)`, hl: '' },
+    { c: `        <span class="fn">print</span>(<span class="st">"Komanda: UVEĆAJ -> LED ON"</span>)`, hl: '' },
     { c: ``, hl: '' },
     { c: `    <span class="kw">def</span> <span class="fn">ugasi_sve</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="cm">"""Smanji intenzitet za 10%, minimum je 0"""</span>`, hl: 'mod' },
-    { c: `        <span class="kw">self</span>.intenzitet <span class="op">=</span> <span class="fn">max</span>(<span class="nm">0</span>, <span class="kw">self</span>.intenzitet <span class="op">-</span> <span class="nm">10</span>)   <span class="cm"># Ne može ispod 0</span>`, hl: 'mod' },
-    { c: `        <span class="fn">print</span>(<span class="st">f"Intenzitet: </span><span class="nm">{self.intenzitet}</span><span class="st">%"</span>)  <span class="cm"># Provera u konzoli</span>`, hl: 'mod' },
+    { c: `        <span class="cm">"""Logika: Taster SMANJI gasi sve diode"""</span>`, hl: '' },
+    { c: `        <span class="kw">for</span> canvas, oval, boja <span class="kw">in</span> <span class="kw">self</span>.led_objekti:`, hl: '' },
+    { c: `            canvas.itemconfig(oval, fill=<span class="st">"#444444"</span>)`, hl: '' },
+    { c: `        <span class="fn">print</span>(<span class="st">"Komanda: SMANJI -> LED OFF"</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:`, hl: '' },
-    { c: `    app <span class="op">=</span> <span class="fn">SimulatorLeds</span>()`, hl: '' },
+    { c: `<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:`, hl: '' },
+    { c: `    app = <span class="fn">SimulatorLeds</span>()`, hl: '' },
     { c: `    app.mainloop()`, hl: '' },
   ]
 },
@@ -655,11 +628,9 @@ Za sada ćemo samo ispisati vrednost u konzoli da proverimo da li radi. LED diod
 // ── KORAK 3 ──────────────────────────────────────────────────────────────────
 {
   name:    'Korak 3',
-  sub:     'Funkcija koja pretvara intenzitet u boju',
-  file:    '07_Led_rasveta_K3.py',
-  explain: `Dodajemo funkciju <code>azuriraj_leds()</code> koja prolazi kroz sve LED diode i postavlja odgovarajuću boju na osnovu <code>self.intenzitet</code>.<br><br>
-<strong>Kako pretvoriti intenzitet u boju?</strong> Tkinter boje su u formatu <code>#RRGGBB</code> gde svaka komponenta ide od <code>00</code> (tamno) do <code>ff</code> (svetlo) u heksadecimalnom zapisu. Na primer, čista crvena je <code>#ff0000</code>. Mi ćemo izračunati vrednost svake komponente: ako je intenzitet 50%, onda je crvena komponenta 50% od 255 = 127 ≈ <code>7f</code> u heksu.<br><br>
-Da bi dobili bazu svake diode (čiste boje), čuvamo ih kao trojke <code>(R, G, B)</code>. Množimo sa <code>intenzitet/100</code> i formatiramo kao hex string koristeći <code>f"#{r:02x}{g:02x}{b:02x}"</code>. <code>:02x</code> znači: prikaži kao heksadecimalni broj sa minimum 2 cifre.`,
+  sub:     'Brišemo for, kopiramo blok 3 puta',
+  file:    '07_Led_rasveta_Korak3.py',
+  explain: '<strong>Brišemo <code>for</code> petlju i kopiramo blok ručno 3 puta.</strong> Zašto? Jer svaka dioda ima <strong>drugačiju boju</strong> – crvena, žuta, zelena – i ne možemo sve tri da generišemo istom formulom u petlji. Lakše je da copy-paste-ujemo isti blok tri puta i ručno promenimo samo <code>column=</code> (0, 1, 2). Uočite da smo smanjili uvlačenje za jedan nivo jer više nema <code>for</code>-a. Boja ostaje ista privremena formula za sada.',
   lines: [
     { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
     { c: ``, hl: '' },
@@ -669,53 +640,65 @@ Da bi dobili bazu svake diode (čiste boje), čuvamo ih kao trojke <code>(R, G, 
     { c: `        <span class="kw">self</span>.title(<span class="st">"LED Kontrola: Uvećaj/Smanji"</span>)`, hl: '' },
     { c: `        <span class="kw">self</span>.geometry(<span class="st">"400x400"</span>)`, hl: '' },
     { c: `        <span class="kw">self</span>.configure(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.intenzitet <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
     { c: ``, hl: '' },
-    { c: `        <span class="cm"># Baze boja kao (R, G, B) trojke – čiste boje pri 100% intenzitetu</span>`, hl: 'add' },
-    { c: `        <span class="kw">self</span>.baze_boja <span class="op">=</span> [(<span class="nm">255</span>, <span class="nm">0</span>, <span class="nm">0</span>), (<span class="nm">255</span>, <span class="nm">255</span>, <span class="nm">0</span>), (<span class="nm">0</span>, <span class="nm">255</span>, <span class="nm">0</span>)]  <span class="cm"># crvena, žuta, zelena</span>`, hl: 'add' },
+    { c: `        <span class="cm"># --- PROMENLJIVE ZA INTENZITET ---</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.intenzitet = <span class="nm">0</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.boja_niz = [<span class="st">"00"</span>, <span class="st">"1a"</span>, <span class="st">"33"</span>, <span class="st">"4d"</span>, <span class="st">"66"</span>, <span class="st">"80"</span>, <span class="st">"99"</span>, <span class="st">"b3"</span>, <span class="st">"cc"</span>, <span class="st">"e6"</span>, <span class="st">"ff"</span>]`, hl: '' },
     { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- UI: LED DIODE ---</span>`, hl: '' },
     { c: `        tk.Label(<span class="kw">self</span>, text=<span class="st">"Status LED dioda:"</span>, fg=<span class="st">"white"</span>, bg=<span class="st">"#2c3e50"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>)).pack(pady=<span class="nm">20</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.led_okviri <span class="op">=</span> []`, hl: '' },
-    { c: `        <span class="kw">self</span>.led_objekti <span class="op">=</span> []`, hl: '' },
-    { c: `        led_boje <span class="op">=</span> [<span class="st">"red"</span>, <span class="st">"yellow"</span>, <span class="st">"green"</span>]`, hl: '' },
-    { c: `        f_leds <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="kw">self</span>.led_okviri = []`, hl: '' },
+    { c: `        <span class="kw">self</span>.led_objekti = []`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        f_leds = tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
     { c: `        f_leds.pack(pady=<span class="nm">10</span>)`, hl: '' },
-    { c: `        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):`, hl: '' },
-    { c: `            c <span class="op">=</span> tk.Canvas(f_leds, width=<span class="nm">60</span>, height=<span class="nm">60</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: '' },
-    { c: `            oval <span class="op">=</span> c.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">55</span>, <span class="nm">55</span>, fill=<span class="st">"#444444"</span>, outline=<span class="st">"white"</span>)`, hl: '' },
-    { c: `            c.grid(row=<span class="nm">0</span>, column=i, padx=<span class="nm">15</span>)`, hl: '' },
-    { c: `            <span class="kw">self</span>.led_objekti.append((c, oval, led_boje[i]))`, hl: '' },
-    { c: `        btn_frame <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- DIODA 1: CRVENA (column=0) ---</span>`, hl: 'del' },
+    { c: `        <span class="cm"># (izbrisana for petlja, svaka dioda se crta posebno)</span>`, hl: 'del' },
+    { c: `        c = tk.Canvas(f_leds, width=<span class="nm">60</span>, height=<span class="nm">60</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: 'copy' },
+    { c: `        oval = c.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">55</span>, <span class="nm">55</span>, fill=<span class="st">"#"</span> + <span class="kw">self</span>.boja_niz[<span class="nm">0</span>] + <span class="st">"0000"</span>, outline=<span class="st">"white"</span>)`, hl: 'copy' },
+    { c: `        c.grid(row=<span class="nm">0</span>, column=<span class="nm">0</span>, padx=<span class="nm">15</span>)`, hl: 'copy' },
+    { c: `        <span class="kw">self</span>.led_objekti.append((c, oval, <span class="st">"red"</span>))`, hl: 'copy' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- DIODA 2: ŽUTA (column=1) ---</span>`, hl: 'copy' },
+    { c: `        c = tk.Canvas(f_leds, width=<span class="nm">60</span>, height=<span class="nm">60</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: 'copy' },
+    { c: `        oval = c.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">55</span>, <span class="nm">55</span>, fill=<span class="st">"#"</span> + <span class="kw">self</span>.boja_niz[<span class="nm">0</span>] + <span class="st">"0000"</span>, outline=<span class="st">"white"</span>)`, hl: 'copy' },
+    { c: `        c.grid(row=<span class="nm">0</span>, column=<span class="nm">1</span>, padx=<span class="nm">15</span>)`, hl: 'copy' },
+    { c: `        <span class="kw">self</span>.led_objekti.append((c, oval, <span class="st">"yellow"</span>))`, hl: 'copy' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- DIODA 3: ZELENA (column=2) ---</span>`, hl: 'copy' },
+    { c: `        c = tk.Canvas(f_leds, width=<span class="nm">60</span>, height=<span class="nm">60</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: 'copy' },
+    { c: `        oval = c.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">55</span>, <span class="nm">55</span>, fill=<span class="st">"#"</span> + <span class="kw">self</span>.boja_niz[<span class="nm">0</span>] + <span class="st">"0000"</span>, outline=<span class="st">"white"</span>)`, hl: 'copy' },
+    { c: `        c.grid(row=<span class="nm">0</span>, column=<span class="nm">2</span>, padx=<span class="nm">15</span>)`, hl: 'copy' },
+    { c: `        <span class="kw">self</span>.led_objekti.append((c, oval, <span class="st">"green"</span>))`, hl: 'copy' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- UI: TASTERI ---</span>`, hl: '' },
+    { c: `        btn_frame = tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
     { c: `        btn_frame.pack(pady=<span class="nm">40</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.btn_uvecaj <span class="op">=</span> tk.Button(btn_frame, text=<span class="st">"UVEĆAJ"</span>, command=<span class="kw">self</span>.upali_sve,`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_uvecaj = tk.Button(btn_frame, text=<span class="st">"UVEĆAJ"</span>, command=<span class="kw">self</span>.upali_sve,`, hl: '' },
     { c: `                                   bg=<span class="st">"#27ae60"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>), width=<span class="nm">12</span>)`, hl: '' },
     { c: `        <span class="kw">self</span>.btn_uvecaj.grid(row=<span class="nm">0</span>, column=<span class="nm">0</span>, padx=<span class="nm">10</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.btn_smanji <span class="op">=</span> tk.Button(btn_frame, text=<span class="st">"SMANJI"</span>, command=<span class="kw">self</span>.ugasi_sve,`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_smanji = tk.Button(btn_frame, text=<span class="st">"SMANJI"</span>, command=<span class="kw">self</span>.ugasi_sve,`, hl: '' },
     { c: `                                   bg=<span class="st">"#c0392b"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>), width=<span class="nm">12</span>)`, hl: '' },
     { c: `        <span class="kw">self</span>.btn_smanji.grid(row=<span class="nm">0</span>, column=<span class="nm">1</span>, padx=<span class="nm">10</span>)`, hl: '' },
     { c: ``, hl: '' },
     { c: `    <span class="kw">def</span> <span class="fn">upali_sve</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="kw">self</span>.intenzitet <span class="op">=</span> <span class="fn">min</span>(<span class="nm">100</span>, <span class="kw">self</span>.intenzitet <span class="op">+</span> <span class="nm">10</span>)`, hl: '' },
-    { c: `        <span class="fn">print</span>(<span class="st">f"Intenzitet: </span><span class="nm">{self.intenzitet}</span><span class="st">%"</span>)`, hl: '' },
+    { c: `        <span class="cm">"""Logika: Taster UVEĆAJ pali sve diode"""</span>`, hl: '' },
+    { c: `        <span class="kw">for</span> canvas, oval, boja <span class="kw">in</span> <span class="kw">self</span>.led_objekti:`, hl: '' },
+    { c: `            canvas.itemconfig(oval, fill=boja)`, hl: '' },
+    { c: `        <span class="fn">print</span>(<span class="st">"Komanda: UVEĆAJ -> LED ON"</span>)`, hl: '' },
     { c: ``, hl: '' },
     { c: `    <span class="kw">def</span> <span class="fn">ugasi_sve</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="kw">self</span>.intenzitet <span class="op">=</span> <span class="fn">max</span>(<span class="nm">0</span>, <span class="kw">self</span>.intenzitet <span class="op">-</span> <span class="nm">10</span>)`, hl: '' },
-    { c: `        <span class="fn">print</span>(<span class="st">f"Intenzitet: </span><span class="nm">{self.intenzitet}</span><span class="st">%"</span>)`, hl: '' },
+    { c: `        <span class="cm">"""Logika: Taster SMANJI gasi sve diode"""</span>`, hl: '' },
+    { c: `        <span class="kw">for</span> canvas, oval, boja <span class="kw">in</span> <span class="kw">self</span>.led_objekti:`, hl: '' },
+    { c: `            canvas.itemconfig(oval, fill=<span class="st">"#444444"</span>)`, hl: '' },
+    { c: `        <span class="fn">print</span>(<span class="st">"Komanda: SMANJI -> LED OFF"</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">azuriraj_leds</span>(<span class="kw">self</span>):`, hl: 'add' },
-    { c: `        <span class="cm">"""Postavlja boju svake LED diode prema trenutnom intenzitetu"""</span>`, hl: 'add' },
-    { c: `        <span class="kw">for</span> i, (canvas, oval, _) <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="kw">self</span>.led_objekti):`, hl: 'add' },
-    { c: `            r_baza, g_baza, b_baza <span class="op">=</span> <span class="kw">self</span>.baze_boja[i]  <span class="cm"># Uzmi baznu boju diode</span>`, hl: 'add' },
-    { c: `            <span class="cm"># Pomnoži svaku komponentu sa procentom intenziteta</span>`, hl: 'add' },
-    { c: `            r <span class="op">=</span> <span class="fn">int</span>(r_baza <span class="op">*</span> <span class="kw">self</span>.intenzitet <span class="op">/</span> <span class="nm">100</span>)`, hl: 'add' },
-    { c: `            g <span class="op">=</span> <span class="fn">int</span>(g_baza <span class="op">*</span> <span class="kw">self</span>.intenzitet <span class="op">/</span> <span class="nm">100</span>)`, hl: 'add' },
-    { c: `            b <span class="op">=</span> <span class="fn">int</span>(b_baza <span class="op">*</span> <span class="kw">self</span>.intenzitet <span class="op">/</span> <span class="nm">100</span>)`, hl: 'add' },
-    { c: `            <span class="cm"># Pretvori u hex string: npr. (127, 0, 0) → "#7f0000"</span>`, hl: 'add' },
-    { c: `            boja_hex <span class="op">=</span> <span class="st">f"#</span><span class="nm">{r:02x}{g:02x}{b:02x}</span><span class="st">"</span>`, hl: 'add' },
-    { c: `            canvas.itemconfig(oval, fill=boja_hex)`, hl: 'add' },
-    { c: ``, hl: '' },
-    { c: `<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:`, hl: '' },
-    { c: `    app <span class="op">=</span> <span class="fn">SimulatorLeds</span>()`, hl: '' },
+    { c: `<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:`, hl: '' },
+    { c: `    app = <span class="fn">SimulatorLeds</span>()`, hl: '' },
     { c: `    app.mainloop()`, hl: '' },
   ]
 },
@@ -723,92 +706,107 @@ Da bi dobili bazu svake diode (čiste boje), čuvamo ih kao trojke <code>(R, G, 
 // ── KORAK 4 ──────────────────────────────────────────────────────────────────
 {
   name:    'Korak 4',
-  sub:     'Završni program – sve povezujemo',
-  file:    '07_Led_rasveta_FINAL.py',
-  explain: `Zadnji korak – <strong>pozivamo <code>azuriraj_leds()</code></strong> na kraju obe funkcije (<code>upali_sve</code> i <code>ugasi_sve</code>) i uklanjamo <code>print</code>. Time je sve povezano: pritisak na taster → promeni intenzitet → ažuriraj boju LED dioda.<br><br>
-Takođe dodajemo <strong>labelu koja prikazuje trenutni procenat</strong> na ekranu, da korisnik vidi vrednost bez konzole. Ona se ažurira u <code>azuriraj_leds()</code> zajedno sa diodama – jednostavan <code>config(text=...)</code> koji smo već koristili.<br><br>
-Program je kompletan! Diode kreću od 0% (ugašene), UVEĆAJ ih pojačava za 10% sve do 100%, SMANJI smanjuje – a boje su stvarno vidljivo tamnije/svetlije.`,
+  sub:     'Finalno rešenje – intenzitet radi',
+  file:    '07_Led_rasveta.py',
+  explain: '<strong>Završni korak – menjamo funkcije <code>upali_sve</code> i <code>ugasi_sve</code>.</strong> U <code>upali_sve</code>: ako intenzitet nije 10, povećavamo ga za 1, pa pozivamo <code>itemconfig</code> na svaki oval posebno sa odgovarajućom hex bojom. Crvena dobija <code>#{xx}0000</code>, žuta <code>#{xx}{xx}00</code>, zelena <code>#00{xx}00</code>. U <code>ugasi_sve</code>: ako intenzitet nije 0, smanjujemo ga za 1 i ažuriramo boje na isti način. Program sada ispunjava sve zahteve zadatka!',
   lines: [
     { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
     { c: ``, hl: '' },
     { c: `<span class="kw">class</span> <span class="cl">SimulatorLeds</span>(tk.Tk):`, hl: '' },
     { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):`, hl: '' },
     { c: `        <span class="kw">super</span>().__init__()`, hl: '' },
-    { c: `        <span class="kw">self</span>.title(<span class="st">"LED Rasveta – Intenzitet"</span>)`, hl: 'mod' },
+    { c: `        <span class="kw">self</span>.title(<span class="st">"LED Kontrola: Uvećaj/Smanji"</span>)`, hl: '' },
     { c: `        <span class="kw">self</span>.geometry(<span class="st">"400x400"</span>)`, hl: '' },
     { c: `        <span class="kw">self</span>.configure(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.intenzitet <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.baze_boja <span class="op">=</span> [(<span class="nm">255</span>, <span class="nm">0</span>, <span class="nm">0</span>), (<span class="nm">255</span>, <span class="nm">255</span>, <span class="nm">0</span>), (<span class="nm">0</span>, <span class="nm">255</span>, <span class="nm">0</span>)]`, hl: '' },
     { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- PROMENLJIVE ZA INTENZITET ---</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.intenzitet = <span class="nm">0</span>`, hl: '' },
+    { c: `        <span class="kw">self</span>.boja_niz = [<span class="st">"00"</span>, <span class="st">"1a"</span>, <span class="st">"33"</span>, <span class="st">"4d"</span>, <span class="st">"66"</span>, <span class="st">"80"</span>, <span class="st">"99"</span>, <span class="st">"b3"</span>, <span class="st">"cc"</span>, <span class="st">"e6"</span>, <span class="st">"ff"</span>]`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- UI: LED DIODE ---</span>`, hl: '' },
     { c: `        tk.Label(<span class="kw">self</span>, text=<span class="st">"Status LED dioda:"</span>, fg=<span class="st">"white"</span>, bg=<span class="st">"#2c3e50"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>)).pack(pady=<span class="nm">20</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.led_okviri <span class="op">=</span> []`, hl: '' },
-    { c: `        <span class="kw">self</span>.led_objekti <span class="op">=</span> []`, hl: '' },
-    { c: `        led_boje <span class="op">=</span> [<span class="st">"red"</span>, <span class="st">"yellow"</span>, <span class="st">"green"</span>]`, hl: '' },
-    { c: `        f_leds <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="kw">self</span>.led_okviri = []`, hl: '' },
+    { c: `        <span class="kw">self</span>.led_objekti = []`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        f_leds = tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
     { c: `        f_leds.pack(pady=<span class="nm">10</span>)`, hl: '' },
-    { c: `        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):`, hl: '' },
-    { c: `            c <span class="op">=</span> tk.Canvas(f_leds, width=<span class="nm">60</span>, height=<span class="nm">60</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: '' },
-    { c: `            oval <span class="op">=</span> c.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">55</span>, <span class="nm">55</span>, fill=<span class="st">"#444444"</span>, outline=<span class="st">"white"</span>)`, hl: '' },
-    { c: `            c.grid(row=<span class="nm">0</span>, column=i, padx=<span class="nm">15</span>)`, hl: '' },
-    { c: `            <span class="kw">self</span>.led_objekti.append((c, oval, led_boje[i]))`, hl: '' },
     { c: ``, hl: '' },
-    { c: `        <span class="cm"># Labela koja prikazuje trenutni intenzitet na ekranu</span>`, hl: 'add' },
-    { c: `        <span class="kw">self</span>.labela_procenat <span class="op">=</span> tk.Label(<span class="kw">self</span>, text=<span class="st">"Intenzitet: 0%"</span>,`, hl: 'add' },
-    { c: `                                        fg=<span class="st">"white"</span>, bg=<span class="st">"#2c3e50"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">14</span>, <span class="st">"bold"</span>))`, hl: 'add' },
-    { c: `        <span class="kw">self</span>.labela_procenat.pack(pady=<span class="nm">10</span>)`, hl: 'add' },
+    { c: `        <span class="cm"># --- DIODA 1: CRVENA (column=0) ---</span>`, hl: '' },
+    { c: `        c = tk.Canvas(f_leds, width=<span class="nm">60</span>, height=<span class="nm">60</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: '' },
+    { c: `        oval = c.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">55</span>, <span class="nm">55</span>, fill=<span class="st">"#"</span> + <span class="kw">self</span>.boja_niz[<span class="nm">0</span>] + <span class="st">"0000"</span>, outline=<span class="st">"white"</span>)`, hl: '' },
+    { c: `        c.grid(row=<span class="nm">0</span>, column=<span class="nm">0</span>, padx=<span class="nm">15</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.led_objekti.append((c, oval, <span class="st">"red"</span>))`, hl: '' },
     { c: ``, hl: '' },
-    { c: `        btn_frame <span class="op">=</span> tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
-    { c: `        btn_frame.pack(pady=<span class="nm">20</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.btn_uvecaj <span class="op">=</span> tk.Button(btn_frame, text=<span class="st">"UVEĆAJ"</span>, command=<span class="kw">self</span>.upali_sve,`, hl: '' },
+    { c: `        <span class="cm"># --- DIODA 2: ŽUTA (column=1) ---</span>`, hl: '' },
+    { c: `        c = tk.Canvas(f_leds, width=<span class="nm">60</span>, height=<span class="nm">60</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: '' },
+    { c: `        oval = c.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">55</span>, <span class="nm">55</span>, fill=<span class="st">"#"</span> + <span class="kw">self</span>.boja_niz[<span class="nm">0</span>] + <span class="st">"0000"</span>, outline=<span class="st">"white"</span>)`, hl: '' },
+    { c: `        c.grid(row=<span class="nm">0</span>, column=<span class="nm">1</span>, padx=<span class="nm">15</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.led_objekti.append((c, oval, <span class="st">"yellow"</span>))`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- DIODA 3: ZELENA (column=2) ---</span>`, hl: '' },
+    { c: `        c = tk.Canvas(f_leds, width=<span class="nm">60</span>, height=<span class="nm">60</span>, bg=<span class="st">"#2c3e50"</span>, highlightthickness=<span class="nm">0</span>)`, hl: '' },
+    { c: `        oval = c.create_oval(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">55</span>, <span class="nm">55</span>, fill=<span class="st">"#00"</span> + <span class="kw">self</span>.boja_niz[<span class="nm">0</span>] + <span class="st">"00"</span>, outline=<span class="st">"white"</span>)`, hl: '' },
+    { c: `        c.grid(row=<span class="nm">0</span>, column=<span class="nm">2</span>, padx=<span class="nm">15</span>)`, hl: '' },
+    { c: `        <span class="kw">self</span>.led_objekti.append((c, oval, <span class="st">"green"</span>))`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- UI: TASTERI ---</span>`, hl: '' },
+    { c: `        btn_frame = tk.Frame(<span class="kw">self</span>, bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: `        btn_frame.pack(pady=<span class="nm">40</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_uvecaj = tk.Button(btn_frame, text=<span class="st">"UVEĆAJ"</span>, command=<span class="kw">self</span>.upali_sve,`, hl: '' },
     { c: `                                   bg=<span class="st">"#27ae60"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>), width=<span class="nm">12</span>)`, hl: '' },
     { c: `        <span class="kw">self</span>.btn_uvecaj.grid(row=<span class="nm">0</span>, column=<span class="nm">0</span>, padx=<span class="nm">10</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.btn_smanji <span class="op">=</span> tk.Button(btn_frame, text=<span class="st">"SMANJI"</span>, command=<span class="kw">self</span>.ugasi_sve,`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="kw">self</span>.btn_smanji = tk.Button(btn_frame, text=<span class="st">"SMANJI"</span>, command=<span class="kw">self</span>.ugasi_sve,`, hl: '' },
     { c: `                                   bg=<span class="st">"#c0392b"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>), width=<span class="nm">12</span>)`, hl: '' },
     { c: `        <span class="kw">self</span>.btn_smanji.grid(row=<span class="nm">0</span>, column=<span class="nm">1</span>, padx=<span class="nm">10</span>)`, hl: '' },
     { c: ``, hl: '' },
     { c: `    <span class="kw">def</span> <span class="fn">upali_sve</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="kw">self</span>.intenzitet <span class="op">=</span> <span class="fn">min</span>(<span class="nm">100</span>, <span class="kw">self</span>.intenzitet <span class="op">+</span> <span class="nm">10</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.azuriraj_leds()  <span class="cm"># Ažuriraj prikaz posle promene</span>`, hl: 'mod' },
+    { c: `        <span class="cm"># Povecaj intenzitet za 1, ali samo ako nije vec 10 (100%)</span>`, hl: 'mod' },
+    { c: `        <span class="kw">if</span> <span class="kw">self</span>.intenzitet != <span class="nm">10</span>:`, hl: 'mod' },
+    { c: `            <span class="kw">self</span>.intenzitet += <span class="nm">1</span>`, hl: 'mod' },
+    { c: `        <span class="cm"># Osvezi boje svih dioda prema novom intenzitetu</span>`, hl: 'mod' },
+    { c: `        canvas, oval, _ = <span class="kw">self</span>.led_objekti[<span class="nm">0</span>]  <span class="cm"># crvena</span>`, hl: 'mod' },
+    { c: `        canvas.itemconfig(oval, fill=<span class="st">"#{0}0000"</span>.<span class="fn">format</span>(<span class="kw">self</span>.boja_niz[<span class="kw">self</span>.intenzitet]))`, hl: 'mod' },
+    { c: `        canvas, oval, _ = <span class="kw">self</span>.led_objekti[<span class="nm">1</span>]  <span class="cm"># zuta</span>`, hl: 'mod' },
+    { c: `        canvas.itemconfig(oval, fill=<span class="st">"#{0}{0}00"</span>.<span class="fn">format</span>(<span class="kw">self</span>.boja_niz[<span class="kw">self</span>.intenzitet]))`, hl: 'mod' },
+    { c: `        canvas, oval, _ = <span class="kw">self</span>.led_objekti[<span class="nm">2</span>]  <span class="cm"># zelena</span>`, hl: 'mod' },
+    { c: `        canvas.itemconfig(oval, fill=<span class="st">"#00{0}00"</span>.<span class="fn">format</span>(<span class="kw">self</span>.boja_niz[<span class="kw">self</span>.intenzitet]))`, hl: 'mod' },
+    { c: `        <span class="fn">print</span>(<span class="st">"Komanda: UVEĆAJ -> intenzitet ="</span>, <span class="kw">self</span>.intenzitet)`, hl: 'mod' },
     { c: ``, hl: '' },
     { c: `    <span class="kw">def</span> <span class="fn">ugasi_sve</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="kw">self</span>.intenzitet <span class="op">=</span> <span class="fn">max</span>(<span class="nm">0</span>, <span class="kw">self</span>.intenzitet <span class="op">-</span> <span class="nm">10</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.azuriraj_leds()  <span class="cm"># Ažuriraj prikaz posle promene</span>`, hl: 'mod' },
+    { c: `        <span class="cm"># Smanji intenzitet za 1, ali samo ako nije vec 0 (ugaseno)</span>`, hl: 'mod' },
+    { c: `        <span class="kw">if</span> <span class="kw">self</span>.intenzitet != <span class="nm">0</span>:`, hl: 'mod' },
+    { c: `            <span class="kw">self</span>.intenzitet -= <span class="nm">1</span>`, hl: 'mod' },
+    { c: `        <span class="cm"># Osvezi boje svih dioda prema novom intenzitetu</span>`, hl: 'mod' },
+    { c: `        canvas, oval, _ = <span class="kw">self</span>.led_objekti[<span class="nm">0</span>]  <span class="cm"># crvena</span>`, hl: 'mod' },
+    { c: `        canvas.itemconfig(oval, fill=<span class="st">"#{0}0000"</span>.<span class="fn">format</span>(<span class="kw">self</span>.boja_niz[<span class="kw">self</span>.intenzitet]))`, hl: 'mod' },
+    { c: `        canvas, oval, _ = <span class="kw">self</span>.led_objekti[<span class="nm">1</span>]  <span class="cm"># zuta</span>`, hl: 'mod' },
+    { c: `        canvas.itemconfig(oval, fill=<span class="st">"#{0}{0}00"</span>.<span class="fn">format</span>(<span class="kw">self</span>.boja_niz[<span class="kw">self</span>.intenzitet]))`, hl: 'mod' },
+    { c: `        canvas, oval, _ = <span class="kw">self</span>.led_objekti[<span class="nm">2</span>]  <span class="cm"># zelena</span>`, hl: 'mod' },
+    { c: `        canvas.itemconfig(oval, fill=<span class="st">"#00{0}00"</span>.<span class="fn">format</span>(<span class="kw">self</span>.boja_niz[<span class="kw">self</span>.intenzitet]))`, hl: 'mod' },
+    { c: `        <span class="fn">print</span>(<span class="st">"Komanda: SMANJI -> intenzitet ="</span>, <span class="kw">self</span>.intenzitet)`, hl: 'mod' },
     { c: ``, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">azuriraj_leds</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="cm">"""Postavlja boju svake LED diode prema trenutnom intenzitetu"""</span>`, hl: '' },
-    { c: `        <span class="cm"># Ažuriraj labelu sa trenutnim procentom</span>`, hl: 'add' },
-    { c: `        <span class="kw">self</span>.labela_procenat.config(text=<span class="st">f"Intenzitet: </span><span class="nm">{self.intenzitet}</span><span class="st">%"</span>)`, hl: 'add' },
-    { c: `        <span class="kw">for</span> i, (canvas, oval, _) <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="kw">self</span>.led_objekti):`, hl: '' },
-    { c: `            r_baza, g_baza, b_baza <span class="op">=</span> <span class="kw">self</span>.baze_boja[i]`, hl: '' },
-    { c: `            r <span class="op">=</span> <span class="fn">int</span>(r_baza <span class="op">*</span> <span class="kw">self</span>.intenzitet <span class="op">/</span> <span class="nm">100</span>)`, hl: '' },
-    { c: `            g <span class="op">=</span> <span class="fn">int</span>(g_baza <span class="op">*</span> <span class="kw">self</span>.intenzitet <span class="op">/</span> <span class="nm">100</span>)`, hl: '' },
-    { c: `            b <span class="op">=</span> <span class="fn">int</span>(b_baza <span class="op">*</span> <span class="kw">self</span>.intenzitet <span class="op">/</span> <span class="nm">100</span>)`, hl: '' },
-    { c: `            boja_hex <span class="op">=</span> <span class="st">f"#</span><span class="nm">{r:02x}{g:02x}{b:02x}</span><span class="st">"</span>`, hl: '' },
-    { c: `            canvas.itemconfig(oval, fill=boja_hex)`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:`, hl: '' },
-    { c: `    app <span class="op">=</span> <span class="fn">SimulatorLeds</span>()`, hl: '' },
+    { c: `<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:`, hl: '' },
+    { c: `    app = <span class="fn">SimulatorLeds</span>()`, hl: '' },
     { c: `    app.mainloop()`, hl: '' },
   ]
 },
 
-]; // ── kraj STEPS ─────────────────────────────────────────────────────────────
-
-
+]; // kraj STEPS
 
 
 // ════════════════════════════════════════════════════════════════════════════
-//  ENGINE  –  ne menjati ispod ove linije
+//  ENGINE
 // ════════════════════════════════════════════════════════════════════════════
 
 let cur = 0;
 
 function buildSidebar() {
-  // zahtevi
   document.getElementById('sidebar-reqs').innerHTML =
     ZAHTEVI.map(z => `<div class="req-item">${z}</div>`).join('');
 
-  // koraci
   const el = document.getElementById('sidebar-steps');
   el.innerHTML = STEPS.map((s, i) =>
     `<div class="step-pill${i === 0 ? ' active' : ''}" onclick="goTo(${i})">
@@ -827,7 +825,6 @@ function render() {
   document.getElementById('btn-prev').disabled = cur === 0;
   document.getElementById('btn-next').disabled = cur === STEPS.length - 1;
 
-  // progress dots
   const dc = document.getElementById('dots');
   dc.innerHTML = '';
   STEPS.forEach((_, i) => {
@@ -837,20 +834,17 @@ function render() {
     dc.appendChild(d);
   });
 
-  // sidebar active
   document.querySelectorAll('.step-pill').forEach((p, i) =>
     p.classList.toggle('active', i === cur));
 
   document.getElementById('step-explain').innerHTML = s.explain || '';
 
-  // kod
   document.getElementById('code-pre').innerHTML =
     s.lines.map(l => {
       const cls = l.hl ? ` hl-${l.hl}` : '';
       return `<div class="ln${cls}"><span class="ln-code">${l.c}</span></div>`;
     }).join('');
 
-  // reset copy dugme
   const cb = document.getElementById('copy-btn');
   cb.textContent = 'copy';
   cb.classList.remove('copied');
