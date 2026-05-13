@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Baci kockicu – LCD Simulator</title>
+<title>Baci Kockicu – LCD Simulator</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -319,7 +319,7 @@ header {
 .copy-btn:hover  { color: var(--accent3); border-color: rgba(124,106,247,.4); }
 .copy-btn.copied { color: var(--green);   border-color: rgba(51,255,153,.3); }
 
-/* mobile legenda strip */
+/* mobile legenda strip – skrivena na desktopu */
 .mobile-legend {
   display: none;
   gap: 12px;
@@ -424,7 +424,7 @@ pre {
   </a>
   <div class="header-center">
     <h1>Baci <span>Kockicu</span></h1>
-    <div class="header-chip">Mikrokontroleri · LCD · tkinter · 4ETP – B12</div>
+    <div class="header-chip">4ETR – B12 · LCD · tkinter</div>
   </div>
   <div class="header-spacer"></div>
 </header>
@@ -520,17 +520,40 @@ pre {
 <script>
 // ════════════════════════════════════════════════════════════════════════════
 //  ZAHTEVI  –  lista zahteva zadatka (prikazana u sidebar-u)
+//  Slobodno menjaj tekst, dodaj ili ukloni stavke.
 // ════════════════════════════════════════════════════════════════════════════
 
 const ZAHTEVI = [
-  'Prikazati "Dobro dosli" koji se pomera s leva na desno 3s, pa desno na levo 3s.',
-  'Nakon dobrodošlice prikazati "Baci kocku" na displeju.',
-  'Pritiskom tastera u gornjem redu ispisati "Vas X broj je Y" (X = redni broj bacanja, Y = broj od 1-6).',
-  'U donjem redu ispisati "Ponovite bacanje" ako je dobijen broj 6.',
+  'Nakon pokretanja, tekst "Dobro dosli" se pomera desno, pauza 2s, zatim levo, pauza 2s.',
+  'Nakon animacije, na displeju se ispisuje "Baci kocku".',
+  'Pritiskom tastera u gornjem redu: "Vas X broj je Y" (X = redni broj bacanja, Y = slučajan broj 1–6).',
+  'U donjem redu piše "Ponovite bacanje" ukoliko je dobijen broj 6.',
 ];
 
 // ════════════════════════════════════════════════════════════════════════════
 //  STEPS  –  svaki objekat je jedan korak
+//
+//  Polja:
+//    name    – naziv koraka  (prikazan u sidebar i nav)
+//    sub     – podnaslov     (ispod naziva u nav-u)
+//    file    – ime fajla     (prikazano u code-bar-u)
+//    explain – objašnjenje koraka (HTML, prikazano iznad koda)
+//              može da sadrži <strong> i <code> tagove
+//    lines   – niz linija koda; svaka linija:
+//                c   – sadržaj linije (može sadržati HTML span-ove za boje)
+//                hl  – tip highlajta:
+//                        'add'  → zeleno  – nova linija
+//                        'del'  → crveno  – obrisana linija
+//                        'mod'  → žuto    – izmenjena linija
+//                        'copy' → roze    – copy-paste iz prethodnog koraka
+//                        ''     → bez highlajta
+//
+//  Primer linije:
+//    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: 'copy' },
+//    { c: `brojac = 0`,      hl: 'add' },
+//    { c: `show_zero()`,     hl: 'del' },
+//    { c: `print(x)`,        hl: 'mod' },
+//    { c: `root.mainloop()`, hl: '' },
 // ════════════════════════════════════════════════════════════════════════════
 
 const STEPS = [
@@ -538,51 +561,47 @@ const STEPS = [
 // ── KORAK 1 ──────────────────────────────────────────────────────────────────
 {
   name:    'Korak 1',
-  sub:     'Test program – polazna tačka',
-  file:    '01_Baci_kockicu_-_Test_program.py',
-  explain: `<strong>Ovo je test program koji dobijamo na maturi.</strong> On prikazuje "Dobar dan" na simuliranom LCD ekranu,
-  a pritiskom tastera D2 menja tekst u "Zdravo". Koristimo ga kao <strong>polaznu tačku</strong> i menjamo ga korak po korak
-  dok ne dobijemo pravi zadatak.<br><br>
-  <strong>Šta treba da uradimo:</strong> Promeniti naslov i tekstove, dodati animaciju scrollovanja,
-  dodati nasumičan broj i brojač bacanja, i dodati poruku za broj 6.`,
+  sub:     'Test program',
+  file:    '01_Baci_kockicu_Test.py',
+  explain: 'Ovo je <strong>polazna tačka</strong> – test program koji već imamo. LCD prikazuje <code>"Dobar dan"</code>, a pritiskom tastera menja se u <code>"Zdravo"</code>. Naš cilj: izmeniti ovaj program korak po korak da ispuni sve zahteve zadatka. Ideja: dodaćemo animaciju dobrodošlice, drugi red LCD-a, nasumičan broj i uslov za broj 6.',
   lines: [
     { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
     { c: `<span class="kw">import</span> time`, hl: '' },
     { c: ``, hl: '' },
     { c: `<span class="kw">class</span> <span class="cl">LCDSimulator</span>(tk.<span class="cl">Tk</span>):`, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="nm">self</span>):`, hl: '' },
     { c: `        <span class="fn">super</span>().__init__()`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">title</span>(<span class="st">"LCD Simulator - Dobar dan / Zdravo"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">geometry</span>(<span class="st">"400x300"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">configure</span>(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.<span class="fn">title</span>(<span class="st">"LCD Simulator - Dobar dan / Zdravo"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.<span class="fn">geometry</span>(<span class="st">"400x300"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.<span class="fn">configure</span>(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
     { c: ``, hl: '' },
     { c: `        <span class="cm"># --- UI: Simulacija LCD ekrana ---</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.lcd_okvir <span class="op">=</span> tk.<span class="cl">Frame</span>(<span class="kw">self</span>, bg=<span class="st">"#33ff33"</span>, bd=<span class="nm">10</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.lcd_okvir.<span class="fn">pack</span>(pady=<span class="nm">30</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.lcd_okvir <span class="op">=</span> tk.<span class="cl">Frame</span>(<span class="nm">self</span>, bg=<span class="st">"#33ff33"</span>, bd=<span class="nm">10</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.lcd_okvir.<span class="fn">pack</span>(pady=<span class="nm">30</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `        <span class="kw">self</span>.linija1 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">"Dobar dan"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>.lcd_okvir, textvariable=<span class="kw">self</span>.linija1,`, hl: '' },
+    { c: `        <span class="nm">self</span>.linija1 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">"Dobar dan"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.labela <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="nm">self</span>.lcd_okvir, textvariable=<span class="nm">self</span>.linija1,`, hl: '' },
     { c: `                              font=(<span class="st">"Courier"</span>, <span class="nm">22</span>, <span class="st">"bold"</span>), bg=<span class="st">"#33ff33"</span>,`, hl: '' },
     { c: `                              fg=<span class="st">"black"</span>, width=<span class="nm">16</span>, anchor=<span class="st">"w"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela.<span class="fn">pack</span>()`, hl: '' },
+    { c: `        <span class="nm">self</span>.labela.<span class="fn">pack</span>()`, hl: '' },
     { c: ``, hl: '' },
     { c: `        <span class="cm"># --- UI: Simulacija Tastera D2 ---</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.label_info <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>, text=<span class="st">"Klikni na taster (GPIO 12 / Board 32):"</span>,`, hl: '' },
+    { c: `        <span class="nm">self</span>.label_info <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="nm">self</span>, text=<span class="st">"Klikni na taster (GPIO 12 / Board 32):"</span>,`, hl: '' },
     { c: `                                  bg=<span class="st">"#2c3e50"</span>, fg=<span class="st">"white"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.label_info.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.label_info.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `        <span class="kw">self</span>.taster_d2 <span class="op">=</span> tk.<span class="cl">Button</span>(<span class="kw">self</span>, text=<span class="st">"TASTER D2"</span>, command=<span class="kw">self</span>.promeni_tekst,`, hl: '' },
+    { c: `        <span class="nm">self</span>.taster_d2 <span class="op">=</span> tk.<span class="cl">Button</span>(<span class="nm">self</span>, text=<span class="st">"TASTER D2"</span>, command=<span class="nm">self</span>.promeni_tekst,`, hl: '' },
     { c: `                                  bg=<span class="st">"#e67e22"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>),`, hl: '' },
     { c: `                                  width=<span class="nm">15</span>, height=<span class="nm">2</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.taster_d2.<span class="fn">pack</span>(pady=<span class="nm">20</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.taster_d2.<span class="fn">pack</span>(pady=<span class="nm">20</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">promeni_tekst</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">promeni_tekst</span>(<span class="nm">self</span>):`, hl: '' },
     { c: `        <span class="cm">"""Simulacija pritiska tastera (GPIO.input == 0)"""</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija1.<span class="fn">set</span>(<span class="st">"Zdravo"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.linija1.<span class="fn">set</span>(<span class="st">"Zdravo"</span>)`, hl: '' },
     { c: `        <span class="fn">print</span>(<span class="st">"Logika: Taster pritisnut -> LCD: Zdravo"</span>)`, hl: '' },
     { c: ``, hl: '' },
     { c: `<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:`, hl: '' },
-    { c: `    app <span class="op">=</span> <span class="fn">LCDSimulator</span>()`, hl: '' },
+    { c: `    app <span class="op">=</span> <span class="cl">LCDSimulator</span>()`, hl: '' },
     { c: `    app.<span class="fn">mainloop</span>()`, hl: '' },
   ]
 },
@@ -590,61 +609,79 @@ const STEPS = [
 // ── KORAK 2 ──────────────────────────────────────────────────────────────────
 {
   name:    'Korak 2',
-  sub:     'Naslov, LCD red 2, import random',
+  sub:     'Animacija "Dobro dosli"',
   file:    '02_Baci_kockicu.py',
-  explain: `Sada menjamo <strong>naslov prozora</strong> i <strong>dodajemo drugi red LCD-a</strong>.
-  Klasa ostaje ista – samo editujemo vrednosti koje su pogrešne. Dodajemo i
-  <code>import random</code> koji će nam trebati za kockicu, i promenljivu <code>self.broj_bacanja</code>
-  za brojanje koliko puta je igrač bacio kockicu. Sve to su minimalne izmene – nema novih funkcija.`,
+  explain: 'Dodajemo <strong>animaciju dobrodošlice</strong>. Umesto <code>import time</code> koristimo <code>import random</code> koji će nam trebati kasnije. Menjamo tekst u <code>"Dobro dosli"</code> i dodajemo <strong>tri nove metode</strong>: <code>animiraj_desno()</code>, <code>animiraj_levo()</code> i <code>kraj_animacije()</code> – svaka poziva sledeću pomoću <code>self.after()</code>. Dodajemo i <code>self.pozicija</code> i <code>self.animacija_gotova</code> kao promenljive stanja. Stara metoda <code>promeni_tekst</code> ostaje nepromenjena za sada.',
   lines: [
     { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
-    { c: `<span class="kw">import</span> time`, hl: '' },
-    { c: `<span class="kw">import</span> random`, hl: 'add' },
+    { c: `<span class="kw">import</span> random  <span class="cm"># zamenili smo "time" sa "random"</span>`, hl: 'mod' },
     { c: ``, hl: '' },
     { c: `<span class="kw">class</span> <span class="cl">LCDSimulator</span>(tk.<span class="cl">Tk</span>):`, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="nm">self</span>):`, hl: '' },
     { c: `        <span class="fn">super</span>().__init__()`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">title</span>(<span class="st">"LCD Simulator - Baci kockicu"</span>)`, hl: 'mod' },
-    { c: `        <span class="kw">self</span>.<span class="fn">geometry</span>(<span class="st">"400x300"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">configure</span>(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.<span class="fn">title</span>(<span class="st">"LCD Simulator - Baci kockicu"</span>)`, hl: 'mod' },
+    { c: `        <span class="nm">self</span>.<span class="fn">geometry</span>(<span class="st">"400x300"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.<span class="fn">configure</span>(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `        <span class="cm"># --- brojač koliko puta je taster pritisnut ---</span>`, hl: 'add' },
-    { c: `        <span class="kw">self</span>.broj_bacanja <span class="op">=</span> <span class="nm">0</span>`, hl: 'add' },
+    { c: `        <span class="cm"># --- Promenljive za animaciju ---</span>`, hl: 'add' },
+    { c: `        <span class="nm">self</span>.pozicija <span class="op">=</span> <span class="nm">0</span>           <span class="cm"># 0 = levo, 5 = desno</span>`, hl: 'add' },
+    { c: `        <span class="nm">self</span>.animacija_gotova <span class="op">=</span> <span class="kw">False</span>`, hl: 'add' },
     { c: ``, hl: '' },
     { c: `        <span class="cm"># --- UI: Simulacija LCD ekrana ---</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.lcd_okvir <span class="op">=</span> tk.<span class="cl">Frame</span>(<span class="kw">self</span>, bg=<span class="st">"#33ff33"</span>, bd=<span class="nm">10</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.lcd_okvir.<span class="fn">pack</span>(pady=<span class="nm">30</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.lcd_okvir <span class="op">=</span> tk.<span class="cl">Frame</span>(<span class="nm">self</span>, bg=<span class="st">"#33ff33"</span>, bd=<span class="nm">10</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.lcd_okvir.<span class="fn">pack</span>(pady=<span class="nm">30</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `        <span class="kw">self</span>.linija1 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">"Dobro dosli"</span>)`, hl: 'mod' },
-    { c: `        <span class="kw">self</span>.labela <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>.lcd_okvir, textvariable=<span class="kw">self</span>.linija1,`, hl: '' },
+    { c: `        <span class="nm">self</span>.linija1 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">"Dobro dosli  "</span>)`, hl: 'mod' },
+    { c: `        <span class="nm">self</span>.labela <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="nm">self</span>.lcd_okvir, textvariable=<span class="nm">self</span>.linija1,`, hl: '' },
     { c: `                              font=(<span class="st">"Courier"</span>, <span class="nm">22</span>, <span class="st">"bold"</span>), bg=<span class="st">"#33ff33"</span>,`, hl: '' },
     { c: `                              fg=<span class="st">"black"</span>, width=<span class="nm">16</span>, anchor=<span class="st">"w"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela.<span class="fn">pack</span>()`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `        <span class="cm"># --- drugi red LCD-a ---</span>`, hl: 'add' },
-    { c: `        <span class="kw">self</span>.linija2 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">""</span>)`, hl: 'add' },
-    { c: `        <span class="kw">self</span>.labela2 <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>.lcd_okvir, textvariable=<span class="kw">self</span>.linija2,`, hl: 'add' },
-    { c: `                               font=(<span class="st">"Courier"</span>, <span class="nm">22</span>, <span class="st">"bold"</span>), bg=<span class="st">"#33ff33"</span>,`, hl: 'add' },
-    { c: `                               fg=<span class="st">"black"</span>, width=<span class="nm">16</span>, anchor=<span class="st">"w"</span>)`, hl: 'add' },
-    { c: `        <span class="kw">self</span>.labela2.<span class="fn">pack</span>()`, hl: 'add' },
+    { c: `        <span class="nm">self</span>.labela.<span class="fn">pack</span>()`, hl: '' },
     { c: ``, hl: '' },
     { c: `        <span class="cm"># --- UI: Simulacija Tastera D2 ---</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.label_info <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>, text=<span class="st">"Klikni na taster (GPIO 12 / Board 32):"</span>,`, hl: '' },
+    { c: `        <span class="nm">self</span>.label_info <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="nm">self</span>, text=<span class="st">"Klikni na taster (GPIO 12 / Board 32):"</span>,`, hl: '' },
     { c: `                                  bg=<span class="st">"#2c3e50"</span>, fg=<span class="st">"white"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.label_info.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.label_info.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `        <span class="kw">self</span>.taster_d2 <span class="op">=</span> tk.<span class="cl">Button</span>(<span class="kw">self</span>, text=<span class="st">"TASTER D2"</span>, command=<span class="kw">self</span>.promeni_tekst,`, hl: '' },
+    { c: `        <span class="nm">self</span>.taster_d2 <span class="op">=</span> tk.<span class="cl">Button</span>(<span class="nm">self</span>, text=<span class="st">"TASTER D2"</span>, command=<span class="nm">self</span>.promeni_tekst,`, hl: '' },
     { c: `                                  bg=<span class="st">"#e67e22"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>),`, hl: '' },
     { c: `                                  width=<span class="nm">15</span>, height=<span class="nm">2</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.taster_d2.<span class="fn">pack</span>(pady=<span class="nm">20</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.taster_d2.<span class="fn">pack</span>(pady=<span class="nm">20</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">promeni_tekst</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `        <span class="cm"># --- Pokrecemo animaciju odmah na startu ---</span>`, hl: 'add' },
+    { c: `        <span class="nm">self</span>.<span class="fn">animiraj_desno</span>()`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">animiraj_desno</span>(<span class="nm">self</span>):`, hl: 'add' },
+    { c: `        <span class="cm">"""Pomera tekst polako na desno, korak po korak"""</span>`, hl: 'add' },
+    { c: `        <span class="nm">self</span>.pozicija <span class="op">+=</span> <span class="nm">1</span>`, hl: 'add' },
+    { c: `        razmaci <span class="op">=</span> <span class="st">" "</span> <span class="op">*</span> <span class="nm">self</span>.pozicija`, hl: 'add' },
+    { c: `        <span class="nm">self</span>.linija1.<span class="fn">set</span>(razmaci <span class="op">+</span> <span class="st">"Dobro dosli"</span>)`, hl: 'add' },
+    { c: `        <span class="kw">if</span> <span class="nm">self</span>.pozicija <span class="op">&lt;</span> <span class="nm">5</span>:`, hl: 'add' },
+    { c: `            <span class="nm">self</span>.<span class="fn">after</span>(<span class="nm">300</span>, <span class="nm">self</span>.animiraj_desno)  <span class="cm"># nastavljamo za 300ms</span>`, hl: 'add' },
+    { c: `        <span class="kw">else</span>:`, hl: 'add' },
+    { c: `            <span class="nm">self</span>.<span class="fn">after</span>(<span class="nm">2000</span>, <span class="nm">self</span>.animiraj_levo)  <span class="cm"># pauza 2 sekunde pa levo</span>`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">animiraj_levo</span>(<span class="nm">self</span>):`, hl: 'add' },
+    { c: `        <span class="cm">"""Pomera tekst polako na levo, korak po korak"""</span>`, hl: 'add' },
+    { c: `        <span class="nm">self</span>.pozicija <span class="op">-=</span> <span class="nm">1</span>`, hl: 'add' },
+    { c: `        razmaci <span class="op">=</span> <span class="st">" "</span> <span class="op">*</span> <span class="nm">self</span>.pozicija`, hl: 'add' },
+    { c: `        <span class="nm">self</span>.linija1.<span class="fn">set</span>(razmaci <span class="op">+</span> <span class="st">"Dobro dosli"</span>)`, hl: 'add' },
+    { c: `        <span class="kw">if</span> <span class="nm">self</span>.pozicija <span class="op">&gt;</span> <span class="nm">0</span>:`, hl: 'add' },
+    { c: `            <span class="nm">self</span>.<span class="fn">after</span>(<span class="nm">300</span>, <span class="nm">self</span>.animiraj_levo)  <span class="cm"># nastavljamo za 300ms</span>`, hl: 'add' },
+    { c: `        <span class="kw">else</span>:`, hl: 'add' },
+    { c: `            <span class="nm">self</span>.<span class="fn">after</span>(<span class="nm">2000</span>, <span class="nm">self</span>.kraj_animacije)  <span class="cm"># pauza 2 sekunde pa kraj</span>`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">kraj_animacije</span>(<span class="nm">self</span>):`, hl: 'add' },
+    { c: `        <span class="cm">"""Posle animacije prikazujemo Baci kocku"""</span>`, hl: 'add' },
+    { c: `        <span class="nm">self</span>.linija1.<span class="fn">set</span>(<span class="st">"Baci kocku"</span>)`, hl: 'add' },
+    { c: `        <span class="nm">self</span>.animacija_gotova <span class="op">=</span> <span class="kw">True</span>`, hl: 'add' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">promeni_tekst</span>(<span class="nm">self</span>):`, hl: '' },
     { c: `        <span class="cm">"""Simulacija pritiska tastera (GPIO.input == 0)"""</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija1.<span class="fn">set</span>(<span class="st">"Zdravo"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.linija1.<span class="fn">set</span>(<span class="st">"Zdravo"</span>)`, hl: '' },
     { c: `        <span class="fn">print</span>(<span class="st">"Logika: Taster pritisnut -> LCD: Zdravo"</span>)`, hl: '' },
     { c: ``, hl: '' },
     { c: `<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:`, hl: '' },
-    { c: `    app <span class="op">=</span> <span class="fn">LCDSimulator</span>()`, hl: '' },
+    { c: `    app <span class="op">=</span> <span class="cl">LCDSimulator</span>()`, hl: '' },
     { c: `    app.<span class="fn">mainloop</span>()`, hl: '' },
   ]
 },
@@ -652,70 +689,84 @@ const STEPS = [
 // ── KORAK 3 ──────────────────────────────────────────────────────────────────
 {
   name:    'Korak 3',
-  sub:     'Scroll: "Dobro dosli" levo→desno',
+  sub:     'Drugi red LCD-a',
   file:    '03_Baci_kockicu.py',
-  explain: `Sada dodajemo <strong>animaciju scrollovanja</strong>. Ideja je jednostavna: tekst "Dobro dosli" 
-  ima 11 znakova, a LCD prikazuje 16 znakova. Dodajemo razmake ispred teksta i povećavamo ih svake 300ms
-  koristeći <code>self.after()</code> – tkinter-ova zamena za <code>time.sleep()</code> koja ne zamrzava prozor.
-  Dodajemo novu funkciju <code>skroluj_levo_desno()</code>. Taster privremeno ne radi ništa novo.`,
+  explain: 'Dodajemo <strong>drugi red LCD ekrana</strong> – kopiramo <code>linija1</code> i <code>labela</code> i pravimo <code>linija2</code> i <code>labela2</code>. Takođe dodajemo <strong>zaštitu tastera</strong> u <code>promeni_tekst</code>: ako animacija još nije gotova, taster ne radi ništa. Metoda <code>promeni_tekst</code> za sada samo prikazuje <code>"Baci kocku"</code> kada se pritisne taster – sledeći korak će dodati logiku bacanja.',
   lines: [
     { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
-    { c: `<span class="kw">import</span> time`, hl: '' },
     { c: `<span class="kw">import</span> random`, hl: '' },
     { c: ``, hl: '' },
     { c: `<span class="kw">class</span> <span class="cl">LCDSimulator</span>(tk.<span class="cl">Tk</span>):`, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="nm">self</span>):`, hl: '' },
     { c: `        <span class="fn">super</span>().__init__()`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">title</span>(<span class="st">"LCD Simulator - Baci kockicu"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">geometry</span>(<span class="st">"400x300"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">configure</span>(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.broj_bacanja <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
+    { c: `        <span class="nm">self</span>.<span class="fn">title</span>(<span class="st">"LCD Simulator - Baci kockicu"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.<span class="fn">geometry</span>(<span class="st">"400x300"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.<span class="fn">configure</span>(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `        <span class="cm"># --- varijabla za poziciju scrolla (broj razmaka ispred teksta) ---</span>`, hl: 'add' },
-    { c: `        <span class="kw">self</span>.pozicija <span class="op">=</span> <span class="nm">0</span>`, hl: 'add' },
+    { c: `        <span class="cm"># --- Promenljive za animaciju ---</span>`, hl: '' },
+    { c: `        <span class="nm">self</span>.pozicija <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
+    { c: `        <span class="nm">self</span>.animacija_gotova <span class="op">=</span> <span class="kw">False</span>`, hl: '' },
     { c: ``, hl: '' },
     { c: `        <span class="cm"># --- UI: Simulacija LCD ekrana ---</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.lcd_okvir <span class="op">=</span> tk.<span class="cl">Frame</span>(<span class="kw">self</span>, bg=<span class="st">"#33ff33"</span>, bd=<span class="nm">10</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.lcd_okvir.<span class="fn">pack</span>(pady=<span class="nm">30</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija1 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">"Dobro dosli"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>.lcd_okvir, textvariable=<span class="kw">self</span>.linija1,`, hl: '' },
+    { c: `        <span class="nm">self</span>.lcd_okvir <span class="op">=</span> tk.<span class="cl">Frame</span>(<span class="nm">self</span>, bg=<span class="st">"#33ff33"</span>, bd=<span class="nm">10</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.lcd_okvir.<span class="fn">pack</span>(pady=<span class="nm">30</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="nm">self</span>.linija1 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">"Dobro dosli  "</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.labela <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="nm">self</span>.lcd_okvir, textvariable=<span class="nm">self</span>.linija1,`, hl: '' },
     { c: `                              font=(<span class="st">"Courier"</span>, <span class="nm">22</span>, <span class="st">"bold"</span>), bg=<span class="st">"#33ff33"</span>,`, hl: '' },
     { c: `                              fg=<span class="st">"black"</span>, width=<span class="nm">16</span>, anchor=<span class="st">"w"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela.<span class="fn">pack</span>()`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija2 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">""</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela2 <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>.lcd_okvir, textvariable=<span class="kw">self</span>.linija2,`, hl: '' },
-    { c: `                               font=(<span class="st">"Courier"</span>, <span class="nm">22</span>, <span class="st">"bold"</span>), bg=<span class="st">"#33ff33"</span>,`, hl: '' },
-    { c: `                               fg=<span class="st">"black"</span>, width=<span class="nm">16</span>, anchor=<span class="st">"w"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela2.<span class="fn">pack</span>()`, hl: '' },
+    { c: `        <span class="nm">self</span>.labela.<span class="fn">pack</span>()`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="cm"># --- Drugi red LCD-a (copy-paste od prvog reda) ---</span>`, hl: 'copy' },
+    { c: `        <span class="nm">self</span>.linija2 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">""</span>)`, hl: 'copy' },
+    { c: `        <span class="nm">self</span>.labela2 <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="nm">self</span>.lcd_okvir, textvariable=<span class="nm">self</span>.linija2,`, hl: 'copy' },
+    { c: `                               font=(<span class="st">"Courier"</span>, <span class="nm">22</span>, <span class="st">"bold"</span>), bg=<span class="st">"#33ff33"</span>,`, hl: 'copy' },
+    { c: `                               fg=<span class="st">"black"</span>, width=<span class="nm">16</span>, anchor=<span class="st">"w"</span>)`, hl: 'copy' },
+    { c: `        <span class="nm">self</span>.labela2.<span class="fn">pack</span>()`, hl: 'copy' },
+    { c: ``, hl: '' },
     { c: `        <span class="cm"># --- UI: Simulacija Tastera D2 ---</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.label_info <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>, text=<span class="st">"Klikni na taster (GPIO 12 / Board 32):"</span>,`, hl: '' },
+    { c: `        <span class="nm">self</span>.label_info <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="nm">self</span>, text=<span class="st">"Klikni na taster (GPIO 12 / Board 32):"</span>,`, hl: '' },
     { c: `                                  bg=<span class="st">"#2c3e50"</span>, fg=<span class="st">"white"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.label_info.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.taster_d2 <span class="op">=</span> tk.<span class="cl">Button</span>(<span class="kw">self</span>, text=<span class="st">"TASTER D2"</span>, command=<span class="kw">self</span>.promeni_tekst,`, hl: '' },
+    { c: `        <span class="nm">self</span>.label_info.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `        <span class="nm">self</span>.taster_d2 <span class="op">=</span> tk.<span class="cl">Button</span>(<span class="nm">self</span>, text=<span class="st">"TASTER D2"</span>, command=<span class="nm">self</span>.promeni_tekst,`, hl: '' },
     { c: `                                  bg=<span class="st">"#e67e22"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>),`, hl: '' },
     { c: `                                  width=<span class="nm">15</span>, height=<span class="nm">2</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.taster_d2.<span class="fn">pack</span>(pady=<span class="nm">20</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.taster_d2.<span class="fn">pack</span>(pady=<span class="nm">20</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.<span class="fn">animiraj_desno</span>()`, hl: '' },
     { c: ``, hl: '' },
-    { c: `        <span class="cm"># --- pokrenuti animaciju čim se prozor otvori ---</span>`, hl: 'add' },
-    { c: `        <span class="kw">self</span>.<span class="fn">skroluj_levo_desno</span>()`, hl: 'add' },
+    { c: `    <span class="kw">def</span> <span class="fn">animiraj_desno</span>(<span class="nm">self</span>):`, hl: '' },
+    { c: `        <span class="nm">self</span>.pozicija <span class="op">+=</span> <span class="nm">1</span>`, hl: '' },
+    { c: `        razmaci <span class="op">=</span> <span class="st">" "</span> <span class="op">*</span> <span class="nm">self</span>.pozicija`, hl: '' },
+    { c: `        <span class="nm">self</span>.linija1.<span class="fn">set</span>(razmaci <span class="op">+</span> <span class="st">"Dobro dosli"</span>)`, hl: '' },
+    { c: `        <span class="kw">if</span> <span class="nm">self</span>.pozicija <span class="op">&lt;</span> <span class="nm">5</span>:`, hl: '' },
+    { c: `            <span class="nm">self</span>.<span class="fn">after</span>(<span class="nm">300</span>, <span class="nm">self</span>.animiraj_desno)`, hl: '' },
+    { c: `        <span class="kw">else</span>:`, hl: '' },
+    { c: `            <span class="nm">self</span>.<span class="fn">after</span>(<span class="nm">2000</span>, <span class="nm">self</span>.animiraj_levo)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">skroluj_levo_desno</span>(<span class="kw">self</span>):`, hl: 'add' },
-    { c: `        <span class="cm"># LCD ima 16 mesta, tekst "Dobro dosli" ima 11 znakova</span>`, hl: 'add' },
-    { c: `        <span class="cm"># maksimalan pomak je 16 - 11 = 5 razmaka</span>`, hl: 'add' },
-    { c: `        <span class="kw">if</span> <span class="kw">self</span>.pozicija <span class="op">&lt;=</span> <span class="nm">5</span>:`, hl: 'add' },
-    { c: `            tekst <span class="op">=</span> <span class="st">" "</span> <span class="op">*</span> <span class="kw">self</span>.pozicija <span class="op">+</span> <span class="st">"Dobro dosli"</span>`, hl: 'add' },
-    { c: `            <span class="kw">self</span>.linija1.<span class="fn">set</span>(tekst)`, hl: 'add' },
-    { c: `            <span class="kw">self</span>.pozicija <span class="op">+=</span> <span class="nm">1</span>`, hl: 'add' },
-    { c: `            <span class="cm"># after(300, ...) = pozovi ovu funkciju ponovo posle 300ms</span>`, hl: 'add' },
-    { c: `            <span class="kw">self</span>.<span class="fn">after</span>(<span class="nm">300</span>, <span class="kw">self</span>.skroluj_levo_desno)`, hl: 'add' },
+    { c: `    <span class="kw">def</span> <span class="fn">animiraj_levo</span>(<span class="nm">self</span>):`, hl: '' },
+    { c: `        <span class="nm">self</span>.pozicija <span class="op">-=</span> <span class="nm">1</span>`, hl: '' },
+    { c: `        razmaci <span class="op">=</span> <span class="st">" "</span> <span class="op">*</span> <span class="nm">self</span>.pozicija`, hl: '' },
+    { c: `        <span class="nm">self</span>.linija1.<span class="fn">set</span>(razmaci <span class="op">+</span> <span class="st">"Dobro dosli"</span>)`, hl: '' },
+    { c: `        <span class="kw">if</span> <span class="nm">self</span>.pozicija <span class="op">&gt;</span> <span class="nm">0</span>:`, hl: '' },
+    { c: `            <span class="nm">self</span>.<span class="fn">after</span>(<span class="nm">300</span>, <span class="nm">self</span>.animiraj_levo)`, hl: '' },
+    { c: `        <span class="kw">else</span>:`, hl: '' },
+    { c: `            <span class="nm">self</span>.<span class="fn">after</span>(<span class="nm">2000</span>, <span class="nm">self</span>.kraj_animacije)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">promeni_tekst</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="cm">"""Simulacija pritiska tastera (GPIO.input == 0)"""</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija1.<span class="fn">set</span>(<span class="st">"Zdravo"</span>)`, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">kraj_animacije</span>(<span class="nm">self</span>):`, hl: '' },
+    { c: `        <span class="nm">self</span>.linija1.<span class="fn">set</span>(<span class="st">"Baci kocku"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.animacija_gotova <span class="op">=</span> <span class="kw">True</span>`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">promeni_tekst</span>(<span class="nm">self</span>):`, hl: '' },
+    { c: `        <span class="cm">"""Simulacija pritiska tastera"""</span>`, hl: '' },
+    { c: `        <span class="cm"># Zastita: dok traje animacija taster ne radi nista</span>`, hl: 'add' },
+    { c: `        <span class="kw">if not</span> <span class="nm">self</span>.animacija_gotova:`, hl: 'add' },
+    { c: `            <span class="kw">return</span>`, hl: 'add' },
+    { c: `        <span class="nm">self</span>.linija1.<span class="fn">set</span>(<span class="st">"Zdravo"</span>)`, hl: '' },
     { c: `        <span class="fn">print</span>(<span class="st">"Logika: Taster pritisnut -> LCD: Zdravo"</span>)`, hl: '' },
     { c: ``, hl: '' },
     { c: `<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:`, hl: '' },
-    { c: `    app <span class="op">=</span> <span class="fn">LCDSimulator</span>()`, hl: '' },
+    { c: `    app <span class="op">=</span> <span class="cl">LCDSimulator</span>()`, hl: '' },
     { c: `    app.<span class="fn">mainloop</span>()`, hl: '' },
   ]
 },
@@ -723,241 +774,85 @@ const STEPS = [
 // ── KORAK 4 ──────────────────────────────────────────────────────────────────
 {
   name:    'Korak 4',
-  sub:     'Scroll: desno→levo, pa "Baci kocku"',
-  file:    '04_Baci_kockicu.py',
-  explain: `Sada proširujemo funkciju za scroll: kada tekst stigne do desne strane (5 razmaka),
-  treba da se vrati nazad. Dodajemo i novi uslov za suprotni smer. Koristimo <code>self.after(3000, ...)</code>
-  da sačekamo <strong>3 sekunde</strong> na kraju svake strane pre nego što krenemo nazad.
-  Na kraju, kada oba scrollanja završe, pozivamo novu funkciju <code>pokazi_baci_kocku()</code>
-  koja ispisuje "Baci kocku" i <strong>aktivira taster</strong>.`,
+  sub:     'Bacanje kockice + uslov za 6',
+  file:    '04_Baci_kockicu_FINAL.py',
+  explain: 'Finalni korak – menjamo <strong>samo metodu <code>promeni_tekst</code></strong>. Dodajemo <code>self.broj_bacanja</code> kao brojač, generišemo nasumičan broj sa <code>random.randint(1, 6)</code> i prikazujemo rezultat u <strong>gornjem redu</strong>. U <strong>donjem redu</strong> dodajemo uslov: ako je broj 6, ispisuje se <code>"Ponovite bacanje"</code>, inače se donji red briše. Program je kompletan!',
   lines: [
     { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
-    { c: `<span class="kw">import</span> time`, hl: '' },
     { c: `<span class="kw">import</span> random`, hl: '' },
     { c: ``, hl: '' },
     { c: `<span class="kw">class</span> <span class="cl">LCDSimulator</span>(tk.<span class="cl">Tk</span>):`, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):`, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="nm">self</span>):`, hl: '' },
     { c: `        <span class="fn">super</span>().__init__()`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">title</span>(<span class="st">"LCD Simulator - Baci kockicu"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">geometry</span>(<span class="st">"400x300"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">configure</span>(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.broj_bacanja <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.pozicija <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
+    { c: `        <span class="nm">self</span>.<span class="fn">title</span>(<span class="st">"LCD Simulator - Baci kockicu"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.<span class="fn">geometry</span>(<span class="st">"400x300"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.<span class="fn">configure</span>(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `        <span class="cm"># --- smer scrolla: 1 = levo→desno, -1 = desno→levo ---</span>`, hl: 'add' },
-    { c: `        <span class="kw">self</span>.smer <span class="op">=</span> <span class="nm">1</span>`, hl: 'add' },
+    { c: `        <span class="nm">self</span>.pozicija <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
+    { c: `        <span class="nm">self</span>.animacija_gotova <span class="op">=</span> <span class="kw">False</span>`, hl: '' },
+    { c: `        <span class="cm"># --- Brojac koliko puta smo bacili kockicu ---</span>`, hl: 'add' },
+    { c: `        <span class="nm">self</span>.broj_bacanja <span class="op">=</span> <span class="nm">0</span>`, hl: 'add' },
     { c: ``, hl: '' },
-    { c: `        <span class="cm"># --- UI: Simulacija LCD ekrana ---</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.lcd_okvir <span class="op">=</span> tk.<span class="cl">Frame</span>(<span class="kw">self</span>, bg=<span class="st">"#33ff33"</span>, bd=<span class="nm">10</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.lcd_okvir.<span class="fn">pack</span>(pady=<span class="nm">30</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija1 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">"Dobro dosli"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>.lcd_okvir, textvariable=<span class="kw">self</span>.linija1,`, hl: '' },
+    { c: `        <span class="nm">self</span>.lcd_okvir <span class="op">=</span> tk.<span class="cl">Frame</span>(<span class="nm">self</span>, bg=<span class="st">"#33ff33"</span>, bd=<span class="nm">10</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.lcd_okvir.<span class="fn">pack</span>(pady=<span class="nm">30</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.linija1 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">"Dobro dosli  "</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.labela <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="nm">self</span>.lcd_okvir, textvariable=<span class="nm">self</span>.linija1,`, hl: '' },
     { c: `                              font=(<span class="st">"Courier"</span>, <span class="nm">22</span>, <span class="st">"bold"</span>), bg=<span class="st">"#33ff33"</span>,`, hl: '' },
     { c: `                              fg=<span class="st">"black"</span>, width=<span class="nm">16</span>, anchor=<span class="st">"w"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela.<span class="fn">pack</span>()`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija2 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">""</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela2 <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>.lcd_okvir, textvariable=<span class="kw">self</span>.linija2,`, hl: '' },
+    { c: `        <span class="nm">self</span>.labela.<span class="fn">pack</span>()`, hl: '' },
+    { c: `        <span class="nm">self</span>.linija2 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">""</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.labela2 <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="nm">self</span>.lcd_okvir, textvariable=<span class="nm">self</span>.linija2,`, hl: '' },
     { c: `                               font=(<span class="st">"Courier"</span>, <span class="nm">22</span>, <span class="st">"bold"</span>), bg=<span class="st">"#33ff33"</span>,`, hl: '' },
     { c: `                               fg=<span class="st">"black"</span>, width=<span class="nm">16</span>, anchor=<span class="st">"w"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela2.<span class="fn">pack</span>()`, hl: '' },
-    { c: `        <span class="cm"># --- UI: Simulacija Tastera D2 ---</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.label_info <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>, text=<span class="st">"Klikni na taster (GPIO 12 / Board 32):"</span>,`, hl: '' },
+    { c: `        <span class="nm">self</span>.labela2.<span class="fn">pack</span>()`, hl: '' },
+    { c: `        <span class="nm">self</span>.label_info <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="nm">self</span>, text=<span class="st">"Klikni na taster (GPIO 12 / Board 32):"</span>,`, hl: '' },
     { c: `                                  bg=<span class="st">"#2c3e50"</span>, fg=<span class="st">"white"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.label_info.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.taster_d2 <span class="op">=</span> tk.<span class="cl">Button</span>(<span class="kw">self</span>, text=<span class="st">"TASTER D2"</span>, command=<span class="kw">self</span>.promeni_tekst,`, hl: '' },
+    { c: `        <span class="nm">self</span>.label_info.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.taster_d2 <span class="op">=</span> tk.<span class="cl">Button</span>(<span class="nm">self</span>, text=<span class="st">"TASTER D2"</span>, command=<span class="nm">self</span>.promeni_tekst,`, hl: '' },
     { c: `                                  bg=<span class="st">"#e67e22"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>),`, hl: '' },
     { c: `                                  width=<span class="nm">15</span>, height=<span class="nm">2</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.taster_d2.<span class="fn">pack</span>(pady=<span class="nm">20</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">skroluj_levo_desno</span>()`, hl: '' },
+    { c: `        <span class="nm">self</span>.taster_d2.<span class="fn">pack</span>(pady=<span class="nm">20</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.<span class="fn">animiraj_desno</span>()`, hl: '' },
     { c: ``, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">skroluj_levo_desno</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="cm"># sve dok nismo dostigli krajeve (0 ili 5 razmaka), nastavljamo</span>`, hl: 'mod' },
-    { c: `        <span class="kw">if</span> <span class="nm">0</span> <span class="op">&lt;=</span> <span class="kw">self</span>.pozicija <span class="op">&lt;=</span> <span class="nm">5</span>:`, hl: 'mod' },
-    { c: `            tekst <span class="op">=</span> <span class="st">" "</span> <span class="op">*</span> <span class="kw">self</span>.pozicija <span class="op">+</span> <span class="st">"Dobro dosli"</span>`, hl: '' },
-    { c: `            <span class="kw">self</span>.linija1.<span class="fn">set</span>(tekst)`, hl: '' },
-    { c: `            <span class="kw">self</span>.pozicija <span class="op">+=</span> <span class="kw">self</span>.smer   <span class="cm"># +1 ili -1 zavisno od smera</span>`, hl: 'mod' },
-    { c: `            <span class="kw">self</span>.<span class="fn">after</span>(<span class="nm">300</span>, <span class="kw">self</span>.skroluj_levo_desno)`, hl: '' },
-    { c: `        <span class="kw">elif</span> <span class="kw">self</span>.pozicija <span class="op">&gt;</span> <span class="nm">5</span> <span class="kw">and</span> <span class="kw">self</span>.smer <span class="op">==</span> <span class="nm">1</span>:`, hl: 'add' },
-    { c: `            <span class="cm"># stigli smo do desne strane – čekamo 3s pa idemo nazad</span>`, hl: 'add' },
-    { c: `            <span class="kw">self</span>.smer <span class="op">=</span> <span class="op">-</span><span class="nm">1</span>`, hl: 'add' },
-    { c: `            <span class="kw">self</span>.pozicija <span class="op">=</span> <span class="nm">5</span>`, hl: 'add' },
-    { c: `            <span class="kw">self</span>.<span class="fn">after</span>(<span class="nm">3000</span>, <span class="kw">self</span>.skroluj_levo_desno)`, hl: 'add' },
-    { c: `        <span class="kw">else</span>:`, hl: 'add' },
-    { c: `            <span class="cm"># stigli smo do leve strane – scroll gotov, prikazujemo "Baci kocku"</span>`, hl: 'add' },
-    { c: `            <span class="kw">self</span>.<span class="fn">after</span>(<span class="nm">3000</span>, <span class="kw">self</span>.pokazi_baci_kocku)`, hl: 'add' },
-    { c: ``, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">pokazi_baci_kocku</span>(<span class="kw">self</span>):`, hl: 'add' },
-    { c: `        <span class="cm"># prikazujemo poruku i aktiviramo taster</span>`, hl: 'add' },
-    { c: `        <span class="kw">self</span>.linija1.<span class="fn">set</span>(<span class="st">"Baci kocku"</span>)`, hl: 'add' },
-    { c: `        <span class="kw">self</span>.linija2.<span class="fn">set</span>(<span class="st">""</span>)`, hl: 'add' },
-    { c: ``, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">promeni_tekst</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="cm">"""Simulacija pritiska tastera (GPIO.input == 0)"""</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija1.<span class="fn">set</span>(<span class="st">"Zdravo"</span>)`, hl: '' },
-    { c: `        <span class="fn">print</span>(<span class="st">"Logika: Taster pritisnut -> LCD: Zdravo"</span>)`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:`, hl: '' },
-    { c: `    app <span class="op">=</span> <span class="fn">LCDSimulator</span>()`, hl: '' },
-    { c: `    app.<span class="fn">mainloop</span>()`, hl: '' },
-  ]
-},
-
-// ── KORAK 5 ──────────────────────────────════════════════════════════════════
-{
-  name:    'Korak 5',
-  sub:     'Taster: bacanje kockice, gornji red',
-  file:    '05_Baci_kockicu.py',
-  explain: `Sada menjamo funkciju <code>promeni_tekst()</code> – to je jedino što preostaje.
-  Kada korisnik pritisne taster, treba da: povećamo brojač bacanja, generišemo nasumičan broj od 1 do 6
-  pomoću <code>random.randint(1, 6)</code>, i ispišemo u <strong>gornjem redu</strong>
-  "Vas X broj je Y" gde je X redni broj bacanja, a Y dobijeni broj. Donji red za sad ostavljamo prazan.`,
-  lines: [
-    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
-    { c: `<span class="kw">import</span> time`, hl: '' },
-    { c: `<span class="kw">import</span> random`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `<span class="kw">class</span> <span class="cl">LCDSimulator</span>(tk.<span class="cl">Tk</span>):`, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="fn">super</span>().__init__()`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">title</span>(<span class="st">"LCD Simulator - Baci kockicu"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">geometry</span>(<span class="st">"400x300"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">configure</span>(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.broj_bacanja <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.pozicija <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.smer <span class="op">=</span> <span class="nm">1</span>`, hl: '' },
-    { c: `        <span class="cm"># --- UI: Simulacija LCD ekrana ---</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.lcd_okvir <span class="op">=</span> tk.<span class="cl">Frame</span>(<span class="kw">self</span>, bg=<span class="st">"#33ff33"</span>, bd=<span class="nm">10</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.lcd_okvir.<span class="fn">pack</span>(pady=<span class="nm">30</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija1 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">"Dobro dosli"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>.lcd_okvir, textvariable=<span class="kw">self</span>.linija1,`, hl: '' },
-    { c: `                              font=(<span class="st">"Courier"</span>, <span class="nm">22</span>, <span class="st">"bold"</span>), bg=<span class="st">"#33ff33"</span>,`, hl: '' },
-    { c: `                              fg=<span class="st">"black"</span>, width=<span class="nm">16</span>, anchor=<span class="st">"w"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela.<span class="fn">pack</span>()`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija2 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">""</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela2 <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>.lcd_okvir, textvariable=<span class="kw">self</span>.linija2,`, hl: '' },
-    { c: `                               font=(<span class="st">"Courier"</span>, <span class="nm">22</span>, <span class="st">"bold"</span>), bg=<span class="st">"#33ff33"</span>,`, hl: '' },
-    { c: `                               fg=<span class="st">"black"</span>, width=<span class="nm">16</span>, anchor=<span class="st">"w"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela2.<span class="fn">pack</span>()`, hl: '' },
-    { c: `        <span class="cm"># --- UI: Simulacija Tastera D2 ---</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.label_info <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>, text=<span class="st">"Klikni na taster (GPIO 12 / Board 32):"</span>,`, hl: '' },
-    { c: `                                  bg=<span class="st">"#2c3e50"</span>, fg=<span class="st">"white"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.label_info.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.taster_d2 <span class="op">=</span> tk.<span class="cl">Button</span>(<span class="kw">self</span>, text=<span class="st">"TASTER D2"</span>, command=<span class="kw">self</span>.promeni_tekst,`, hl: '' },
-    { c: `                                  bg=<span class="st">"#e67e22"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>),`, hl: '' },
-    { c: `                                  width=<span class="nm">15</span>, height=<span class="nm">2</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.taster_d2.<span class="fn">pack</span>(pady=<span class="nm">20</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">skroluj_levo_desno</span>()`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">skroluj_levo_desno</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="kw">if</span> <span class="nm">0</span> <span class="op">&lt;=</span> <span class="kw">self</span>.pozicija <span class="op">&lt;=</span> <span class="nm">5</span>:`, hl: '' },
-    { c: `            tekst <span class="op">=</span> <span class="st">" "</span> <span class="op">*</span> <span class="kw">self</span>.pozicija <span class="op">+</span> <span class="st">"Dobro dosli"</span>`, hl: '' },
-    { c: `            <span class="kw">self</span>.linija1.<span class="fn">set</span>(tekst)`, hl: '' },
-    { c: `            <span class="kw">self</span>.pozicija <span class="op">+=</span> <span class="kw">self</span>.smer`, hl: '' },
-    { c: `            <span class="kw">self</span>.<span class="fn">after</span>(<span class="nm">300</span>, <span class="kw">self</span>.skroluj_levo_desno)`, hl: '' },
-    { c: `        <span class="kw">elif</span> <span class="kw">self</span>.pozicija <span class="op">&gt;</span> <span class="nm">5</span> <span class="kw">and</span> <span class="kw">self</span>.smer <span class="op">==</span> <span class="nm">1</span>:`, hl: '' },
-    { c: `            <span class="kw">self</span>.smer <span class="op">=</span> <span class="op">-</span><span class="nm">1</span>`, hl: '' },
-    { c: `            <span class="kw">self</span>.pozicija <span class="op">=</span> <span class="nm">5</span>`, hl: '' },
-    { c: `            <span class="kw">self</span>.<span class="fn">after</span>(<span class="nm">3000</span>, <span class="kw">self</span>.skroluj_levo_desno)`, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">animiraj_desno</span>(<span class="nm">self</span>):`, hl: '' },
+    { c: `        <span class="nm">self</span>.pozicija <span class="op">+=</span> <span class="nm">1</span>`, hl: '' },
+    { c: `        razmaci <span class="op">=</span> <span class="st">" "</span> <span class="op">*</span> <span class="nm">self</span>.pozicija`, hl: '' },
+    { c: `        <span class="nm">self</span>.linija1.<span class="fn">set</span>(razmaci <span class="op">+</span> <span class="st">"Dobro dosli"</span>)`, hl: '' },
+    { c: `        <span class="kw">if</span> <span class="nm">self</span>.pozicija <span class="op">&lt;</span> <span class="nm">5</span>:`, hl: '' },
+    { c: `            <span class="nm">self</span>.<span class="fn">after</span>(<span class="nm">300</span>, <span class="nm">self</span>.animiraj_desno)`, hl: '' },
     { c: `        <span class="kw">else</span>:`, hl: '' },
-    { c: `            <span class="kw">self</span>.<span class="fn">after</span>(<span class="nm">3000</span>, <span class="kw">self</span>.pokazi_baci_kocku)`, hl: '' },
+    { c: `            <span class="nm">self</span>.<span class="fn">after</span>(<span class="nm">2000</span>, <span class="nm">self</span>.animiraj_levo)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">pokazi_baci_kocku</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija1.<span class="fn">set</span>(<span class="st">"Baci kocku"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija2.<span class="fn">set</span>(<span class="st">""</span>)`, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">animiraj_levo</span>(<span class="nm">self</span>):`, hl: '' },
+    { c: `        <span class="nm">self</span>.pozicija <span class="op">-=</span> <span class="nm">1</span>`, hl: '' },
+    { c: `        razmaci <span class="op">=</span> <span class="st">" "</span> <span class="op">*</span> <span class="nm">self</span>.pozicija`, hl: '' },
+    { c: `        <span class="nm">self</span>.linija1.<span class="fn">set</span>(razmaci <span class="op">+</span> <span class="st">"Dobro dosli"</span>)`, hl: '' },
+    { c: `        <span class="kw">if</span> <span class="nm">self</span>.pozicija <span class="op">&gt;</span> <span class="nm">0</span>:`, hl: '' },
+    { c: `            <span class="nm">self</span>.<span class="fn">after</span>(<span class="nm">300</span>, <span class="nm">self</span>.animiraj_levo)`, hl: '' },
+    { c: `        <span class="kw">else</span>:`, hl: '' },
+    { c: `            <span class="nm">self</span>.<span class="fn">after</span>(<span class="nm">2000</span>, <span class="nm">self</span>.kraj_animacije)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">promeni_tekst</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="cm">"""Simulacija pritiska tastera (GPIO.input == 0)"""</span>`, hl: '' },
-    { c: `        <span class="cm"># povećavamo brojač svaki put kada se taster pritisne</span>`, hl: 'mod' },
-    { c: `        <span class="kw">self</span>.broj_bacanja <span class="op">+=</span> <span class="nm">1</span>`, hl: 'mod' },
-    { c: `        <span class="cm"># nasumičan broj od 1 do 6 – simulacija kockice</span>`, hl: 'mod' },
+    { c: `    <span class="kw">def</span> <span class="fn">kraj_animacije</span>(<span class="nm">self</span>):`, hl: '' },
+    { c: `        <span class="nm">self</span>.linija1.<span class="fn">set</span>(<span class="st">"Baci kocku"</span>)`, hl: '' },
+    { c: `        <span class="nm">self</span>.animacija_gotova <span class="op">=</span> <span class="kw">True</span>`, hl: '' },
+    { c: ``, hl: '' },
+    { c: `    <span class="kw">def</span> <span class="fn">promeni_tekst</span>(<span class="nm">self</span>):`, hl: '' },
+    { c: `        <span class="kw">if not</span> <span class="nm">self</span>.animacija_gotova:`, hl: '' },
+    { c: `            <span class="kw">return</span>`, hl: '' },
+    { c: `        <span class="cm"># Povecavamo broj bacanja za 1</span>`, hl: 'mod' },
+    { c: `        <span class="nm">self</span>.broj_bacanja <span class="op">+=</span> <span class="nm">1</span>`, hl: 'mod' },
+    { c: `        <span class="cm"># Generisemo nasumican broj od 1 do 6</span>`, hl: 'mod' },
     { c: `        broj <span class="op">=</span> random.<span class="fn">randint</span>(<span class="nm">1</span>, <span class="nm">6</span>)`, hl: 'mod' },
-    { c: `        <span class="cm"># gornji red: "Vas X broj je Y"</span>`, hl: 'mod' },
-    { c: `        <span class="kw">self</span>.linija1.<span class="fn">set</span>(<span class="st">f"Vas </span><span class="op">{</span><span class="kw">self</span>.broj_bacanja<span class="op">}</span><span class="st"> broj je </span><span class="op">{</span>broj<span class="op">}</span><span class="st">"</span>)`, hl: 'mod' },
-    { c: `        <span class="cm"># donji red: prazan za sada</span>`, hl: 'mod' },
-    { c: `        <span class="kw">self</span>.linija2.<span class="fn">set</span>(<span class="st">""</span>)`, hl: 'mod' },
-    { c: ``, hl: '' },
-    { c: `<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:`, hl: '' },
-    { c: `    app <span class="op">=</span> <span class="fn">LCDSimulator</span>()`, hl: '' },
-    { c: `    app.<span class="fn">mainloop</span>()`, hl: '' },
-  ]
-},
-
-// ── KORAK 6 ──────────────────────────────────────────────────────────────────
-{
-  name:    'Korak 6',
-  sub:     'Donji red: "Ponovite bacanje" za broj 6',
-  file:    '06_Baci_kockicu.py',
-  explain: `Poslednji korak! Jedina izmena je u funkciji <code>promeni_tekst()</code> – dodajemo
-  jedan <code>if</code> uslov koji proverava da li je dobijeni broj <strong>6</strong>.
-  Ako jeste, u donjem redu se ispisuje "Ponovite bacanje". Ako nije, donji red ostaje prazan.
-  Program je gotov i ispunjava sve zahteve zadatka!`,
-  lines: [
-    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
-    { c: `<span class="kw">import</span> time`, hl: '' },
-    { c: `<span class="kw">import</span> random`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `<span class="kw">class</span> <span class="cl">LCDSimulator</span>(tk.<span class="cl">Tk</span>):`, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="fn">super</span>().__init__()`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">title</span>(<span class="st">"LCD Simulator - Baci kockicu"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">geometry</span>(<span class="st">"400x300"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">configure</span>(bg=<span class="st">"#2c3e50"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.broj_bacanja <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.pozicija <span class="op">=</span> <span class="nm">0</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.smer <span class="op">=</span> <span class="nm">1</span>`, hl: '' },
-    { c: `        <span class="cm"># --- UI: Simulacija LCD ekrana ---</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.lcd_okvir <span class="op">=</span> tk.<span class="cl">Frame</span>(<span class="kw">self</span>, bg=<span class="st">"#33ff33"</span>, bd=<span class="nm">10</span>, relief=<span class="st">"sunken"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.lcd_okvir.<span class="fn">pack</span>(pady=<span class="nm">30</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija1 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">"Dobro dosli"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>.lcd_okvir, textvariable=<span class="kw">self</span>.linija1,`, hl: '' },
-    { c: `                              font=(<span class="st">"Courier"</span>, <span class="nm">22</span>, <span class="st">"bold"</span>), bg=<span class="st">"#33ff33"</span>,`, hl: '' },
-    { c: `                              fg=<span class="st">"black"</span>, width=<span class="nm">16</span>, anchor=<span class="st">"w"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela.<span class="fn">pack</span>()`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija2 <span class="op">=</span> tk.<span class="cl">StringVar</span>(value=<span class="st">""</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela2 <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>.lcd_okvir, textvariable=<span class="kw">self</span>.linija2,`, hl: '' },
-    { c: `                               font=(<span class="st">"Courier"</span>, <span class="nm">22</span>, <span class="st">"bold"</span>), bg=<span class="st">"#33ff33"</span>,`, hl: '' },
-    { c: `                               fg=<span class="st">"black"</span>, width=<span class="nm">16</span>, anchor=<span class="st">"w"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.labela2.<span class="fn">pack</span>()`, hl: '' },
-    { c: `        <span class="cm"># --- UI: Simulacija Tastera D2 ---</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.label_info <span class="op">=</span> tk.<span class="cl">Label</span>(<span class="kw">self</span>, text=<span class="st">"Klikni na taster (GPIO 12 / Board 32):"</span>,`, hl: '' },
-    { c: `                                  bg=<span class="st">"#2c3e50"</span>, fg=<span class="st">"white"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.label_info.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.taster_d2 <span class="op">=</span> tk.<span class="cl">Button</span>(<span class="kw">self</span>, text=<span class="st">"TASTER D2"</span>, command=<span class="kw">self</span>.promeni_tekst,`, hl: '' },
-    { c: `                                  bg=<span class="st">"#e67e22"</span>, fg=<span class="st">"white"</span>, font=(<span class="st">"Arial"</span>, <span class="nm">12</span>, <span class="st">"bold"</span>),`, hl: '' },
-    { c: `                                  width=<span class="nm">15</span>, height=<span class="nm">2</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.taster_d2.<span class="fn">pack</span>(pady=<span class="nm">20</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.<span class="fn">skroluj_levo_desno</span>()`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">skroluj_levo_desno</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="kw">if</span> <span class="nm">0</span> <span class="op">&lt;=</span> <span class="kw">self</span>.pozicija <span class="op">&lt;=</span> <span class="nm">5</span>:`, hl: '' },
-    { c: `            tekst <span class="op">=</span> <span class="st">" "</span> <span class="op">*</span> <span class="kw">self</span>.pozicija <span class="op">+</span> <span class="st">"Dobro dosli"</span>`, hl: '' },
-    { c: `            <span class="kw">self</span>.linija1.<span class="fn">set</span>(tekst)`, hl: '' },
-    { c: `            <span class="kw">self</span>.pozicija <span class="op">+=</span> <span class="kw">self</span>.smer`, hl: '' },
-    { c: `            <span class="kw">self</span>.<span class="fn">after</span>(<span class="nm">300</span>, <span class="kw">self</span>.skroluj_levo_desno)`, hl: '' },
-    { c: `        <span class="kw">elif</span> <span class="kw">self</span>.pozicija <span class="op">&gt;</span> <span class="nm">5</span> <span class="kw">and</span> <span class="kw">self</span>.smer <span class="op">==</span> <span class="nm">1</span>:`, hl: '' },
-    { c: `            <span class="kw">self</span>.smer <span class="op">=</span> <span class="op">-</span><span class="nm">1</span>`, hl: '' },
-    { c: `            <span class="kw">self</span>.pozicija <span class="op">=</span> <span class="nm">5</span>`, hl: '' },
-    { c: `            <span class="kw">self</span>.<span class="fn">after</span>(<span class="nm">3000</span>, <span class="kw">self</span>.skroluj_levo_desno)`, hl: '' },
-    { c: `        <span class="kw">else</span>:`, hl: '' },
-    { c: `            <span class="kw">self</span>.<span class="fn">after</span>(<span class="nm">3000</span>, <span class="kw">self</span>.pokazi_baci_kocku)`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">pokazi_baci_kocku</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija1.<span class="fn">set</span>(<span class="st">"Baci kocku"</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija2.<span class="fn">set</span>(<span class="st">""</span>)`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `    <span class="kw">def</span> <span class="fn">promeni_tekst</span>(<span class="kw">self</span>):`, hl: '' },
-    { c: `        <span class="cm">"""Simulacija pritiska tastera (GPIO.input == 0)"""</span>`, hl: '' },
-    { c: `        <span class="kw">self</span>.broj_bacanja <span class="op">+=</span> <span class="nm">1</span>`, hl: '' },
-    { c: `        broj <span class="op">=</span> random.<span class="fn">randint</span>(<span class="nm">1</span>, <span class="nm">6</span>)`, hl: '' },
-    { c: `        <span class="kw">self</span>.linija1.<span class="fn">set</span>(<span class="st">f"Vas </span><span class="op">{</span><span class="kw">self</span>.broj_bacanja<span class="op">}</span><span class="st"> broj je </span><span class="op">{</span>broj<span class="op">}</span><span class="st">"</span>)`, hl: '' },
-    { c: `        <span class="cm"># ako je dobijen broj 6 – donji red prikazuje poruku</span>`, hl: 'add' },
+    { c: `        <span class="cm"># Prikazujemo u gornjem redu LCD-a</span>`, hl: 'mod' },
+    { c: `        <span class="nm">self</span>.linija1.<span class="fn">set</span>(<span class="kw">f</span><span class="st">"Vas {self.broj_bacanja} broj je {broj}"</span>)`, hl: 'mod' },
+    { c: `        <span class="cm"># Uslov za donji red: ako je 6 -> "Ponovite bacanje"</span>`, hl: 'add' },
     { c: `        <span class="kw">if</span> broj <span class="op">==</span> <span class="nm">6</span>:`, hl: 'add' },
-    { c: `            <span class="kw">self</span>.linija2.<span class="fn">set</span>(<span class="st">"Ponovite bacanje"</span>)`, hl: 'add' },
+    { c: `            <span class="nm">self</span>.linija2.<span class="fn">set</span>(<span class="st">"Ponovite bacanje"</span>)`, hl: 'add' },
     { c: `        <span class="kw">else</span>:`, hl: 'add' },
-    { c: `            <span class="kw">self</span>.linija2.<span class="fn">set</span>(<span class="st">""</span>)`, hl: 'add' },
+    { c: `            <span class="nm">self</span>.linija2.<span class="fn">set</span>(<span class="st">""</span>)  <span class="cm"># cistimo donji red</span>`, hl: 'add' },
     { c: ``, hl: '' },
     { c: `<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:`, hl: '' },
-    { c: `    app <span class="op">=</span> <span class="fn">LCDSimulator</span>()`, hl: '' },
+    { c: `    app <span class="op">=</span> <span class="cl">LCDSimulator</span>()`, hl: '' },
     { c: `    app.<span class="fn">mainloop</span>()`, hl: '' },
   ]
 },
@@ -972,9 +867,11 @@ const STEPS = [
 let cur = 0;
 
 function buildSidebar() {
+  // zahtevi
   document.getElementById('sidebar-reqs').innerHTML =
     ZAHTEVI.map(z => `<div class="req-item">${z}</div>`).join('');
 
+  // koraci
   const el = document.getElementById('sidebar-steps');
   el.innerHTML = STEPS.map((s, i) =>
     `<div class="step-pill${i === 0 ? ' active' : ''}" onclick="goTo(${i})">
@@ -993,6 +890,7 @@ function render() {
   document.getElementById('btn-prev').disabled = cur === 0;
   document.getElementById('btn-next').disabled = cur === STEPS.length - 1;
 
+  // progress dots
   const dc = document.getElementById('dots');
   dc.innerHTML = '';
   STEPS.forEach((_, i) => {
@@ -1002,17 +900,20 @@ function render() {
     dc.appendChild(d);
   });
 
+  // sidebar active
   document.querySelectorAll('.step-pill').forEach((p, i) =>
     p.classList.toggle('active', i === cur));
 
   document.getElementById('step-explain').innerHTML = s.explain || '';
 
+  // kod
   document.getElementById('code-pre').innerHTML =
     s.lines.map(l => {
       const cls = l.hl ? ` hl-${l.hl}` : '';
       return `<div class="ln${cls}"><span class="ln-code">${l.c}</span></div>`;
     }).join('');
 
+  // reset copy dugme
   const cb = document.getElementById('copy-btn');
   cb.textContent = 'copy';
   cb.classList.remove('copied');

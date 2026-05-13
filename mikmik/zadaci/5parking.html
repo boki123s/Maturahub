@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kontrola pristupa na parking prostoru</title>
+<title>Parking Kontrola – LED i 7-Segment Simulator</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -20,6 +20,7 @@
   --mono:     'JetBrains Mono', monospace;
   --sans:     'Sora', sans-serif;
 
+  /* highlight boje */
   --hl-add-bg:    rgba(52,211,153,.09);
   --hl-add-bar:   #34d399;
   --hl-del-bg:    rgba(239,68,68,.09);
@@ -43,6 +44,7 @@ body {
   flex-direction: column;
 }
 
+/* ── HEADER ── */
 header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -83,6 +85,7 @@ header {
 }
 .header-spacer { width: 80px; flex-shrink: 0; }
 
+/* ── LAYOUT ── */
 .layout {
   display: flex;
   flex: 1;
@@ -90,6 +93,7 @@ header {
   height: calc(100vh - 53px);
 }
 
+/* ── SIDEBAR ── */
 .sidebar {
   width: 230px;
   flex-shrink: 0;
@@ -119,6 +123,7 @@ header {
   margin-bottom: 8px;
 }
 
+/* zahtevi */
 .sidebar-reqs { padding: 12px 16px 4px; border-bottom: 1px solid var(--border); }
 .req-item {
   display: flex;
@@ -137,6 +142,7 @@ header {
   margin-top: 1px;
 }
 
+/* objašnjenje koraka */
 .step-explain {
   padding: 10px 18px 9px;
   background: var(--surface);
@@ -186,6 +192,7 @@ header {
   border-color: var(--accent);
 }
 
+/* ── LEGENDA ── */
 .legend {
   border-top: 1px solid var(--border);
   padding: 12px 16px 16px;
@@ -226,6 +233,7 @@ header {
 .ls-mod   { background: var(--hl-mod-bg);  border: 1px solid var(--hl-mod-bar); }
 .ls-copy  { background: var(--hl-copy-bg); border: 1px solid var(--hl-copy-bar); }
 
+/* ── CONTENT ── */
 .content {
   flex: 1;
   display: flex;
@@ -234,6 +242,7 @@ header {
   min-width: 0;
 }
 
+/* ── NAV ── */
 .step-nav {
   display: flex;
   align-items: center;
@@ -281,6 +290,7 @@ header {
 .dot.active { background: var(--accent); transform: scale(1.35); }
 .dot.done   { background: var(--accent2); }
 
+/* ── CODE AREA ── */
 .code-area { flex: 1; overflow-y: auto; }
 .code-wrap { background: #0a0b10; min-height: 100%; }
 .code-bar {
@@ -309,6 +319,7 @@ header {
 .copy-btn:hover  { color: var(--accent3); border-color: rgba(124,106,247,.4); }
 .copy-btn.copied { color: var(--green);   border-color: rgba(51,255,153,.3); }
 
+/* mobile legenda strip – skrivena na desktopu */
 .mobile-legend {
   display: none;
   gap: 12px;
@@ -362,6 +373,7 @@ pre {
 }
 .ln-code { flex: 1; white-space: pre; }
 
+/* highlight tipovi */
 .ln.hl-add  { background: var(--hl-add-bg);  border-left: 2px solid var(--hl-add-bar);  }
 .ln.hl-del  { background: var(--hl-del-bg);  border-left: 2px solid var(--hl-del-bar);  }
 .ln.hl-mod  { background: var(--hl-mod-bg);  border-left: 2px solid var(--hl-mod-bar);  }
@@ -371,6 +383,7 @@ pre {
 .ln.hl-mod::before  { color: rgba(251,191,36,.3); }
 .ln.hl-copy::before { color: rgba(236,72,153,.3); }
 
+/* syntax */
 .kw { color: #a78bfa; }
 .fn { color: #60a5fa; }
 .st { color: #86efac; }
@@ -379,10 +392,12 @@ pre {
 .cl { color: #f9a8d4; }
 .op { color: #7c6af7; }
 
+/* scrollbar */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
+/* ── MOBILE ── */
 @media (max-width: 680px) {
   .sidebar        { display: none; }
   .layout         { height: calc(100vh - 49px); }
@@ -408,23 +423,31 @@ pre {
     home
   </a>
   <div class="header-center">
-    <h1>Kontrola pristupa na <span>parking prostoru</span></h1>
-    <div class="header-chip">4ETR · B16 · LED diode · 7-Segment · tkinter</div>
+    <h1>Parking <span>Kontrola</span></h1>
+    <div class="header-chip">Mikrokontroleri · LED · 7-Segment · tkinter</div>
   </div>
   <div class="header-spacer"></div>
 </header>
 
 <div class="layout">
 
+  <!-- ── SIDEBAR ── -->
   <aside class="sidebar">
+
     <div class="sidebar-head">// zahtev zadatka</div>
-    <div class="sidebar-reqs" id="sidebar-reqs"></div>
+    <div class="sidebar-reqs" id="sidebar-reqs">
+      <!-- generisano JS-om -->
+    </div>
 
     <div class="sidebar-head" style="border-top: 1px solid var(--border); margin-top: 0;">// koraci</div>
-    <div class="sidebar-steps" id="sidebar-steps"></div>
+    <div class="sidebar-steps" id="sidebar-steps">
+      <!-- generisano JS-om -->
+    </div>
 
+    <!-- LEGENDA -->
     <div class="legend">
       <div class="legend-title">// legenda</div>
+
       <div class="legend-item">
         <div class="legend-bar lb-add"></div>
         <div class="legend-swatch ls-add"></div>
@@ -446,9 +469,12 @@ pre {
         Copy-paste
       </div>
     </div>
+
   </aside>
 
+  <!-- ── CONTENT ── -->
   <div class="content">
+
     <div class="step-nav">
       <button class="nav-btn" id="btn-prev" onclick="prev()">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3L5 8l5 5"/></svg>
@@ -470,476 +496,376 @@ pre {
 
     <div class="code-area">
       <div class="code-wrap">
+
         <div class="code-bar">
           <span id="filename"></span>
           <button class="copy-btn" id="copy-btn" onclick="copyCode()">copy</button>
         </div>
+
+        <!-- Legenda strip – vidljiva samo na mobilnom -->
         <div class="mobile-legend">
           <div class="ml-item"><div class="ml-dot mld-add"></div>Dodato</div>
           <div class="ml-item"><div class="ml-dot mld-del"></div>Obrisano</div>
           <div class="ml-item"><div class="ml-dot mld-mod"></div>Izmenjeno</div>
           <div class="ml-item"><div class="ml-dot mld-copy"></div>Copy-paste</div>
         </div>
+
         <pre id="code-pre"></pre>
       </div>
     </div>
+
   </div>
 </div>
 
 <script>
+// ════════════════════════════════════════════════════════════════════════════
+//  ZAHTEVI  –  lista zahteva zadatka (prikazana u sidebar-u)
+//  Slobodno menjaj tekst, dodaj ili ukloni stavke.
+// ════════════════════════════════════════════════════════════════════════════
+
 const ZAHTEVI = [
-  'Parking ima 5 slobodnih mesta — displej prikazuje broj slobodnih mesta.',
-  'TASTER1 = ulaz vozila: zelena LED svetli 500ms, smanjuje broj mesta (ramps up).',
-  'TASTER2 = izlaz vozila: crvena LED svetli 500ms, povećava broj mesta (ramps down).',
-  'Na parking se može ući samo ako ima slobodnih mesta (slobodna_mesta &gt; 0).',
-  'Dok traje animacija LED diode, tasteri ne reaguju (blokada).',
+  'Parking ima 5 slobodnih mesta – broj se prikazuje na 7-segmentnom displeju.',
+  'Na ulazu su dve LED diode: zelena = rampa se diže, crvena = rampa se spušta.',
+  'TASTER 1 detektuje vozilo na ulazu – aktivira zelenu diodu 500ms (rampa se diže).',
+  'TASTER 2 potvrđuje prolaz – aktivira crvenu diodu 500ms, smanjuje broj mesta za 1.',
+  'Dok jedno vozilo ulazi, sistem je blokiran – niko drugi ne može ući.',
+  'Na parking se može ući samo ako ima slobodnih mesta (displej > 0).',
 ];
 
-// ═══════════════════════════════════════════════════════════════════
-// Pomocna funkcija za skracivanje – inline span-ovi za boje
-// kw=keyword, fn=function, st=string, cm=comment, nm=number, op=operator
-// ═══════════════════════════════════════════════════════════════════
-function kw(t){ return `<span class="kw">${t}</span>`; }
-function fn(t){ return `<span class="fn">${t}</span>`; }
-function st(t){ return `<span class="st">${t}</span>`; }
-function cm(t){ return `<span class="cm">${t}</span>`; }
-function nm(t){ return `<span class="nm">${t}</span>`; }
-function op(t){ return `<span class="op">${t}</span>`; }
+// ════════════════════════════════════════════════════════════════════════════
+//  STEPS  –  svaki objekat je jedan korak
+//
+//  Polja:
+//    name    – naziv koraka  (prikazan u sidebar i nav)
+//    sub     – podnaslov     (ispod naziva u nav-u)
+//    file    – ime fajla     (prikazano u code-bar-u)
+//    explain – objašnjenje koraka (HTML, prikazano iznad koda)
+//              može da sadrži <strong> i <code> tagove
+//    lines   – niz linija koda; svaka linija:
+//                c   – sadržaj linije (može sadržati HTML span-ove za boje)
+//                hl  – tip highlajta:
+//                        'add'  → zeleno  – nova linija
+//                        'del'  → crveno  – obrisana linija
+//                        'mod'  → žuto    – izmenjena linija
+//                        'copy' → roze    – copy-paste iz prethodnog koraka
+//                        ''     → bez highlajta
+//
+//  Primer linije:
+//    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: 'copy' },
+//    { c: `brojac = 0`,      hl: 'add' },
+//    { c: `show_zero()`,     hl: 'del' },
+//    { c: `print(x)`,        hl: 'mod' },
+//    { c: `root.mainloop()`, hl: '' },
+// ════════════════════════════════════════════════════════════════════════════
 
 const STEPS = [
 
-// ── KORAK 1 ─────────────────────────────────────────────────────────
+// ── KORAK 1 ──────────────────────────────────────────────────────────────────
 {
-  name:  'Korak 1',
-  sub:   'test program – polazna tačka',
-  file:  '01_test_program.py',
-  explain:
-    `Ovo je <strong>test program</strong> koji dobijamo na maturi – on već radi nešto slično onome što tražimo. '
-    Ima LED diode (zelena i crvena), 7-segmentni displej i dva tastera. '
-    <strong>Ideja:</strong> umesto da pišemo sve iz nule, iskoristićemo ovaj kod i malo ga izmeniti. '
-    Taster 1 treba da simulira <strong>ulaz vozila</strong> (zelena LED + displej smanjuje broj mesta), '
-    a Taster 2 <strong>izlaz vozila</strong> (crvena LED + displej povećava broj mesta). '
-    Početni broj slobodnih mesta je <code>5</code>.`,
+  name:    'Korak 1',
+  sub:     'Test program',
+  file:    '01_Parking_Test.py',
+  explain: 'Ovo je <strong>polazna tačka</strong> – test program koji već imamo. Taster 1 pali zelenu i prikazuje <code>0</code> na displeju, taster 2 pali crvenu i prikazuje <code>8</code>. Funkcija <code>osvezi_displej()</code> prima listu od 7 vrednosti (0 ili 1) i pali/gasi segmente. Ideja: dodaćemo promenljivu za slobodna mesta, if-ove za svaki broj, LED logiku sa <code>after()</code> i blokadu rampe.',
   lines: [
-    { c: `${kw('import')} tkinter ${kw('as')} tk`, hl: '' },
+    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- Funkcija za Taster 1 ---')}`, hl: '' },
-    { c: `${kw('def')} ${fn('pritisnut_taster1')}():`, hl: '' },
-    { c: `    ${cm('# Ukljuci zelenu, iskljuci crvenu')}`, hl: '' },
-    { c: `    ${fn('led_zelena')}.${fn('config')}(bg=${st('"lightgreen"')})`, hl: '' },
-    { c: `    ${fn('led_crvena')}.${fn('config')}(bg=${st('"gray"')})`, hl: '' },
-    { c: `    ${cm('# Ispisi broj 0 na displeju (svi segmenti osim srednjeg)')}`, hl: '' },
-    { c: `    ${fn('osvezi_displej')}([${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('0')}])`, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">pritisnut_taster1</span>():`, hl: '' },
+    { c: `    <span class="cm"># Ukljuci zelenu, iskljuci crvenu</span>`, hl: '' },
+    { c: `    led_zelena.<span class="fn">config</span>(bg=<span class="st">"lightgreen"</span>)`, hl: '' },
+    { c: `    led_crvena.<span class="fn">config</span>(bg=<span class="st">"gray"</span>)`, hl: '' },
+    { c: `    <span class="cm"># Ispisivanje broja 0 na segmentima (svi osim srednjeg 'g')</span>`, hl: '' },
+    { c: `    <span class="fn">osvezi_displej</span>([<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>])`, hl: '' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- Funkcija za Taster 2 ---')}`, hl: '' },
-    { c: `${kw('def')} ${fn('pritisnut_taster2')}():`, hl: '' },
-    { c: `    ${cm('# Ukljuci crvenu, iskljuci zelenu')}`, hl: '' },
-    { c: `    ${fn('led_zelena')}.${fn('config')}(bg=${st('"gray"')})`, hl: '' },
-    { c: `    ${fn('led_crvena')}.${fn('config')}(bg=${st('"red"')})`, hl: '' },
-    { c: `    ${cm('# Ispisi broj 8 na displeju (svi segmenti ukljuceni)')}`, hl: '' },
-    { c: `    ${fn('osvezi_displej')}([${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}])`, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">pritisnut_taster2</span>():`, hl: '' },
+    { c: `    <span class="cm"># Ukljuci crvenu, iskljuci zelenu</span>`, hl: '' },
+    { c: `    led_zelena.<span class="fn">config</span>(bg=<span class="st">"gray"</span>)`, hl: '' },
+    { c: `    led_crvena.<span class="fn">config</span>(bg=<span class="st">"red"</span>)`, hl: '' },
+    { c: `    <span class="cm"># Ispisivanje broja 8 na segmentima (svi ukljuceni)</span>`, hl: '' },
+    { c: `    <span class="fn">osvezi_displej</span>([<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>])`, hl: '' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- Funkcija koja osvezava 7-segmentni displej ---')}`, hl: '' },
-    { c: `${kw('def')} ${fn('osvezi_displej')}(stanje):`, hl: '' },
-    { c: `    ${kw('for')} i ${kw('in')} ${fn('range')}(${nm('7')}):`, hl: '' },
-    { c: `        boja ${op('=')} ${st('"red"')} ${kw('if')} stanje[i] ${op('==')} ${nm('1')} ${kw('else')} ${st('"#303030"')}`, hl: '' },
-    { c: `        ${fn('platno')}.${fn('itemconfig')}(segmenti[i], fill${op('=')}boja)`, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">osvezi_displej</span>(stanje):`, hl: '' },
+    { c: `    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">7</span>):`, hl: '' },
+    { c: `        boja <span class="op">=</span> <span class="st">"red"</span> <span class="kw">if</span> stanje[i] <span class="op">==</span> <span class="nm">1</span> <span class="kw">else</span> <span class="st">"#303030"</span>`, hl: '' },
+    { c: `        platno.<span class="fn">itemconfig</span>(segmenti[i], fill=boja)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- Kreiranje prozora ---')}`, hl: '' },
-    { c: `root ${op('=')} tk.${fn('Tk')}()`, hl: '' },
-    { c: `root.${fn('title')}(${st('"Simulacija LED i 7-seg displeja"')})`, hl: '' },
-    { c: `root.${fn('geometry')}(${st('"300x400"')})`, hl: '' },
+    { c: `root <span class="op">=</span> tk.<span class="cl">Tk</span>()`, hl: '' },
+    { c: `root.<span class="fn">title</span>(<span class="st">"Simulacija LED i 7-seg displeja"</span>)`, hl: '' },
+    { c: `root.<span class="fn">geometry</span>(<span class="st">"300x400"</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- LED diode (Labels koji menjaju boju) ---')}`, hl: '' },
-    { c: `led_zelena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"ZELENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
-    { c: `led_zelena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: `led_crvena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"CRVENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
-    { c: `led_crvena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: `<span class="cm"># LED Diode</span>`, hl: '' },
+    { c: `led_zelena <span class="op">=</span> tk.<span class="cl">Label</span>(root, text=<span class="st">"ZELENA"</span>, bg=<span class="st">"gray"</span>, width=<span class="nm">10</span>, height=<span class="nm">2</span>)`, hl: '' },
+    { c: `led_zelena.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `led_crvena <span class="op">=</span> tk.<span class="cl">Label</span>(root, text=<span class="st">"CRVENA"</span>, bg=<span class="st">"gray"</span>, width=<span class="nm">10</span>, height=<span class="nm">2</span>)`, hl: '' },
+    { c: `led_crvena.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- Canvas za 7-segmentni displej ---')}`, hl: '' },
-    { c: `platno ${op('=')} tk.${fn('Canvas')}(root, width${op('=')}${nm('150')}, height${op('=')}${nm('200')}, bg${op('=')}${st('"black"')})`, hl: '' },
-    { c: `platno.${fn('pack')}(pady${op('=')}${nm('20')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `${cm('# --- Segmenti displeja: a, b, c, d, e, f, g ---')}`, hl: '' },
-    { c: `segmenti ${op('=')} [`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('20')}, ${nm('110')}, ${nm('30')}, fill${op('=')}${st('"#303030"')}),  ${cm('# a (gore)')}`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('30')}, ${nm('120')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}), ${cm('# b (desno gore)')}`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('100')}, ${nm('120')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),${cm('# c (desno dole)')}`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('160')}, ${nm('110')}, ${nm('170')}, fill${op('=')}${st('"#303030"')}), ${cm('# d (dole)')}`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('100')}, ${nm('40')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),  ${cm('# e (levo dole)')}`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('30')}, ${nm('40')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}),    ${cm('# f (levo gore)')}`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('90')}, ${nm('110')}, ${nm('100')}, fill${op('=')}${st('"#303030"')})   ${cm('# g (sredina)')}`, hl: '' },
+    { c: `<span class="cm"># 7-segmentni displej</span>`, hl: '' },
+    { c: `platno <span class="op">=</span> tk.<span class="cl">Canvas</span>(root, width=<span class="nm">150</span>, height=<span class="nm">200</span>, bg=<span class="st">"black"</span>)`, hl: '' },
+    { c: `platno.<span class="fn">pack</span>(pady=<span class="nm">20</span>)`, hl: '' },
+    { c: `segmenti <span class="op">=</span> [`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">40</span>,<span class="nm">20</span>,<span class="nm">110</span>,<span class="nm">30</span>, fill=<span class="st">"#303030"</span>),   <span class="cm"># a (gore)</span>`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">110</span>,<span class="nm">30</span>,<span class="nm">120</span>,<span class="nm">90</span>, fill=<span class="st">"#303030"</span>),  <span class="cm"># b (desno gore)</span>`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">110</span>,<span class="nm">100</span>,<span class="nm">120</span>,<span class="nm">160</span>, fill=<span class="st">"#303030"</span>), <span class="cm"># c (desno dole)</span>`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">40</span>,<span class="nm">160</span>,<span class="nm">110</span>,<span class="nm">170</span>, fill=<span class="st">"#303030"</span>), <span class="cm"># d (dole)</span>`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">30</span>,<span class="nm">100</span>,<span class="nm">40</span>,<span class="nm">160</span>, fill=<span class="st">"#303030"</span>),  <span class="cm"># e (levo dole)</span>`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">30</span>,<span class="nm">30</span>,<span class="nm">40</span>,<span class="nm">90</span>, fill=<span class="st">"#303030"</span>),    <span class="cm"># f (levo gore)</span>`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">40</span>,<span class="nm">90</span>,<span class="nm">110</span>,<span class="nm">100</span>, fill=<span class="st">"#303030"</span>)   <span class="cm"># g (sredina)</span>`, hl: '' },
     { c: `]`, hl: '' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- Tasteri ---')}`, hl: '' },
-    { c: `btn1 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 1"')}, command${op('=')}pritisnut_taster1, width${op('=')}${nm('15')})`, hl: '' },
-    { c: `btn1.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: `btn2 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 2"')}, command${op('=')}pritisnut_taster2, width${op('=')}${nm('15')})`, hl: '' },
-    { c: `btn2.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
+    { c: `btn1 <span class="op">=</span> tk.<span class="cl">Button</span>(root, text=<span class="st">"Taster 1"</span>, command=<span class="fn">pritisnut_taster1</span>, width=<span class="nm">15</span>)`, hl: '' },
+    { c: `btn1.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `btn2 <span class="op">=</span> tk.<span class="cl">Button</span>(root, text=<span class="st">"Taster 2"</span>, command=<span class="fn">pritisnut_taster2</span>, width=<span class="nm">15</span>)`, hl: '' },
+    { c: `btn2.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `root.${fn('mainloop')}()`, hl: '' },
+    { c: `root.<span class="fn">mainloop</span>()`, hl: '' },
   ]
 },
 
-// ── KORAK 2 ─────────────────────────────────────────────────────────
+// ── KORAK 2 ──────────────────────────────────────────────────────────────────
 {
-  name:  'Korak 2',
-  sub:   'slobodna mesta + mapa cifara',
-  file:  '02_slobodna_mesta.py',
-  explain:
-    `Dodajemo dve važne stvari. Prva je <strong>varijabla <code>slobodna_mesta = 5</code></strong> – '
-    ona pamti koliko mesta ima na parkingu. '
-    Druga je <strong>mapa cifara</strong> – rečnik koji za svaki broj (0–9) čuva koji segmenti treba da svetle. '
-    Na primer, broj <code>5</code> se prikazuje segmentima a, f, g, c, d (lista <code>[1,0,1,1,0,1,1]</code>). '
-    Na kraju dodajemo i poziv <code>osvezi_displej(cifre[slobodna_mesta])</code> da odmah na startu displej pokaže <strong>5</strong>.`,
+  name:    'Korak 2',
+  sub:     'Slobodna mesta + displej',
+  file:    '02_Parking.py',
+  explain: 'Dodajemo <strong>promenljivu <code>slobodna_mesta = 5</code></strong> na vrh programa. Taster 1 sada smanjuje <code>slobodna_mesta</code> za 1 i prikazuje odgovarajući broj na displeju – koristimo <code>if/elif</code> za svaki broj posebno. Na početku prikazujemo <strong>5</strong> pozivom <code>osvezi_displej()</code>. Taster 2 za sada ostaje nepromenjen. Primetiti: svaki broj ima svoju kombinaciju segmenata koja se upisuje direktno!',
   lines: [
-    { c: `${kw('import')} tkinter ${kw('as')} tk`, hl: '' },
+    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- Broj slobodnih mesta na parkingu ---')}`, hl: 'add' },
-    { c: `slobodna_mesta ${op('=')} ${nm('5')}`, hl: 'add' },
+    { c: `<span class="cm"># --- Globalna promenljiva za slobodna mesta ---</span>`, hl: 'add' },
+    { c: `slobodna_mesta <span class="op">=</span> <span class="nm">5</span>`, hl: 'add' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- Mapa segmenata za cifre 0-9 ---')}`, hl: 'add' },
-    { c: `${cm('# Svaka lista: [a, b, c, d, e, f, g] – 1=ukljucen, 0=iskljucen')}`, hl: 'add' },
-    { c: `cifre ${op('=')} {`, hl: 'add' },
-    { c: `    ${nm('0')}: [${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('0')}],  ${cm('# 0')}`, hl: 'add' },
-    { c: `    ${nm('1')}: [${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('0')},${nm('0')}],  ${cm('# 1')}`, hl: 'add' },
-    { c: `    ${nm('2')}: [${nm('1')},${nm('1')},${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('1')}],  ${cm('# 2')}`, hl: 'add' },
-    { c: `    ${nm('3')}: [${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('1')}],  ${cm('# 3')}`, hl: 'add' },
-    { c: `    ${nm('4')}: [${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('1')},${nm('1')}],  ${cm('# 4')}`, hl: 'add' },
-    { c: `    ${nm('5')}: [${nm('1')},${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('1')},${nm('1')}],  ${cm('# 5')}`, hl: 'add' },
-    { c: `}`, hl: 'add' },
+    { c: `<span class="kw">def</span> <span class="fn">pritisnut_taster1</span>():`, hl: '' },
+    { c: `    <span class="kw">global</span> slobodna_mesta`, hl: 'add' },
+    { c: `    <span class="cm"># Ako nema slobodnih mesta, ne radimo nista</span>`, hl: 'add' },
+    { c: `    <span class="kw">if</span> slobodna_mesta <span class="op">==</span> <span class="nm">0</span>:`, hl: 'add' },
+    { c: `        <span class="kw">return</span>`, hl: 'add' },
+    { c: `    <span class="cm"># Smanjujemo broj mesta i azuriramo displej</span>`, hl: 'mod' },
+    { c: `    slobodna_mesta <span class="op">-=</span> <span class="nm">1</span>`, hl: 'mod' },
+    { c: `    <span class="kw">if</span> slobodna_mesta <span class="op">==</span> <span class="nm">4</span>:`, hl: 'mod' },
+    { c: `        <span class="fn">osvezi_displej</span>([<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>])  <span class="cm"># broj 4</span>`, hl: 'mod' },
+    { c: `    <span class="kw">elif</span> slobodna_mesta <span class="op">==</span> <span class="nm">3</span>:`, hl: 'mod' },
+    { c: `        <span class="fn">osvezi_displej</span>([<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">1</span>])  <span class="cm"># broj 3</span>`, hl: 'mod' },
+    { c: `    <span class="kw">elif</span> slobodna_mesta <span class="op">==</span> <span class="nm">2</span>:`, hl: 'mod' },
+    { c: `        <span class="fn">osvezi_displej</span>([<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>])  <span class="cm"># broj 2</span>`, hl: 'mod' },
+    { c: `    <span class="kw">elif</span> slobodna_mesta <span class="op">==</span> <span class="nm">1</span>:`, hl: 'mod' },
+    { c: `        <span class="fn">osvezi_displej</span>([<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>])  <span class="cm"># broj 1</span>`, hl: 'mod' },
+    { c: `    <span class="kw">elif</span> slobodna_mesta <span class="op">==</span> <span class="nm">0</span>:`, hl: 'mod' },
+    { c: `        <span class="fn">osvezi_displej</span>([<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>])  <span class="cm"># broj 0</span>`, hl: 'mod' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- Funkcija za Taster 1 ---')}`, hl: '' },
-    { c: `${kw('def')} ${fn('pritisnut_taster1')}():`, hl: '' },
-    { c: `    ${fn('led_zelena')}.${fn('config')}(bg=${st('"lightgreen"')})`, hl: '' },
-    { c: `    ${fn('led_crvena')}.${fn('config')}(bg=${st('"gray"')})`, hl: '' },
-    { c: `    ${fn('osvezi_displej')}([${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('0')}])`, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">pritisnut_taster2</span>():`, hl: '' },
+    { c: `    led_zelena.<span class="fn">config</span>(bg=<span class="st">"gray"</span>)`, hl: '' },
+    { c: `    led_crvena.<span class="fn">config</span>(bg=<span class="st">"red"</span>)`, hl: '' },
+    { c: `    <span class="fn">osvezi_displej</span>([<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>])`, hl: '' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- Funkcija za Taster 2 ---')}`, hl: '' },
-    { c: `${kw('def')} ${fn('pritisnut_taster2')}():`, hl: '' },
-    { c: `    ${fn('led_zelena')}.${fn('config')}(bg=${st('"gray"')})`, hl: '' },
-    { c: `    ${fn('led_crvena')}.${fn('config')}(bg=${st('"red"')})`, hl: '' },
-    { c: `    ${fn('osvezi_displej')}([${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}])`, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">osvezi_displej</span>(stanje):`, hl: '' },
+    { c: `    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">7</span>):`, hl: '' },
+    { c: `        boja <span class="op">=</span> <span class="st">"red"</span> <span class="kw">if</span> stanje[i] <span class="op">==</span> <span class="nm">1</span> <span class="kw">else</span> <span class="st">"#303030"</span>`, hl: '' },
+    { c: `        platno.<span class="fn">itemconfig</span>(segmenti[i], fill=boja)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- Funkcija koja osvezava 7-segmentni displej ---')}`, hl: '' },
-    { c: `${kw('def')} ${fn('osvezi_displej')}(stanje):`, hl: '' },
-    { c: `    ${kw('for')} i ${kw('in')} ${fn('range')}(${nm('7')}):`, hl: '' },
-    { c: `        boja ${op('=')} ${st('"red"')} ${kw('if')} stanje[i] ${op('==')} ${nm('1')} ${kw('else')} ${st('"#303030"')}`, hl: '' },
-    { c: `        ${fn('platno')}.${fn('itemconfig')}(segmenti[i], fill${op('=')}boja)`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `root ${op('=')} tk.${fn('Tk')}()`, hl: '' },
-    { c: `root.${fn('title')}(${st('"Simulacija LED i 7-seg displeja"')})`, hl: '' },
-    { c: `root.${fn('geometry')}(${st('"300x400"')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `led_zelena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"ZELENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
-    { c: `led_zelena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: `led_crvena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"CRVENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
-    { c: `led_crvena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `platno ${op('=')} tk.${fn('Canvas')}(root, width${op('=')}${nm('150')}, height${op('=')}${nm('200')}, bg${op('=')}${st('"black"')})`, hl: '' },
-    { c: `platno.${fn('pack')}(pady${op('=')}${nm('20')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `segmenti ${op('=')} [`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('20')}, ${nm('110')}, ${nm('30')}, fill${op('=')}${st('"#303030"')}),  ${cm('# a')}`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('30')}, ${nm('120')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}), ${cm('# b')}`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('100')}, ${nm('120')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),${cm('# c')}`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('160')}, ${nm('110')}, ${nm('170')}, fill${op('=')}${st('"#303030"')}), ${cm('# d')}`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('100')}, ${nm('40')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),  ${cm('# e')}`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('30')}, ${nm('40')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}),    ${cm('# f')}`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('90')}, ${nm('110')}, ${nm('100')}, fill${op('=')}${st('"#303030"')})   ${cm('# g')}`, hl: '' },
+    { c: `root <span class="op">=</span> tk.<span class="cl">Tk</span>()`, hl: '' },
+    { c: `root.<span class="fn">title</span>(<span class="st">"Simulacija - Kontrola parkinga"</span>)`, hl: 'mod' },
+    { c: `root.<span class="fn">geometry</span>(<span class="st">"300x450"</span>)`, hl: 'mod' },
+    { c: `led_zelena <span class="op">=</span> tk.<span class="cl">Label</span>(root, text=<span class="st">"ZELENA"</span>, bg=<span class="st">"gray"</span>, width=<span class="nm">10</span>, height=<span class="nm">2</span>)`, hl: '' },
+    { c: `led_zelena.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `led_crvena <span class="op">=</span> tk.<span class="cl">Label</span>(root, text=<span class="st">"CRVENA"</span>, bg=<span class="st">"gray"</span>, width=<span class="nm">10</span>, height=<span class="nm">2</span>)`, hl: '' },
+    { c: `led_crvena.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `platno <span class="op">=</span> tk.<span class="cl">Canvas</span>(root, width=<span class="nm">150</span>, height=<span class="nm">200</span>, bg=<span class="st">"black"</span>)`, hl: '' },
+    { c: `platno.<span class="fn">pack</span>(pady=<span class="nm">10</span>)`, hl: 'mod' },
+    { c: `segmenti <span class="op">=</span> [`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">40</span>,<span class="nm">20</span>,<span class="nm">110</span>,<span class="nm">30</span>, fill=<span class="st">"#303030"</span>),   <span class="cm"># a (gore)</span>`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">110</span>,<span class="nm">30</span>,<span class="nm">120</span>,<span class="nm">90</span>, fill=<span class="st">"#303030"</span>),  <span class="cm"># b (desno gore)</span>`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">110</span>,<span class="nm">100</span>,<span class="nm">120</span>,<span class="nm">160</span>, fill=<span class="st">"#303030"</span>), <span class="cm"># c (desno dole)</span>`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">40</span>,<span class="nm">160</span>,<span class="nm">110</span>,<span class="nm">170</span>, fill=<span class="st">"#303030"</span>), <span class="cm"># d (dole)</span>`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">30</span>,<span class="nm">100</span>,<span class="nm">40</span>,<span class="nm">160</span>, fill=<span class="st">"#303030"</span>),  <span class="cm"># e (levo dole)</span>`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">30</span>,<span class="nm">30</span>,<span class="nm">40</span>,<span class="nm">90</span>, fill=<span class="st">"#303030"</span>),    <span class="cm"># f (levo gore)</span>`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">40</span>,<span class="nm">90</span>,<span class="nm">110</span>,<span class="nm">100</span>, fill=<span class="st">"#303030"</span>)   <span class="cm"># g (sredina)</span>`, hl: '' },
     { c: `]`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `btn1 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 1"')}, command${op('=')}pritisnut_taster1, width${op('=')}${nm('15')})`, hl: '' },
-    { c: `btn1.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: `btn2 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 2"')}, command${op('=')}pritisnut_taster2, width${op('=')}${nm('15')})`, hl: '' },
-    { c: `btn2.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `${cm('# --- Na startu prikazujemo broj slobodnih mesta (5) ---')}`, hl: 'add' },
-    { c: `${fn('osvezi_displej')}(cifre[slobodna_mesta])`, hl: 'add' },
-    { c: ``, hl: '' },
-    { c: `root.${fn('mainloop')}()`, hl: '' },
+    { c: `<span class="cm"># Prikazujemo 5 na startu</span>`, hl: 'add' },
+    { c: `<span class="fn">osvezi_displej</span>([<span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>])  <span class="cm"># broj 5</span>`, hl: 'add' },
+    { c: `btn1 <span class="op">=</span> tk.<span class="cl">Button</span>(root, text=<span class="st">"TASTER 1 (Ulaz)"</span>, command=<span class="fn">pritisnut_taster1</span>, width=<span class="nm">15</span>)`, hl: 'mod' },
+    { c: `btn1.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `btn2 <span class="op">=</span> tk.<span class="cl">Button</span>(root, text=<span class="st">"TASTER 2 (Izlaz)"</span>, command=<span class="fn">pritisnut_taster2</span>, width=<span class="nm">15</span>)`, hl: 'mod' },
+    { c: `btn2.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `root.<span class="fn">mainloop</span>()`, hl: '' },
   ]
 },
 
-// ── KORAK 3 ─────────────────────────────────────────────────────────
+// ── KORAK 3 ──────────────────────────────────────────────────────────────────
 {
-  name:  'Korak 3',
-  sub:   'taster 1 – ulaz vozila',
-  file:  '03_taster1_ulaz.py',
-  explain:
-    `Sada menjamo funkciju <code>pritisnut_taster1</code> da radi pravu logiku. '
-    Koristimo <code>global slobodna_mesta</code> da možemo da menjamo tu varijablu unutar funkcije. '
-    Ako ima slobodnih mesta (<code>slobodna_mesta > 0</code>), <strong>zelena LED svetli 500ms</strong> pa se gasi, '
-    i <strong>displej se smanjuje za 1</strong>. '
-    Za timer koristimo <code>root.after(500, ...)</code> – ista logika kao u test programu, samo sada '
-    pozivamo funkciju koja gasi LED i osvežava displej. Ako nema mesta – ne dešava se ništa.`,
+  name:    'Korak 3',
+  sub:     'LED diode + after() 500ms',
+  file:    '03_Parking.py',
+  explain: 'Sada dodajemo <strong>pravu logiku za LED diode</strong>. Taster 1 pali zelenu na 500ms (rampa se diže) – koristimo <code>root.after(500, ugasi_zelenu)</code> kao što smo radili i ranije. Taster 2 smanjuje mesta, pali crvenu na 500ms (rampa se spušta) i poziva <code>ugasi_crvenu()</code>. Dodajemo dve nove funkcije: <code>ugasi_zelenu()</code> i <code>ugasi_crvenu()</code> – svaka samo gasi odgovarajuću diodu.',
   lines: [
-    { c: `${kw('import')} tkinter ${kw('as')} tk`, hl: '' },
+    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
     { c: ``, hl: '' },
-    { c: `slobodna_mesta ${op('=')} ${nm('5')}`, hl: '' },
+    { c: `slobodna_mesta <span class="op">=</span> <span class="nm">5</span>`, hl: '' },
     { c: ``, hl: '' },
-    { c: `cifre ${op('=')} {`, hl: '' },
-    { c: `    ${nm('0')}: [${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('0')}],`, hl: '' },
-    { c: `    ${nm('1')}: [${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('0')},${nm('0')}],`, hl: '' },
-    { c: `    ${nm('2')}: [${nm('1')},${nm('1')},${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('1')}],`, hl: '' },
-    { c: `    ${nm('3')}: [${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('1')}],`, hl: '' },
-    { c: `    ${nm('4')}: [${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('1')},${nm('1')}],`, hl: '' },
-    { c: `    ${nm('5')}: [${nm('1')},${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('1')},${nm('1')}],`, hl: '' },
-    { c: `}`, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">pritisnut_taster1</span>():`, hl: '' },
+    { c: `    <span class="kw">global</span> slobodna_mesta`, hl: '' },
+    { c: `    <span class="kw">if</span> slobodna_mesta <span class="op">==</span> <span class="nm">0</span>:`, hl: '' },
+    { c: `        <span class="kw">return</span>`, hl: '' },
+    { c: `    slobodna_mesta <span class="op">-=</span> <span class="nm">1</span>`, hl: '' },
+    { c: `    <span class="kw">if</span> slobodna_mesta <span class="op">==</span> <span class="nm">4</span>:`, hl: '' },
+    { c: `        <span class="fn">osvezi_displej</span>([<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>])`, hl: '' },
+    { c: `    <span class="kw">elif</span> slobodna_mesta <span class="op">==</span> <span class="nm">3</span>:`, hl: '' },
+    { c: `        <span class="fn">osvezi_displej</span>([<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">1</span>])`, hl: '' },
+    { c: `    <span class="kw">elif</span> slobodna_mesta <span class="op">==</span> <span class="nm">2</span>:`, hl: '' },
+    { c: `        <span class="fn">osvezi_displej</span>([<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>])`, hl: '' },
+    { c: `    <span class="kw">elif</span> slobodna_mesta <span class="op">==</span> <span class="nm">1</span>:`, hl: '' },
+    { c: `        <span class="fn">osvezi_displej</span>([<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>])`, hl: '' },
+    { c: `    <span class="kw">elif</span> slobodna_mesta <span class="op">==</span> <span class="nm">0</span>:`, hl: '' },
+    { c: `        <span class="fn">osvezi_displej</span>([<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>])`, hl: '' },
+    { c: `    <span class="cm"># Palimo zelenu 500ms (rampa se dize)</span>`, hl: 'add' },
+    { c: `    led_zelena.<span class="fn">config</span>(bg=<span class="st">"lightgreen"</span>)`, hl: 'add' },
+    { c: `    led_crvena.<span class="fn">config</span>(bg=<span class="st">"gray"</span>)`, hl: 'add' },
+    { c: `    root.<span class="fn">after</span>(<span class="nm">500</span>, ugasi_zelenu)  <span class="cm"># gasi zelenu nakon 500ms</span>`, hl: 'add' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- Pomocna funkcija: gasi zelenu LED i osvezava displej ---')}`, hl: 'add' },
-    { c: `${kw('def')} ${fn('ugasi_zelenu')}():`, hl: 'add' },
-    { c: `    ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: 'add' },
-    { c: `    ${fn('osvezi_displej')}(cifre[slobodna_mesta])  ${cm('# osvezi displej na novi broj')}`, hl: 'add' },
+    { c: `<span class="kw">def</span> <span class="fn">ugasi_zelenu</span>():`, hl: 'add' },
+    { c: `    <span class="cm">"""Gasi zelenu diodu nakon 500ms"""</span>`, hl: 'add' },
+    { c: `    led_zelena.<span class="fn">config</span>(bg=<span class="st">"gray"</span>)`, hl: 'add' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- Taster 1: ulaz vozila ---')}`, hl: '' },
-    { c: `${kw('def')} ${fn('pritisnut_taster1')}():`, hl: '' },
-    { c: `    ${kw('global')} slobodna_mesta  ${cm('# koristimo globalnu varijablu')}`, hl: 'mod' },
-    { c: `    ${kw('if')} slobodna_mesta ${op('>')} ${nm('0')}:  ${cm('# ima slobodnih mesta?')}`, hl: 'mod' },
-    { c: `        slobodna_mesta ${op('-=')} ${nm('1')}  ${cm('# smanjujemo za 1')}`, hl: 'mod' },
-    { c: `        ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"lightgreen"')})  ${cm('# palimo zelenu')}`, hl: '' },
-    { c: `        ${fn('led_crvena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
-    { c: `        root.${fn('after')}(${nm('500')}, ugasi_zelenu)  ${cm('# gasimo zelenu posle 500ms')}`, hl: 'mod' },
+    { c: `<span class="kw">def</span> <span class="fn">pritisnut_taster2</span>():`, hl: '' },
+    { c: `    <span class="cm"># Palimo crvenu 500ms (rampa se spusta)</span>`, hl: 'mod' },
+    { c: `    led_crvena.<span class="fn">config</span>(bg=<span class="st">"red"</span>)`, hl: 'mod' },
+    { c: `    led_zelena.<span class="fn">config</span>(bg=<span class="st">"gray"</span>)`, hl: 'mod' },
+    { c: `    root.<span class="fn">after</span>(<span class="nm">500</span>, ugasi_crvenu)  <span class="cm"># gasi crvenu nakon 500ms</span>`, hl: 'mod' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- Taster 2: za sada nepromenjen ---')}`, hl: '' },
-    { c: `${kw('def')} ${fn('pritisnut_taster2')}():`, hl: '' },
-    { c: `    ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
-    { c: `    ${fn('led_crvena')}.${fn('config')}(bg${op('=')}${st('"red"')})`, hl: '' },
-    { c: `    ${fn('osvezi_displej')}([${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}, ${nm('1')}])`, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">ugasi_crvenu</span>():`, hl: 'add' },
+    { c: `    <span class="cm">"""Gasi crvenu diodu nakon 500ms"""</span>`, hl: 'add' },
+    { c: `    led_crvena.<span class="fn">config</span>(bg=<span class="st">"gray"</span>)`, hl: 'add' },
     { c: ``, hl: '' },
-    { c: `${kw('def')} ${fn('osvezi_displej')}(stanje):`, hl: '' },
-    { c: `    ${kw('for')} i ${kw('in')} ${fn('range')}(${nm('7')}):`, hl: '' },
-    { c: `        boja ${op('=')} ${st('"red"')} ${kw('if')} stanje[i] ${op('==')} ${nm('1')} ${kw('else')} ${st('"#303030"')}`, hl: '' },
-    { c: `        ${fn('platno')}.${fn('itemconfig')}(segmenti[i], fill${op('=')}boja)`, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">osvezi_displej</span>(stanje):`, hl: '' },
+    { c: `    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">7</span>):`, hl: '' },
+    { c: `        boja <span class="op">=</span> <span class="st">"red"</span> <span class="kw">if</span> stanje[i] <span class="op">==</span> <span class="nm">1</span> <span class="kw">else</span> <span class="st">"#303030"</span>`, hl: '' },
+    { c: `        platno.<span class="fn">itemconfig</span>(segmenti[i], fill=boja)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `root ${op('=')} tk.${fn('Tk')}()`, hl: '' },
-    { c: `root.${fn('title')}(${st('"Simulacija LED i 7-seg displeja"')})`, hl: '' },
-    { c: `root.${fn('geometry')}(${st('"300x400"')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `led_zelena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"ZELENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
-    { c: `led_zelena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: `led_crvena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"CRVENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
-    { c: `led_crvena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `platno ${op('=')} tk.${fn('Canvas')}(root, width${op('=')}${nm('150')}, height${op('=')}${nm('200')}, bg${op('=')}${st('"black"')})`, hl: '' },
-    { c: `platno.${fn('pack')}(pady${op('=')}${nm('20')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `segmenti ${op('=')} [`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('20')}, ${nm('110')}, ${nm('30')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('30')}, ${nm('120')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('100')}, ${nm('120')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('160')}, ${nm('110')}, ${nm('170')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('100')}, ${nm('40')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('30')}, ${nm('40')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('90')}, ${nm('110')}, ${nm('100')}, fill${op('=')}${st('"#303030"')})`, hl: '' },
+    { c: `root <span class="op">=</span> tk.<span class="cl">Tk</span>()`, hl: '' },
+    { c: `root.<span class="fn">title</span>(<span class="st">"Simulacija - Kontrola parkinga"</span>)`, hl: '' },
+    { c: `root.<span class="fn">geometry</span>(<span class="st">"300x450"</span>)`, hl: '' },
+    { c: `led_zelena <span class="op">=</span> tk.<span class="cl">Label</span>(root, text=<span class="st">"ZELENA"</span>, bg=<span class="st">"gray"</span>, width=<span class="nm">10</span>, height=<span class="nm">2</span>)`, hl: '' },
+    { c: `led_zelena.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `led_crvena <span class="op">=</span> tk.<span class="cl">Label</span>(root, text=<span class="st">"CRVENA"</span>, bg=<span class="st">"gray"</span>, width=<span class="nm">10</span>, height=<span class="nm">2</span>)`, hl: '' },
+    { c: `led_crvena.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `platno <span class="op">=</span> tk.<span class="cl">Canvas</span>(root, width=<span class="nm">150</span>, height=<span class="nm">200</span>, bg=<span class="st">"black"</span>)`, hl: '' },
+    { c: `platno.<span class="fn">pack</span>(pady=<span class="nm">10</span>)`, hl: '' },
+    { c: `segmenti <span class="op">=</span> [`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">40</span>,<span class="nm">20</span>,<span class="nm">110</span>,<span class="nm">30</span>, fill=<span class="st">"#303030"</span>),`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">110</span>,<span class="nm">30</span>,<span class="nm">120</span>,<span class="nm">90</span>, fill=<span class="st">"#303030"</span>),`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">110</span>,<span class="nm">100</span>,<span class="nm">120</span>,<span class="nm">160</span>, fill=<span class="st">"#303030"</span>),`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">40</span>,<span class="nm">160</span>,<span class="nm">110</span>,<span class="nm">170</span>, fill=<span class="st">"#303030"</span>),`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">30</span>,<span class="nm">100</span>,<span class="nm">40</span>,<span class="nm">160</span>, fill=<span class="st">"#303030"</span>),`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">30</span>,<span class="nm">30</span>,<span class="nm">40</span>,<span class="nm">90</span>, fill=<span class="st">"#303030"</span>),`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">40</span>,<span class="nm">90</span>,<span class="nm">110</span>,<span class="nm">100</span>, fill=<span class="st">"#303030"</span>)`, hl: '' },
     { c: `]`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `btn1 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 1"')}, command${op('=')}pritisnut_taster1, width${op('=')}${nm('15')})`, hl: '' },
-    { c: `btn1.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: `btn2 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 2"')}, command${op('=')}pritisnut_taster2, width${op('=')}${nm('15')})`, hl: '' },
-    { c: `btn2.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `${fn('osvezi_displej')}(cifre[slobodna_mesta])`, hl: '' },
-    { c: `root.${fn('mainloop')}()`, hl: '' },
+    { c: `<span class="fn">osvezi_displej</span>([<span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>])  <span class="cm"># broj 5 na startu</span>`, hl: '' },
+    { c: `btn1 <span class="op">=</span> tk.<span class="cl">Button</span>(root, text=<span class="st">"TASTER 1 (Ulaz)"</span>, command=<span class="fn">pritisnut_taster1</span>, width=<span class="nm">15</span>)`, hl: '' },
+    { c: `btn1.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `btn2 <span class="op">=</span> tk.<span class="cl">Button</span>(root, text=<span class="st">"TASTER 2 (Izlaz)"</span>, command=<span class="fn">pritisnut_taster2</span>, width=<span class="nm">15</span>)`, hl: '' },
+    { c: `btn2.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `root.<span class="fn">mainloop</span>()`, hl: '' },
   ]
 },
 
-// ── KORAK 4 ─────────────────────────────────────────────────────────
+// ── KORAK 4 ──────────────────────────────────────────────────────────────────
 {
-  name:  'Korak 4',
-  sub:   'taster 2 – izlaz vozila',
-  file:  '04_taster2_izlaz.py',
-  explain:
-    `Sada po istom šablonu menjamo <code>pritisnut_taster2</code>. '
-    Kopiramo logiku iz Tastera 1 i pravimo ogledalni efekat: '
-    <strong>crvena LED svetli 500ms</strong>, <code>slobodna_mesta</code> se <strong>povećava za 1</strong>, ali samo '
-    ako je manji od 5 (ne možemo imati više od 5 slobodnih mesta). '
-    Dodajemo <code>ugasi_crvenu</code> funkciju – copy-paste od <code>ugasi_zelenu</code>, samo sa crvenom LED. '
-    Sada oba tastera rade ispravno!`,
+  name:    'Korak 4',
+  sub:     'Blokada rampe',
+  file:    '04_Parking_FINAL.py',
+  explain: 'Poslednji korak – dodajemo <strong>promenljivu <code>rampa_aktivna = False</code></strong>. Dok jedno vozilo prolazi, taster 1 je blokiran – niko drugi ne može ući. Logika: taster 1 postavlja <code>rampa_aktivna = True</code>, a <code>ugasi_crvenu()</code> je vraća na <code>False</code> tek kada crvena dioda ugasi. Taster 2 radi samo ako je <code>rampa_aktivna</code> tačno. Program je kompletan!',
   lines: [
-    { c: `${kw('import')} tkinter ${kw('as')} tk`, hl: '' },
+    { c: `<span class="kw">import</span> tkinter <span class="kw">as</span> tk`, hl: '' },
     { c: ``, hl: '' },
-    { c: `slobodna_mesta ${op('=')} ${nm('5')}`, hl: '' },
+    { c: `slobodna_mesta <span class="op">=</span> <span class="nm">5</span>`, hl: '' },
+    { c: `<span class="cm"># --- Blokada: da ne moze niko da udje dok prvi ne prodje ---</span>`, hl: 'add' },
+    { c: `rampa_aktivna <span class="op">=</span> <span class="kw">False</span>`, hl: 'add' },
     { c: ``, hl: '' },
-    { c: `cifre ${op('=')} {`, hl: '' },
-    { c: `    ${nm('0')}: [${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('0')}],`, hl: '' },
-    { c: `    ${nm('1')}: [${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('0')},${nm('0')}],`, hl: '' },
-    { c: `    ${nm('2')}: [${nm('1')},${nm('1')},${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('1')}],`, hl: '' },
-    { c: `    ${nm('3')}: [${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('1')}],`, hl: '' },
-    { c: `    ${nm('4')}: [${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('1')},${nm('1')}],`, hl: '' },
-    { c: `    ${nm('5')}: [${nm('1')},${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('1')},${nm('1')}],`, hl: '' },
-    { c: `}`, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">pritisnut_taster1</span>():`, hl: '' },
+    { c: `    <span class="kw">global</span> slobodna_mesta, rampa_aktivna`, hl: 'mod' },
+    { c: `    <span class="kw">if</span> slobodna_mesta <span class="op">==</span> <span class="nm">0</span>:`, hl: '' },
+    { c: `        <span class="kw">return</span>`, hl: '' },
+    { c: `    <span class="cm"># Ako je rampa vec aktivna, ne radimo nista</span>`, hl: 'add' },
+    { c: `    <span class="kw">if</span> rampa_aktivna:`, hl: 'add' },
+    { c: `        <span class="kw">return</span>`, hl: 'add' },
+    { c: `    <span class="cm"># Blokiramo sistem dok vozilo ne prodje</span>`, hl: 'add' },
+    { c: `    rampa_aktivna <span class="op">=</span> <span class="kw">True</span>`, hl: 'add' },
+    { c: `    slobodna_mesta <span class="op">-=</span> <span class="nm">1</span>`, hl: '' },
+    { c: `    <span class="kw">if</span> slobodna_mesta <span class="op">==</span> <span class="nm">4</span>:`, hl: '' },
+    { c: `        <span class="fn">osvezi_displej</span>([<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>])`, hl: '' },
+    { c: `    <span class="kw">elif</span> slobodna_mesta <span class="op">==</span> <span class="nm">3</span>:`, hl: '' },
+    { c: `        <span class="fn">osvezi_displej</span>([<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">1</span>])`, hl: '' },
+    { c: `    <span class="kw">elif</span> slobodna_mesta <span class="op">==</span> <span class="nm">2</span>:`, hl: '' },
+    { c: `        <span class="fn">osvezi_displej</span>([<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>])`, hl: '' },
+    { c: `    <span class="kw">elif</span> slobodna_mesta <span class="op">==</span> <span class="nm">1</span>:`, hl: '' },
+    { c: `        <span class="fn">osvezi_displej</span>([<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>])`, hl: '' },
+    { c: `    <span class="kw">elif</span> slobodna_mesta <span class="op">==</span> <span class="nm">0</span>:`, hl: '' },
+    { c: `        <span class="fn">osvezi_displej</span>([<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>])`, hl: '' },
+    { c: `    led_zelena.<span class="fn">config</span>(bg=<span class="st">"lightgreen"</span>)`, hl: '' },
+    { c: `    led_crvena.<span class="fn">config</span>(bg=<span class="st">"gray"</span>)`, hl: '' },
+    { c: `    root.<span class="fn">after</span>(<span class="nm">500</span>, ugasi_zelenu)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `${kw('def')} ${fn('ugasi_zelenu')}():`, hl: '' },
-    { c: `    ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
-    { c: `    ${fn('osvezi_displej')}(cifre[slobodna_mesta])`, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">ugasi_zelenu</span>():`, hl: '' },
+    { c: `    led_zelena.<span class="fn">config</span>(bg=<span class="st">"gray"</span>)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- Copy-paste od ugasi_zelenu, samo za crvenu ---')}`, hl: 'copy' },
-    { c: `${kw('def')} ${fn('ugasi_crvenu')}():`, hl: 'copy' },
-    { c: `    ${fn('led_crvena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: 'copy' },
-    { c: `    ${fn('osvezi_displej')}(cifre[slobodna_mesta])`, hl: 'copy' },
+    { c: `<span class="kw">def</span> <span class="fn">pritisnut_taster2</span>():`, hl: '' },
+    { c: `    <span class="cm"># Taster 2 radi samo ako je rampa aktivirana tasterom 1</span>`, hl: 'add' },
+    { c: `    <span class="kw">if not</span> rampa_aktivna:`, hl: 'add' },
+    { c: `        <span class="kw">return</span>`, hl: 'add' },
+    { c: `    led_crvena.<span class="fn">config</span>(bg=<span class="st">"red"</span>)`, hl: '' },
+    { c: `    led_zelena.<span class="fn">config</span>(bg=<span class="st">"gray"</span>)`, hl: '' },
+    { c: `    root.<span class="fn">after</span>(<span class="nm">500</span>, ugasi_crvenu)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `${kw('def')} ${fn('pritisnut_taster1')}():`, hl: '' },
-    { c: `    ${kw('global')} slobodna_mesta`, hl: '' },
-    { c: `    ${kw('if')} slobodna_mesta ${op('>')} ${nm('0')}:`, hl: '' },
-    { c: `        slobodna_mesta ${op('-=')} ${nm('1')}`, hl: '' },
-    { c: `        ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"lightgreen"')})`, hl: '' },
-    { c: `        ${fn('led_crvena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
-    { c: `        root.${fn('after')}(${nm('500')}, ugasi_zelenu)`, hl: '' },
+    { c: `<span class="kw">def</span> <span class="fn">ugasi_crvenu</span>():`, hl: '' },
+    { c: `    <span class="kw">global</span> rampa_aktivna`, hl: 'mod' },
+    { c: `    led_crvena.<span class="fn">config</span>(bg=<span class="st">"gray"</span>)`, hl: '' },
+    { c: `    <span class="cm"># Sistem slobodan za sledece vozilo</span>`, hl: 'add' },
+    { c: `    rampa_aktivna <span class="op">=</span> <span class="kw">False</span>`, hl: 'add' },
     { c: ``, hl: '' },
-    { c: `${cm('# --- Taster 2: izlaz vozila – ista logika, suprotno ---')}`, hl: '' },
-    { c: `${kw('def')} ${fn('pritisnut_taster2')}():`, hl: '' },
-    { c: `    ${kw('global')} slobodna_mesta`, hl: 'mod' },
-    { c: `    ${kw('if')} slobodna_mesta ${op('<')} ${nm('5')}:  ${cm('# manje od max (5)?')}`, hl: 'mod' },
-    { c: `        slobodna_mesta ${op('+=')} ${nm('1')}  ${cm('# povecavamo za 1')}`, hl: 'mod' },
-    { c: `        ${fn('led_crvena')}.${fn('config')}(bg${op('=')}${st('"red"')})  ${cm('# palimo crvenu')}`, hl: 'mod' },
-    { c: `        ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
-    { c: `        root.${fn('after')}(${nm('500')}, ugasi_crvenu)  ${cm('# gasimo crvenu posle 500ms')}`, hl: 'mod' },
+    { c: `<span class="kw">def</span> <span class="fn">osvezi_displej</span>(stanje):`, hl: '' },
+    { c: `    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">7</span>):`, hl: '' },
+    { c: `        boja <span class="op">=</span> <span class="st">"red"</span> <span class="kw">if</span> stanje[i] <span class="op">==</span> <span class="nm">1</span> <span class="kw">else</span> <span class="st">"#303030"</span>`, hl: '' },
+    { c: `        platno.<span class="fn">itemconfig</span>(segmenti[i], fill=boja)`, hl: '' },
     { c: ``, hl: '' },
-    { c: `${kw('def')} ${fn('osvezi_displej')}(stanje):`, hl: '' },
-    { c: `    ${kw('for')} i ${kw('in')} ${fn('range')}(${nm('7')}):`, hl: '' },
-    { c: `        boja ${op('=')} ${st('"red"')} ${kw('if')} stanje[i] ${op('==')} ${nm('1')} ${kw('else')} ${st('"#303030"')}`, hl: '' },
-    { c: `        ${fn('platno')}.${fn('itemconfig')}(segmenti[i], fill${op('=')}boja)`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `root ${op('=')} tk.${fn('Tk')}()`, hl: '' },
-    { c: `root.${fn('title')}(${st('"Simulacija LED i 7-seg displeja"')})`, hl: '' },
-    { c: `root.${fn('geometry')}(${st('"300x400"')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `led_zelena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"ZELENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
-    { c: `led_zelena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: `led_crvena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"CRVENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
-    { c: `led_crvena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `platno ${op('=')} tk.${fn('Canvas')}(root, width${op('=')}${nm('150')}, height${op('=')}${nm('200')}, bg${op('=')}${st('"black"')})`, hl: '' },
-    { c: `platno.${fn('pack')}(pady${op('=')}${nm('20')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `segmenti ${op('=')} [`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('20')}, ${nm('110')}, ${nm('30')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('30')}, ${nm('120')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('100')}, ${nm('120')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('160')}, ${nm('110')}, ${nm('170')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('100')}, ${nm('40')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('30')}, ${nm('40')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('90')}, ${nm('110')}, ${nm('100')}, fill${op('=')}${st('"#303030"')})`, hl: '' },
+    { c: `root <span class="op">=</span> tk.<span class="cl">Tk</span>()`, hl: '' },
+    { c: `root.<span class="fn">title</span>(<span class="st">"Simulacija - Kontrola parkinga"</span>)`, hl: '' },
+    { c: `root.<span class="fn">geometry</span>(<span class="st">"300x450"</span>)`, hl: '' },
+    { c: `led_zelena <span class="op">=</span> tk.<span class="cl">Label</span>(root, text=<span class="st">"ZELENA"</span>, bg=<span class="st">"gray"</span>, width=<span class="nm">10</span>, height=<span class="nm">2</span>)`, hl: '' },
+    { c: `led_zelena.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `led_crvena <span class="op">=</span> tk.<span class="cl">Label</span>(root, text=<span class="st">"CRVENA"</span>, bg=<span class="st">"gray"</span>, width=<span class="nm">10</span>, height=<span class="nm">2</span>)`, hl: '' },
+    { c: `led_crvena.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `platno <span class="op">=</span> tk.<span class="cl">Canvas</span>(root, width=<span class="nm">150</span>, height=<span class="nm">200</span>, bg=<span class="st">"black"</span>)`, hl: '' },
+    { c: `platno.<span class="fn">pack</span>(pady=<span class="nm">10</span>)`, hl: '' },
+    { c: `segmenti <span class="op">=</span> [`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">40</span>,<span class="nm">20</span>,<span class="nm">110</span>,<span class="nm">30</span>, fill=<span class="st">"#303030"</span>),`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">110</span>,<span class="nm">30</span>,<span class="nm">120</span>,<span class="nm">90</span>, fill=<span class="st">"#303030"</span>),`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">110</span>,<span class="nm">100</span>,<span class="nm">120</span>,<span class="nm">160</span>, fill=<span class="st">"#303030"</span>),`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">40</span>,<span class="nm">160</span>,<span class="nm">110</span>,<span class="nm">170</span>, fill=<span class="st">"#303030"</span>),`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">30</span>,<span class="nm">100</span>,<span class="nm">40</span>,<span class="nm">160</span>, fill=<span class="st">"#303030"</span>),`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">30</span>,<span class="nm">30</span>,<span class="nm">40</span>,<span class="nm">90</span>, fill=<span class="st">"#303030"</span>),`, hl: '' },
+    { c: `    platno.<span class="fn">create_rectangle</span>(<span class="nm">40</span>,<span class="nm">90</span>,<span class="nm">110</span>,<span class="nm">100</span>, fill=<span class="st">"#303030"</span>)`, hl: '' },
     { c: `]`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `btn1 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 1"')}, command${op('=')}pritisnut_taster1, width${op('=')}${nm('15')})`, hl: '' },
-    { c: `btn1.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: `btn2 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 2"')}, command${op('=')}pritisnut_taster2, width${op('=')}${nm('15')})`, hl: '' },
-    { c: `btn2.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `${fn('osvezi_displej')}(cifre[slobodna_mesta])`, hl: '' },
-    { c: `root.${fn('mainloop')}()`, hl: '' },
+    { c: `<span class="fn">osvezi_displej</span>([<span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>])  <span class="cm"># broj 5 na startu</span>`, hl: '' },
+    { c: `btn1 <span class="op">=</span> tk.<span class="cl">Button</span>(root, text=<span class="st">"TASTER 1 (Ulaz)"</span>, command=<span class="fn">pritisnut_taster1</span>, width=<span class="nm">15</span>)`, hl: '' },
+    { c: `btn1.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `btn2 <span class="op">=</span> tk.<span class="cl">Button</span>(root, text=<span class="st">"TASTER 2 (Izlaz)"</span>, command=<span class="fn">pritisnut_taster2</span>, width=<span class="nm">15</span>)`, hl: '' },
+    { c: `btn2.<span class="fn">pack</span>(pady=<span class="nm">5</span>)`, hl: '' },
+    { c: `root.<span class="fn">mainloop</span>()`, hl: '' },
   ]
 },
 
-// ── KORAK 5 ─────────────────────────────────────────────────────────
-{
-  name:  'Korak 5',
-  sub:   'blokada tastera tokom animacije',
-  file:  '05_parking_final.py',
-  explain:
-    `Poslednji detalj: dok LED svetli 500ms, korisnik može ponovo da pritisne taster i napravi grešku. '
-    Dodajemo varijablu <code>blokiran = False</code> – dok je LED upaljena, blokira se pritisak tastera. '
-    Na početku svake funkcije proveravamo <code>if blokiran</code> i izlazimo odmah (<code>return</code>). '
-    Kada se LED upali, postavljamo <code>blokiran = True</code>, a kada se ugasi, vraćamo <code>blokiran = False</code>. '
-    <strong>Program je sada kompletan!</strong> Sve zahteve smo ispunili sa minimalnim promenama test programa.`,
-  lines: [
-    { c: `${kw('import')} tkinter ${kw('as')} tk`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `slobodna_mesta ${op('=')} ${nm('5')}`, hl: '' },
-    { c: `${cm('# --- Blokada: sprecava pritisak dok LED svetli ---')}`, hl: 'add' },
-    { c: `blokiran ${op('=')} ${kw('False')}`, hl: 'add' },
-    { c: ``, hl: '' },
-    { c: `cifre ${op('=')} {`, hl: '' },
-    { c: `    ${nm('0')}: [${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('0')}],`, hl: '' },
-    { c: `    ${nm('1')}: [${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('0')},${nm('0')}],`, hl: '' },
-    { c: `    ${nm('2')}: [${nm('1')},${nm('1')},${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('1')}],`, hl: '' },
-    { c: `    ${nm('3')}: [${nm('1')},${nm('1')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('1')}],`, hl: '' },
-    { c: `    ${nm('4')}: [${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('0')},${nm('1')},${nm('1')}],`, hl: '' },
-    { c: `    ${nm('5')}: [${nm('1')},${nm('0')},${nm('1')},${nm('1')},${nm('0')},${nm('1')},${nm('1')}],`, hl: '' },
-    { c: `}`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `${kw('def')} ${fn('ugasi_zelenu')}():`, hl: '' },
-    { c: `    ${kw('global')} blokiran`, hl: 'add' },
-    { c: `    ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
-    { c: `    ${fn('osvezi_displej')}(cifre[slobodna_mesta])`, hl: '' },
-    { c: `    blokiran ${op('=')} ${kw('False')}  ${cm('# otkljucavamo tastere')}`, hl: 'add' },
-    { c: ``, hl: '' },
-    { c: `${kw('def')} ${fn('ugasi_crvenu')}():`, hl: '' },
-    { c: `    ${kw('global')} blokiran`, hl: 'add' },
-    { c: `    ${fn('led_crvena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
-    { c: `    ${fn('osvezi_displej')}(cifre[slobodna_mesta])`, hl: '' },
-    { c: `    blokiran ${op('=')} ${kw('False')}  ${cm('# otkljucavamo tastere')}`, hl: 'add' },
-    { c: ``, hl: '' },
-    { c: `${kw('def')} ${fn('pritisnut_taster1')}():`, hl: '' },
-    { c: `    ${kw('global')} slobodna_mesta, blokiran`, hl: 'mod' },
-    { c: `    ${kw('if')} blokiran: ${kw('return')}  ${cm('# ignorisi ako je blokiran')}`, hl: 'add' },
-    { c: `    ${kw('if')} slobodna_mesta ${op('>')} ${nm('0')}:`, hl: '' },
-    { c: `        slobodna_mesta ${op('-=')} ${nm('1')}`, hl: '' },
-    { c: `        blokiran ${op('=')} ${kw('True')}  ${cm('# zakljucavamo tastere')}`, hl: 'add' },
-    { c: `        ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"lightgreen"')})`, hl: '' },
-    { c: `        ${fn('led_crvena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
-    { c: `        root.${fn('after')}(${nm('500')}, ugasi_zelenu)`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `${kw('def')} ${fn('pritisnut_taster2')}():`, hl: '' },
-    { c: `    ${kw('global')} slobodna_mesta, blokiran`, hl: 'mod' },
-    { c: `    ${kw('if')} blokiran: ${kw('return')}  ${cm('# ignorisi ako je blokiran')}`, hl: 'add' },
-    { c: `    ${kw('if')} slobodna_mesta ${op('<')} ${nm('5')}:`, hl: '' },
-    { c: `        slobodna_mesta ${op('+=')} ${nm('1')}`, hl: '' },
-    { c: `        blokiran ${op('=')} ${kw('True')}  ${cm('# zakljucavamo tastere')}`, hl: 'add' },
-    { c: `        ${fn('led_crvena')}.${fn('config')}(bg${op('=')}${st('"red"')})`, hl: '' },
-    { c: `        ${fn('led_zelena')}.${fn('config')}(bg${op('=')}${st('"gray"')})`, hl: '' },
-    { c: `        root.${fn('after')}(${nm('500')}, ugasi_crvenu)`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `${kw('def')} ${fn('osvezi_displej')}(stanje):`, hl: '' },
-    { c: `    ${kw('for')} i ${kw('in')} ${fn('range')}(${nm('7')}):`, hl: '' },
-    { c: `        boja ${op('=')} ${st('"red"')} ${kw('if')} stanje[i] ${op('==')} ${nm('1')} ${kw('else')} ${st('"#303030"')}`, hl: '' },
-    { c: `        ${fn('platno')}.${fn('itemconfig')}(segmenti[i], fill${op('=')}boja)`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `root ${op('=')} tk.${fn('Tk')}()`, hl: '' },
-    { c: `root.${fn('title')}(${st('"Kontrola pristupa na parking prostoru"')})`, hl: 'mod' },
-    { c: `root.${fn('geometry')}(${st('"300x400"')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `led_zelena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"ZELENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
-    { c: `led_zelena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: `led_crvena ${op('=')} tk.${fn('Label')}(root, text${op('=')}${st('"CRVENA"')}, bg${op('=')}${st('"gray"')}, width${op('=')}${nm('10')}, height${op('=')}${nm('2')})`, hl: '' },
-    { c: `led_crvena.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `platno ${op('=')} tk.${fn('Canvas')}(root, width${op('=')}${nm('150')}, height${op('=')}${nm('200')}, bg${op('=')}${st('"black"')})`, hl: '' },
-    { c: `platno.${fn('pack')}(pady${op('=')}${nm('20')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `segmenti ${op('=')} [`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('20')}, ${nm('110')}, ${nm('30')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('30')}, ${nm('120')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('110')}, ${nm('100')}, ${nm('120')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('160')}, ${nm('110')}, ${nm('170')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('100')}, ${nm('40')}, ${nm('160')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('30')}, ${nm('30')}, ${nm('40')}, ${nm('90')}, fill${op('=')}${st('"#303030"')}),`, hl: '' },
-    { c: `    platno.${fn('create_rectangle')}(${nm('40')}, ${nm('90')}, ${nm('110')}, ${nm('100')}, fill${op('=')}${st('"#303030"')})`, hl: '' },
-    { c: `]`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `btn1 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 1 – Ulaz"')}, command${op('=')}pritisnut_taster1, width${op('=')}${nm('15')})`, hl: 'mod' },
-    { c: `btn1.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: `btn2 ${op('=')} tk.${fn('Button')}(root, text${op('=')}${st('"Taster 2 – Izlaz"')}, command${op('=')}pritisnut_taster2, width${op('=')}${nm('15')})`, hl: 'mod' },
-    { c: `btn2.${fn('pack')}(pady${op('=')}${nm('5')})`, hl: '' },
-    { c: ``, hl: '' },
-    { c: `${fn('osvezi_displej')}(cifre[slobodna_mesta])`, hl: '' },
-    { c: `root.${fn('mainloop')}()`, hl: '' },
-  ]
-},
+]; // ── kraj STEPS ─────────────────────────────────────────────────────────────
 
-]; // kraj STEPS
 
-// ═══════════════════════════════════════════════════════════════════
-//  ENGINE
-// ═══════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════════════
+//  ENGINE  –  ne menjati ispod ove linije
+// ════════════════════════════════════════════════════════════════════════════
+
 let cur = 0;
 
 function buildSidebar() {
+  // zahtevi
   document.getElementById('sidebar-reqs').innerHTML =
     ZAHTEVI.map(z => `<div class="req-item">${z}</div>`).join('');
 
+  // koraci
   const el = document.getElementById('sidebar-steps');
   el.innerHTML = STEPS.map((s, i) =>
     `<div class="step-pill${i === 0 ? ' active' : ''}" onclick="goTo(${i})">
@@ -958,6 +884,7 @@ function render() {
   document.getElementById('btn-prev').disabled = cur === 0;
   document.getElementById('btn-next').disabled = cur === STEPS.length - 1;
 
+  // progress dots
   const dc = document.getElementById('dots');
   dc.innerHTML = '';
   STEPS.forEach((_, i) => {
@@ -967,17 +894,20 @@ function render() {
     dc.appendChild(d);
   });
 
+  // sidebar active
   document.querySelectorAll('.step-pill').forEach((p, i) =>
     p.classList.toggle('active', i === cur));
 
   document.getElementById('step-explain').innerHTML = s.explain || '';
 
+  // kod
   document.getElementById('code-pre').innerHTML =
     s.lines.map(l => {
       const cls = l.hl ? ` hl-${l.hl}` : '';
       return `<div class="ln${cls}"><span class="ln-code">${l.c}</span></div>`;
     }).join('');
 
+  // reset copy dugme
   const cb = document.getElementById('copy-btn');
   cb.textContent = 'copy';
   cb.classList.remove('copied');
