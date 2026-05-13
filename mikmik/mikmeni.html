@@ -366,21 +366,305 @@
   }
 
   /* ══════════════════════════════
+     INFO SECTION
+  ══════════════════════════════ */
+  .info-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+
+  /* ── Info Card (smaller, no text, only title) ── */
+  .info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 16px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: transform 0.25s cubic-bezier(.34,1.56,.64,1),
+                border-color 0.25s,
+                box-shadow 0.25s;
+    animation: card-in 0.5s both;
+  }
+
+  .info-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(124,77,255,0.07) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .info-card:hover {
+    transform: translateY(-3px) scale(1.02);
+    border-color: var(--purple-dim);
+    box-shadow: 0 6px 24px rgba(124,77,255,0.16), 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .info-card:hover::before { opacity: 1; }
+
+  .info-card-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    background: rgba(124,77,255,0.12);
+    border: 1px solid rgba(124,77,255,0.2);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .info-card-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ══════════════════════════════
+     MODAL
+  ══════════════════════════════ */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    width: 100%;
+    max-width: 680px;
+    max-height: 80vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(124,77,255,0.1);
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
+    overflow: hidden;
+  }
+  .modal-overlay.open .modal {
+    transform: translateY(0) scale(1);
+  }
+
+  /* close button */
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+    font-size: 1rem;
+    line-height: 1;
+    transition: background 0.2s, color 0.2s;
+    z-index: 10;
+  }
+  .modal-close:hover {
+    background: rgba(255,255,255,0.12);
+    color: var(--text);
+  }
+
+  /* slide content area */
+  .modal-slides {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .modal-slide {
+    position: absolute;
+    inset: 0;
+    padding: 40px 48px 32px;
+    overflow-y: auto;
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.3s, transform 0.3s cubic-bezier(.77,0,.18,1);
+    pointer-events: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .modal-slide::-webkit-scrollbar { display: none; }
+  .modal-slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+    position: relative;
+  }
+  .modal-slide.slide-out-left {
+    opacity: 0;
+    transform: translateX(-40px);
+    pointer-events: none;
+  }
+
+  .modal-slide h2 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 6px;
+    padding-right: 40px;
+  }
+  .modal-slide .slide-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--purple-light);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: block;
+  }
+  .modal-slide p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.75;
+    margin-bottom: 14px;
+  }
+  .modal-slide strong {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  /* table inside modal */
+  .modal-slide table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.82rem;
+  }
+  .modal-slide th {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--purple-light);
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-slide td {
+    padding: 9px 12px;
+    color: var(--text-muted);
+    border-bottom: 1px solid rgba(42,42,58,0.5);
+  }
+  .modal-slide tr:last-child td { border-bottom: none; }
+  .modal-slide code {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8em;
+    background: rgba(124,77,255,0.1);
+    color: var(--accent);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  /* navigation bar at bottom */
+  .modal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    border-top: 1px solid var(--border);
+    background: rgba(0,0,0,0.2);
+    flex-shrink: 0;
+  }
+
+  .modal-arrow {
+    width: 38px; height: 38px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 1rem;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    user-select: none;
+  }
+  .modal-arrow:hover:not(.disabled) {
+    background: rgba(124,77,255,0.15);
+    border-color: var(--purple-dim);
+    color: var(--text);
+  }
+  .modal-arrow.disabled {
+    opacity: 0.25;
+    cursor: default;
+  }
+
+  .modal-dots {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+  }
+  .modal-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.25s, transform 0.25s;
+    cursor: pointer;
+  }
+  .modal-dot.active {
+    background: var(--purple-light);
+    transform: scale(1.25);
+  }
+
+  /* ══════════════════════════════
      RESPONSIVE
   ══════════════════════════════ */
   @media (max-width: 900px) {
     .tasks-grid { grid-template-columns: repeat(2, 1fr); }
+    .info-grid  { grid-template-columns: repeat(2, 1fr); }
     .banner { padding: 44px 24px 40px; gap: 24px; }
     .intro { padding: 36px 24px 30px; }
     .tasks-section { padding: 30px 24px 60px; }
+    .info-section  { padding: 0 24px 60px; }
   }
   @media (max-width: 540px) {
     .tasks-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .info-grid  { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .banner-logo { width: 54px; height: 54px; border-radius: 14px; }
     .banner-logo svg { width: 32px; height: 32px; }
+    .modal-slide { padding: 28px 24px 24px; }
   }
   @media (max-width: 380px) {
     .tasks-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .info-grid  { grid-template-columns: 1fr 1fr; gap: 8px; }
     .task-card { padding: 14px 12px 12px; }
   }
 
@@ -403,7 +687,6 @@
 <!-- ══ BANNER ══ -->
 <header class="banner">
   <div class="banner-logo">
-    <!-- Thonny-style snake/python icon -->
     <svg viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="21" cy="21" r="16" stroke="#7c4dff" stroke-width="2" opacity="0.4"/>
       <path d="M14 17c0-3.3 2.7-6 6-6h2c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4c-2.2 0-4 1.8-4 4v1" stroke="#b39dff" stroke-width="2" stroke-linecap="round"/>
@@ -448,9 +731,37 @@
   <p class="scroll-hint">↑ klikni na zadatak za detalje</p>
 </section>
 
+<!-- ══ KORISNE INFORMACIJE ══ -->
+<section class="info-section">
+  <div class="tasks-header">
+    <h3>Korisne informacije</h3>
+    <div class="tasks-header-line"></div>
+  </div>
+
+  <div class="info-grid" id="infoGrid"></div>
+</section>
+
+<!-- ══ MODAL ══ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modalClose" aria-label="Zatvori">✕</button>
+
+    <div class="modal-slides" id="modalSlides"></div>
+
+    <div class="modal-nav">
+      <div class="modal-arrow" id="arrowLeft">&#8592;</div>
+      <div class="modal-dots" id="modalDots"></div>
+      <div class="modal-arrow" id="arrowRight">&#8594;</div>
+    </div>
+  </div>
+</div>
+
 <script>
+/* ══════════════════════════════
+   TASKS
+══════════════════════════════ */
 const tasks = [
-{
+  {
     name: "Alarmni sistem",
     desc: "Implementirati brojac, veoma lako, samo 5 linije koda treba izmeniti.",
     tag: "Težina ★",
@@ -495,12 +806,9 @@ const tasks = [
     link: "zadaci/3semafor.html",
     featured: false
   },
-
-  
 ];
 
 const grid = document.getElementById('tasksGrid');
-
 tasks.forEach((task, i) => {
   const card = document.createElement('div');
   card.className = 'task-card' + (task.featured ? ' featured' : '');
@@ -518,6 +826,432 @@ tasks.forEach((task, i) => {
     }, 180);
   });
   grid.appendChild(card);
+});
+
+/* ══════════════════════════════
+   KORISNE INFORMACIJE
+   
+   Kako dodati novi tile:
+   Dodaj novi objekat u niz `infoItems` ispod.
+   Svaki objekat ima:
+     - icon: emoji ili karakter za ikonicu
+     - title: naziv tilea
+     - slides: niz strana u modalnom prozoru
+       Svaka strana ima:
+         - heading: naslov strane
+         - tag: mala oznaka ispod naslova (opciono)
+         - html: HTML sadrzaj strane (tekst, tabele, itd.)
+══════════════════════════════ */
+const infoItems = [
+    {
+    icon: "📋",
+    title: "Struktura ispita",
+    slides: [
+      {
+        heading: "Kako izgleda maturski ispit",
+        tag: "Opšte informacije",
+        html: `
+          <p>Ispit se radi u Thonny okruženju, a zadaci su <strong>isti</strong> onima ovde na sajtu.</p>
+		  <p>Dobijate test program koji treba da ispuni zahteve, <strong>ne radi se na fizickom mikrokontroler </strong>vec na simulaciji u python-u.</p>
+		  <p>Traje valjda 3 sata (ptvrditi sa Petkoskim), on i jos neki profesor ce biti komisija. </p>
+		  <p>Petkoski je rekao da ukoliko ste uradili domaci da vam to moze pomoci sadobijanjem bolje ocene, tako da ako ga niste uradili, uradite ga obavezno. </p>
+		  
+        `
+      },
+      {
+        heading: "Bodovanje",
+        tag: "Strana 02 / Ocenjevanje",
+        html: `
+		<p> Znaci kako funkcionise bodovanje (po Petkoskom)?</p>
+		<p> 2 se dobije samim prisustvom </p>
+		<p> 3 se dobije pokretanjem test programa </p>
+		<p> 4 se dobije pokusajem ispunjavanja zahteva (program ne radi)</p>
+		<p> 5 se dobije kompletnim ispunjenjem zahteva - sto na ovom sajtu ucimo</p>
+          <table>
+    <thead>
+        <tr>
+            <th style="width: 50%;">Ukupan broj bodova</th>
+            <th>USPEH</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>do 50</td>
+            <td>nedovoljan (1)</td>
+        </tr>
+        <tr>
+            <td>50,5 – 63</td>
+            <td>dovoljan (2)</td>
+        </tr>
+        <tr>
+            <td>63,5 – 75</td>
+            <td>dobar (3)</td>
+        </tr>
+        <tr>
+            <td>75,5 – 87</td>
+            <td>vrlo dobar (4)</td>
+        </tr>
+        <tr>
+            <td>87,5 – 100</td>
+            <td>odličan (5)</td>
+        </tr>
+    </tbody>
+</table>
+<p> Ovi bodovi se kombinuju sa prakticnim testom iz ORS-a </p>
+        `
+      },
+      {
+        heading: "Saveti",
+        tag: "Strana 03 / Saveti",
+        html: `
+          <p><strong>Pre ispita:</strong> Uvežbaj svaki zadatak sa ovog sajta bar jednom od nule, bez gledanja rešenja. Topla preporuka pogedati neke youtube tutorijale vezane za tkinter i obnoviti programiranje.</p>
+          <p><strong>Na ispitu:</strong> Bitno je samo da radi, ne bitno kakav je kod.</p>
+        `
+      }
+    ]
+  },
+  {
+    icon: "🖼️",
+    title: "Tkinter",
+    slides: [
+      {
+        heading: "after() umesto time.sleep()",
+        tag: "Strana 01 / Tajmeri",
+        html: `
+          <p><strong>Zašto ne koristimo <code>time.sleep()</code> u tkinteru?</strong></p>
+          <p><code>time.sleep()</code> zamrzava ceo program — prozor prestaje da reaguje na klikove i izgleda kao da se srušio. Tkinter ne može ništa da radi dok čeka.</p>
+          <p>Umesto toga koristimo <code>.after()</code> koji kaže tkinteru: <em>"Pozovi ovu funkciju za X milisekundi, ali za to vreme radi normalno."</em></p>
+          <table>
+            <thead><tr><th>Kod</th><th>Šta radi</th></tr></thead>
+            <tbody>
+              <tr><td><code>self.after(1000, self.tik)</code></td><td>Pozovi <code>tik()</code> za 1 sekundu</td></tr>
+              <tr><td><code>posao = prozor.after(1000, f)</code></td><td>Čuva referencu da bismo mogli da otkažemo</td></tr>
+              <tr><td><code>prozor.after_cancel(posao)</code></td><td>Otkazuje zakazani poziv — koristi se za STOP/RESET</td></tr>
+            </tbody>
+          </table>
+          <p>Da bi tajmer tekao stalno, funkcija poziva <strong>samu sebe</strong> na kraju. U semaforu: <code>self.after(1000, self.tik_crveno)</code> — i tako se krug ponavlja bez petlje.</p>
+        `
+      },
+      {
+        heading: "Canvas i ovali — kako rade",
+        tag: "Strana 02 / Canvas",
+        html: `
+          <p><code>Canvas</code> je "platno" na kome crtamo oblike. LED lampice u semaforu su nacrtani ovali na canvasu.</p>
+          <table>
+            <thead><tr><th>Kod</th><th>Šta radi</th></tr></thead>
+            <tbody>
+              <tr><td><code>c = tk.Canvas(prozor, width=40, height=40)</code></td><td>Pravi platno 40×40 piksela</td></tr>
+              <tr><td><code>c.create_oval(5, 5, 35, 35, fill="gray")</code></td><td>Crta oval — koordinate su: levo, gore, desno, dole</td></tr>
+              <tr><td><code>tags="led0"</code></td><td>Daje ovalu ime (tag) da bismo ga mogli naći kasnije</td></tr>
+            </tbody>
+          </table>
+          <p>Koordinate <code>create_oval(x1, y1, x2, y2)</code> opisuju <strong>pravougaonik u koji oval stane</strong>. Dakle <code>(5,5,35,35)</code> znači: oval koji počinje 5px od leve/gornje ivice i ide do 35px.</p>
+        `
+      },
+      {
+        heading: "itemconfig — menjanje boje posle crtanja",
+        tag: "Strana 03 / Canvas",
+        html: `
+          <p>Kada oval jednom nacrtamo, ne brišemo ga i ne crtamo novi — samo mu <strong>menjamo boju</strong> sa <code>.itemconfig()</code>.</p>
+          <table>
+            <thead><tr><th>Kod</th><th>Šta radi</th></tr></thead>
+            <tbody>
+              <tr><td><code>c.itemconfig("led0", fill="red")</code></td><td>Menja boju ovalu sa tagom <code>led0</code> u crvenu</td></tr>
+              <tr><td><code>c.itemconfig("led0", fill="gray")</code></td><td>Vraća oval na sivu — simulira "ugašenu" lampicu</td></tr>
+              <tr><td><code>c.itemconfig(1, fill="red")</code></td><td>Isto, ali po rednom broju elementa (1 = prvi nacrtani)</td></tr>
+            </tbody>
+          </table>
+          <p>U semaforu: <code>self.leds[0].itemconfig("led0", fill="red")</code> — <code>self.leds</code> je lista canvasa, a svaki canvas ima jedan oval sa odgovarajućim tagom.</p>
+        `
+      },
+      {
+        heading: "Boje i heksadecimalne vrednosti",
+        tag: "Strana 04 / Boje",
+        html: `
+          <p>Boje u tkinteru možemo pisati kao <strong>naziv</strong> (<code>"red"</code>, <code>"green"</code>) ili kao <strong>hex kod</strong> u obliku <code>"#RRGGBB"</code>.</p>
+          <p>Hex kod ima 6 znakova — po 2 za crvenu, zelenu i plavu. Svaki par ide od <code>00</code> (ništa) do <code>ff</code> (maksimum):</p>
+          <table>
+            <thead><tr><th>Hex kod</th><th>Boja</th><th>Objašnjenje</th></tr></thead>
+            <tbody>
+              <tr><td><code>#ff0000</code></td><td>Crvena</td><td>Maksimum crvene, nula zelene i plave</td></tr>
+              <tr><td><code>#00ff00</code></td><td>Zelena</td><td>Nula crvene, maksimum zelene, nula plave</td></tr>
+              <tr><td><code>#ffff00</code></td><td>Žuta</td><td>Puna crvena + puna zelena = žuta</td></tr>
+              <tr><td><code>#440000</code></td><td>Tamno crvena</td><td>Malo crvene — simulira "ugašenu" lampicu</td></tr>
+              <tr><td><code>#ffffff</code></td><td>Bela</td><td>Sve tri boje na maksimumu</td></tr>
+              <tr><td><code>#000000</code></td><td>Crna</td><td>Sve tri boje na nuli</td></tr>
+            </tbody>
+          </table>
+          <p>U semaforu se <code>#440000</code> koristi za "ugašenu" crvenu lampicu — nije čisto crna, već samo veoma tamna crvena, da izgleda realnije.</p>
+        `
+      },
+      {
+        heading: "StringVar — promenljiva vezana za GUI",
+        tag: "Strana 05 / Elementi",
+        html: `
+          <p><code>StringVar</code> je specijalna tkinter promenljiva koja je <strong>direktno povezana sa elementom na ekranu</strong>. Kada se vrednost promeni, element se automatski ažurira — i obrnuto.</p>
+          <table>
+            <thead><tr><th>Kod</th><th>Šta radi</th></tr></thead>
+            <tbody>
+              <tr><td><code>izbor = tk.StringVar(value="parni")</code></td><td>Pravi StringVar sa početnom vrednošću</td></tr>
+              <tr><td><code>izbor.get()</code></td><td>Čita trenutnu vrednost — npr. <code>"parni"</code> ili <code>"neparni"</code></td></tr>
+              <tr><td><code>izbor.set("neparni")</code></td><td>Menja vrednost (i automatski osvežava vezani element)</td></tr>
+              <tr><td><code>variable=izbor, value="parni"</code></td><td>Vezuje Radiobutton za StringVar</td></tr>
+            </tbody>
+          </table>
+          <p>Kada korisnik klikne Radiobutton, <code>StringVar</code> se automatski postavlja na <code>value</code> tog dugmeta. Zatim u funkciji čitamo <code>izbor.get()</code> da znamo šta je izabrano — bez dodatnog koda.</p>
+        `
+      }
+    ]
+  },
+  {
+    icon: "🧩",
+    title: "Klase i funkcije",
+    slides: [
+      {
+        heading: "Klase — podsetnik osnova",
+        tag: "Strana 01 / Ono što znamo",
+        html: `
+          <p>Klasa je "šablon" za pravljenje objekata. Svaki objekat napravljen po toj klasi ima svoje podatke i metode.</p>
+          <table>
+            <thead><tr><th>Kod</th><th>Šta radi</th></tr></thead>
+            <tbody>
+              <tr><td><code>class Pravougaonik:</code></td><td>Definišemo klasu</td></tr>
+              <tr><td><code>def __init__(self, a, b):</code></td><td>Konstruktor — automatski se poziva pri kreiranju objekta</td></tr>
+              <tr><td><code>self._duzina = a</code></td><td>Čuva vrednost kao atribut — dostupan svuda u klasi</td></tr>
+              <tr><td><code>def povrsina(self):</code></td><td>Metoda — funkcija unutar klase</td></tr>
+              <tr><td><code>p = Pravougaonik(3, 4)</code></td><td>Pravi objekat — poziva <code>__init__</code></td></tr>
+              <tr><td><code>p.povrsina()</code></td><td>Poziva metodu na objektu</td></tr>
+            </tbody>
+          </table>
+          <p><code>self</code> je uvek prvi parametar svake metode — Python ga automatski šalje, ne pišemo ga pri pozivu.</p>
+        `
+      },
+      {
+        heading: "Izvedene klase — nasleđivanje",
+        tag: "Strana 02 / Nasleđivanje",
+        html: `
+          <p>Izvedena klasa <strong>nasleđuje</strong> sve metode i atribute roditeljske klase, i može da doda svoje.</p>
+          <table>
+            <thead><tr><th>Kod</th><th>Šta radi</th></tr></thead>
+            <tbody>
+              <tr><td><code>class Kvadar(Pravougaonik):</code></td><td>Kvadar nasleđuje sve od Pravougaonika</td></tr>
+              <tr><td><code>Pravougaonik.__init__(self, a, b)</code></td><td>Poziva konstruktor roditelja — da se i njegovi atributi postave</td></tr>
+              <tr><td><code>self._visina = c</code></td><td>Dodaje novi atribut koji Pravougaonik nema</td></tr>
+              <tr><td><code>def zapremina(self):</code></td><td>Nova metoda — samo Kvadar je ima</td></tr>
+            </tbody>
+          </table>
+          <p>Kvadar automatski ima i <code>povrsina()</code> i <code>ispis()</code> od Pravougaonika — nije ih potrebno ponovo pisati.</p>
+        `
+      },
+      {
+        heading: "Klasa kao tkinter prozor",
+        tag: "Strana 03 / Napredno",
+        html: `
+          <p>U programima kao što je Semafor, <strong>ceo prozor je klasa</strong>. Umesto <code>prozor = tk.Tk()</code>, klasa nasleđuje <code>tk.Tk</code>.</p>
+          <table>
+            <thead><tr><th>Kod</th><th>Šta radi</th></tr></thead>
+            <tbody>
+              <tr><td><code>class Semafor(tk.Tk):</code></td><td>Naša klasa JE tkinter prozor</td></tr>
+              <tr><td><code>super().__init__()</code></td><td>Poziva konstruktor <code>tk.Tk</code> — pravi prozor</td></tr>
+              <tr><td><code>self.title("...")</code></td><td>Umesto <code>prozor.title()</code> — jer smo mi prozor</td></tr>
+              <tr><td><code>self.labela_88</code></td><td>Atribut klase — Label dostupan svim metodama</td></tr>
+              <tr><td><code>app = Semafor()</code></td><td>Pravi prozor i poziva <code>__init__</code></td></tr>
+              <tr><td><code>app.mainloop()</code></td><td>Pokreće prozor</td></tr>
+            </tbody>
+          </table>
+          <p>Prednost: sve metode (<code>tik_crveno</code>, <code>zeleno</code>...) direktno pristupaju labelama i dugmadima kroz <code>self</code> — bez prosleđivanja promenljivih.</p>
+        `
+      },
+      {
+        heading: "Globalne promenljive",
+        tag: "Strana 04 / Funkcije",
+        html: `
+          <p>Normalna promenljiva unutar funkcije postoji samo dok ta funkcija radi. <strong>Globalna promenljiva</strong> postoji celo vreme dok program radi i dostupna je svuda.</p>
+          <table>
+            <thead><tr><th>Situacija</th><th>Primer</th></tr></thead>
+            <tbody>
+              <tr><td>Definisanje globalne</td><td><code>sekunde = 0</code> — piše se van svake funkcije</td></tr>
+              <tr><td>Čitanje u funkciji</td><td>Radi automatski — možeš čitati bez ičega</td></tr>
+              <tr><td>Menjanje u funkciji</td><td>Mora da piše <code>global sekunde</code> na vrhu funkcije</td></tr>
+            </tbody>
+          </table>
+          <p>U Štoperici: <code>sekunde</code>, <code>radi</code>, <code>posao</code> su globalne jer svaka funkcija (<code>start_stop</code>, <code>reset</code>, <code>osvezi_vreme</code>) mora da ih čita ili menja. Bez <code>global sekunde</code>, Python bi mislio da praviš <em>novu lokalnu</em> promenljivu i dobio bi grešku.</p>
+        `
+      },
+      {
+        heading: "Metode kao funkcije u klasi",
+        tag: "Strana 05 / Funkcije",
+        html: `
+          <p>U klasama nema globalnih promenljivih — umesto njih koristimo <code>self.promenljiva</code>. Svaka metoda automatski prima <code>self</code> i može da pristupi svemu.</p>
+          <table>
+            <thead><tr><th>Bez klase (globalne)</th><th>Sa klasom (self)</th></tr></thead>
+            <tbody>
+              <tr><td><code>sekunde = 0</code></td><td><code>self.tajmer = 0</code></td></tr>
+              <tr><td><code>global sekunde</code> u funkciji</td><td>Nije potrebno — <code>self</code> je uvek tu</td></tr>
+              <tr><td><code>sekunde += 1</code></td><td><code>self.tajmer -= 1</code></td></tr>
+            </tbody>
+          </table>
+          <p>U Semaforu svaka faza (crveno, zeleno...) je posebna metoda. Na kraju svake faze poziva se sledeća: <code>self.after(2000, self.zeleno)</code> — to je ceo "lanac" faza bez ijedne petlje.</p>
+        `
+      }
+    ]
+  },
+  /* ── DODAJ NOVI TILE OVDE ─────────────────────────
+  {
+    icon: "🔧",
+    title: "Naziv novog tilea",
+    slides: [
+      {
+        heading: "Naslov prve strane",
+        tag: "Strana 01 / Kategorija",
+        html: `<p>Sadrzaj ovde...</p>`
+      },
+      {
+        heading: "Naslov druge strane",
+        tag: "Strana 02 / ...",
+        html: `<p>Sadrzaj ovde...</p>`
+      },
+      {
+        heading: "Naslov trece strane",
+        tag: "Strana 03 / ...",
+        html: `<p>Sadrzaj ovde...</p>`
+      }
+    ]
+  },
+  ─────────────────────────────────────────────────── */
+];
+
+/* ══════════════════════════════
+   RENDER INFO TILES
+══════════════════════════════ */
+const infoGrid = document.getElementById('infoGrid');
+infoItems.forEach((item, i) => {
+  const card = document.createElement('div');
+  card.className = 'info-card';
+  card.style.animationDelay = (0.05 + i * 0.08) + 's';
+  card.innerHTML = `
+    <div class="info-card-icon">${item.icon}</div>
+    <div class="info-card-title">${item.title}</div>
+  `;
+  card.addEventListener('click', () => openModal(i));
+  infoGrid.appendChild(card);
+});
+
+/* ══════════════════════════════
+   MODAL LOGIC
+══════════════════════════════ */
+const overlay    = document.getElementById('modalOverlay');
+const slidesEl   = document.getElementById('modalSlides');
+const dotsEl     = document.getElementById('modalDots');
+const arrowLeft  = document.getElementById('arrowLeft');
+const arrowRight = document.getElementById('arrowRight');
+const closeBtn   = document.getElementById('modalClose');
+
+let currentSlide = 0;
+let totalSlides  = 0;
+let slideEls     = [];
+let dotEls       = [];
+
+function openModal(itemIndex) {
+  const item = infoItems[itemIndex];
+  currentSlide = 0;
+  totalSlides  = item.slides.length;
+
+  // Build slides
+  slidesEl.innerHTML = '';
+  dotsEl.innerHTML   = '';
+  slideEls = [];
+  dotEls   = [];
+
+  item.slides.forEach((slide, i) => {
+    const el = document.createElement('div');
+    el.className = 'modal-slide' + (i === 0 ? ' active' : '');
+    el.innerHTML = `
+      <h2>${slide.heading}</h2>
+      ${slide.tag ? `<span class="slide-tag">${slide.tag}</span>` : ''}
+      ${slide.html}
+    `;
+    slidesEl.appendChild(el);
+    slideEls.push(el);
+
+    const dot = document.createElement('div');
+    dot.className = 'modal-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => goToSlide(i));
+    dotsEl.appendChild(dot);
+    dotEls.push(dot);
+  });
+
+  updateArrows();
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function goToSlide(index) {
+  if (index === currentSlide) return;
+  const direction = index > currentSlide ? 1 : -1;
+
+  // Animate out current
+  slideEls[currentSlide].classList.remove('active');
+  if (direction === 1) {
+    slideEls[currentSlide].classList.add('slide-out-left');
+  } else {
+    slideEls[currentSlide].style.transform = 'translateX(40px)';
+    slideEls[currentSlide].style.opacity   = '0';
+  }
+  dotEls[currentSlide].classList.remove('active');
+
+  // Reset outgoing after animation
+  const outgoing = currentSlide;
+  setTimeout(() => {
+    slideEls[outgoing].classList.remove('slide-out-left');
+    slideEls[outgoing].style.transform = '';
+    slideEls[outgoing].style.opacity   = '';
+  }, 320);
+
+  currentSlide = index;
+
+  // Animate in new
+  if (direction === -1) {
+    slideEls[currentSlide].style.transform = 'translateX(-40px)';
+    slideEls[currentSlide].style.opacity   = '0';
+    slideEls[currentSlide].style.transition = 'none';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        slideEls[currentSlide].style.transition = '';
+        slideEls[currentSlide].classList.add('active');
+        slideEls[currentSlide].style.transform = '';
+        slideEls[currentSlide].style.opacity   = '';
+      });
+    });
+  } else {
+    slideEls[currentSlide].classList.add('active');
+  }
+
+  dotEls[currentSlide].classList.add('active');
+  updateArrows();
+}
+
+function updateArrows() {
+  arrowLeft.classList.toggle('disabled',  currentSlide === 0);
+  arrowRight.classList.toggle('disabled', currentSlide === totalSlides - 1);
+}
+
+arrowLeft.addEventListener('click',  () => { if (currentSlide > 0) goToSlide(currentSlide - 1); });
+arrowRight.addEventListener('click', () => { if (currentSlide < totalSlides - 1) goToSlide(currentSlide + 1); });
+closeBtn.addEventListener('click',   closeModal);
+overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (!overlay.classList.contains('open')) return;
+  if (e.key === 'ArrowRight') { if (currentSlide < totalSlides - 1) goToSlide(currentSlide + 1); }
+  if (e.key === 'ArrowLeft')  { if (currentSlide > 0) goToSlide(currentSlide - 1); }
+  if (e.key === 'Escape') closeModal();
 });
 </script>
 </body>
