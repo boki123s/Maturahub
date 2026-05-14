@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instalacija i podešavanje virtuelne mašine</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: #0f172a;
+      color: #e2e8f0;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      background: rgba(59, 130, 246, 0.15);
+      border-radius: 50%;
+      top: -200px;
+      right: -100px;
+      filter: blur(100px);
+      z-index: -1;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      width: 400px;
+      height: 400px;
+      background: rgba(139, 92, 246, 0.12);
+      border-radius: 50%;
+      bottom: -150px;
+      left: -100px;
+      filter: blur(100px);
+      z-index: -1;
+    }
+
+    header {
+      text-align: center;
+      padding: 80px 20px 50px;
+    }
+
+    header h1 {
+      font-size: 48px;
+      margin-bottom: 15px;
+      color: white;
+    }
+
+    header p {
+      color: #94a3b8;
+      font-size: 18px;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+      display: grid;
+      gap: 25px;
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 24px;
+      transition: 0.3s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(59,130,246,0.4);
+    }
+
+    .card h2 {
+      margin-bottom: 20px;
+      color: #60a5fa;
+      font-size: 28px;
+    }
+
+    ol {
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 14px;
+      color: #cbd5e1;
+    }
+
+    code {
+      background: rgba(59,130,246,0.15);
+      color: #93c5fd;
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    a {
+      color: #60a5fa;
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    strong {
+      color: white;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 34px;
+      }
+
+      .card {
+        padding: 22px;
+      }
+
+      .card h2 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Instalacija i podešavanje virtuelne mašine</h1>
+    <p>Jednostavno uputstvo za kreiranje i osnovno podešavanje VM-a</p>
+  </header>
+
+  <main>
+
+    <section class="card">
+      <h2>1. Preuzimanje potrebnih fajlova</h2>
+      <ol>
+        <li>Preuzmi i instaliraj <strong>Oracle VM VirtualBox</strong> program sa zvaničnog sajta:</li>
+        <li><a href="https://www.virtualbox.org/wiki/Downloads" target="_blank">https://www.virtualbox.org/wiki/Downloads</a></li>
+        <li>Preuzmi Windows 10 ISO fajl sa Microsoft sajta:</li>
+        <li><a href="https://www.microsoft.com/software-download/windows10" target="_blank">https://www.microsoft.com/software-download/windows10</a></li>
+        <li>Nakon preuzimanja instaliraj VirtualBox kao običan program.</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>2. Kreiranje virtuelne mašine</h2>
+      <ol>
+        <li>Pokreni VirtualBox program.</li>
+        <li>Klikni na dugme <code>New</code>.</li>
+        <li>Unesi naziv virtuelne mašine, na primer <strong>Windows 10</strong>.</li>
+        <li>U delu <code>Type</code> izaberi <strong>Microsoft Windows</strong>.</li>
+        <li>U delu <code>Version</code> izaberi <strong>Windows 10 (64-bit)</strong>.</li>
+        <li>Podesi količinu RAM memorije. Preporučeno je najmanje <strong>4096 MB</strong>.</li>
+        <li>Izaberi opciju <code>Create a virtual hard disk now</code>.</li>
+        <li>Klikni na <code>Create</code>.</li>
+        <li>Izaberi format diska <code>VDI</code>.</li>
+        <li>Izaberi <code>Dynamically allocated</code>.</li>
+        <li>Podesi veličinu diska na najmanje <strong>50 GB</strong>.</li>
+        <li>Ponovo klikni na <code>Create</code>.</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>3. Dodavanje Windows 10 ISO fajla</h2>
+      <ol>
+        <li>U VirtualBox programu izaberi napravljenu virtuelnu mašinu.</li>
+        <li>Klikni na <code>Settings</code>.</li>
+        <li>Otvori karticu <code>Storage</code>.</li>
+        <li>U delu <code>Controller: IDE</code> klikni na ikonicu diska.</li>
+        <li>Klikni na <code>Choose a Disk File</code>.</li>
+        <li>Pronađi i izaberi Windows 10 ISO fajl koji si preuzeo.</li>
+        <li>Klikni na <code>OK</code> da sačuvaš podešavanja.</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>4. Instalacija Windows 10 sistema</h2>
+      <ol>
+        <li>Klikni na dugme <code>Start</code> da pokreneš virtuelnu mašinu.</li>
+        <li>Sačekaj da se učita Windows instalacija.</li>
+        <li>Izaberi jezik i tastaturu pa klikni na <code>Next</code>.</li>
+        <li>Klikni na <code>Install now</code>.</li>
+        <li>Ako traži ključ, možeš kliknuti na <code>I don't have a product key</code>.</li>
+        <li>Izaberi verziju Windowsa i klikni na <code>Next</code>.</li>
+        <li>Prihvati uslove korišćenja.</li>
+        <li>Izaberi opciju <code>Custom: Install Windows only</code>.</li>
+        <li>Izaberi virtuelni disk i klikni na <code>Next</code>.</li>
+        <li>Sačekaj da se instalacija završi i da se sistem restartuje.</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>5. Dodavanje dodatnog virtuelnog diska</h2>
+      <ol>
+        <li>Ugasi virtuelnu mašinu.</li>
+        <li>Izaberi virtuelnu mašinu i klikni na <code>Settings</code>.</li>
+        <li>Otvori karticu <code>Storage</code>.</li>
+        <li>Klikni na <code>Add Hard Disk</code>.</li>
+        <li>Izaberi <code>Create Disk Image</code>.</li>
+        <li>Izaberi format <code>VDI</code>.</li>
+        <li>Podesi veličinu dodatnog diska.</li>
+        <li>Klikni na <code>Finish</code>, zatim <code>Choose</code> i <code>OK</code>.</li>
+      </ol>
+    </section>
+
+  </main>
+
+  <footer>
+    Napravljeno kao jednostavno uputstvo za podešavanje virtuelne mašine.
+  </footer>
+
+</body>
+</html>
