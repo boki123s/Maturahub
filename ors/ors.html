@@ -532,6 +532,7 @@ body.light {
       <option value="0">4ETR–A1: Kvote diska</option>
       <option value="1">4ETR–A2: Studentska služba</option>
       <option value="2">4ETR–Zadatak 20: Podešavanje monitora</option>
+      <option value="3">4ETR–A17: Mrežni administratori</option>
     </select>
   </div>
   <div class="topbar-right">
@@ -698,9 +699,9 @@ const TASKS = [
         sim: 'groupPolicyA2'
       },
       {
-        title: 'Obaveštenja o pročitanim mejlovima (Chrome ekstenzija)',
-        body: 'Otvorite <strong>Google Chrome</strong> → Chrome Web Store → potražite <strong>"Checker Plus for Gmail"</strong>. Kliknite "Add to Chrome" i potvrdite instalaciju. Ekstenzija će prikazivati broj nepročitanih mejlova i slati notifikacije kada stignu novi ili kada neko pročita poslate mejlove.',
-        hint: 'Chrome → chrome.google.com/webstore → Checker Plus for Gmail',
+        title: 'Obaveštenja o pročitanim mejlovima (MailSuite ekstenzija)',
+        body: 'Otvorite <strong>Google Chrome</strong> → Chrome Web Store → potražite <strong>"MailSuite for Gmail"</strong>. Kliknite "Add to Chrome" i potvrdite instalaciju. MailSuite omogućava praćenje kada su poslati mejlovi pročitani (read receipts), kao i napredne opcije za Gmail produktivnost.',
+        hint: 'Chrome → chrome.google.com/webstore → MailSuite for Gmail',
         sim: 'chromeExtension'
       },
       {
@@ -800,6 +801,66 @@ const TASKS = [
         sim: null
       }
     ]
+  },
+  {
+    code: '4ETR – A17',
+    name: 'Mrežni administratori',
+    steps: [
+      {
+        title: 'Kreiranje naloga Nikola i Jelena (Computer Management)',
+        body: 'Desni klik na <strong>Start → Computer Management → System Tools → Local Users and Groups → Users</strong>. Desni klik na prazno → <strong>New User</strong>.<br><br><strong>Za Nikola:</strong> User name: <code>Nikola</code>, Password: <code>K0risnik01</code>. Isključi "User must change password at next logon". Uključi <strong>"User cannot change password"</strong> i <strong>"Password never expires"</strong> → Create.<br><br><strong>Za Jelena:</strong> Isti postupak, User name: <code>Jelena</code>, Password: <code>L0zinka10</code> → Create → Close.',
+        hint: 'Desni klik Start → Computer Management → Local Users and Groups → Users → New User',
+        sim: 'a17NewUser'
+      },
+      {
+        title: 'Kreiranje foldera NikolaDokumenti i JelenaDokumenti na C:\\',
+        body: 'Otvorite <strong>File Explorer → This PC → Local Disk (C:)</strong>. Desni klik na prazan prostor → <strong>New → Folder</strong>. Imenujte folder <strong>NikolaDokumenti</strong>. Ponovite za <strong>JelenaDokumenti</strong>.<br><br>Ovi folderi će biti matični direktorijumi za svakog korisnika na kojima će zaposleni postavljati svoje izveštaje.',
+        hint: 'File Explorer → C: → New Folder → NikolaDokumenti, JelenaDokumenti',
+        sim: 'a17FolderSecurity'
+      },
+      {
+        title: 'Prava pristupa: NikolaDokumenti (samo Nikola + direktor za čitanje)',
+        body: 'Desni klik na <strong>NikolaDokumenti → Properties → kartica Security → Advanced</strong>. Klikni <strong>Disable inheritance → Convert inherited permissions</strong>. Ukloni <strong>Users</strong> i <strong>Authenticated Users</strong> (i Jelenu ako se nalazi). Klikni <strong>Add → Select a principal → upiši Nikola → Check Names → OK</strong>. Štikliraj <strong>Full control</strong> → OK.<br>Dodaj i <strong>direktor</strong> → samo <strong>Read &amp; execute, List folder contents, Read</strong> → OK.',
+        hint: 'NikolaDokumenti → Properties → Security → Advanced → Disable inheritance → dodaj Nikola (Full) + direktor (Read)',
+        sim: 'a17FolderSecurity'
+      },
+      {
+        title: 'Prava pristupa: JelenaDokumenti (samo Jelena + direktor za čitanje)',
+        body: 'Isti postupak kao za NikolaDokumenti, ali za folder <strong>JelenaDokumenti</strong>. Ukloni <strong>Users, Authenticated Users</strong> i <strong>Nikola</strong> (ako se nalazi). Dodaj <strong>Jelena → Full control</strong> i <strong>direktor → Read &amp; execute, List folder contents, Read</strong> → OK na sve.',
+        hint: 'JelenaDokumenti → Properties → Security → Advanced → dodaj Jelena (Full) + direktor (Read)',
+        sim: 'a17FolderSecurity'
+      },
+      {
+        title: 'Grupna polisa: zabrana promene pozadinske slike (Wallpaper)',
+        body: 'Pritisnite <strong>Win + R → upiši gpedit.msc → Enter</strong>. Idite: <strong>User Configuration → Administrative Templates → Control Panel → Personalization</strong>. Dvaput kliknite na <strong>"Prevent changing desktop background"</strong> → označite <strong>Enabled</strong> → Apply → OK.',
+        hint: 'gpedit.msc → User Config → Admin Templates → Control Panel → Personalization → Prevent changing desktop background',
+        sim: 'a17GroupPolicy'
+      },
+      {
+        title: 'Grupna polisa: ukloniti User Accounts iz Control Panel-a',
+        body: 'U <strong>Local Group Policy Editor</strong>: <strong>User Configuration → Administrative Templates → Control Panel</strong>. Dvaput kliknite na <strong>"Hide specified Control Panel items"</strong> → Enabled. Kliknite dugme <strong>Show...</strong> → u tabelu unesite tačno: <strong>Microsoft.UserAccounts</strong> → OK → OK.<br>Obični korisnici više neće moći da vide ili menjaju korisničke naloge.',
+        hint: 'gpedit.msc → User Config → Admin Templates → Control Panel → Hide specified Control Panel items → Show → Microsoft.UserAccounts',
+        sim: 'a17GroupPolicy'
+      },
+      {
+        title: 'Grupna polisa: onemogućiti korišćenje prenosivih uređaja (USB)',
+        body: 'U <strong>Local Group Policy Editor</strong>: <strong>Computer Configuration → Administrative Templates → System → Removable Storage Access</strong>. Dvaput kliknite na <strong>"All Removable Storage classes: Deny all access"</strong> → Enabled → OK.<br>Ovo blokira sve USB, flash i slične prenosive uređaje na celom računaru.',
+        hint: 'gpedit.msc → Computer Config → Admin Templates → System → Removable Storage Access → All Removable Storage classes: Deny all access',
+        sim: 'a17GroupPolicy'
+      },
+      {
+        title: 'Task Manager: prikaz procesa, resursa i prinudno zatvaranje',
+        body: 'Pritisnite <strong>Ctrl + Shift + Esc</strong> (ili desni klik na Taskbar → Task Manager).<br><br>• <strong>Processes</strong> tab: lista svih pokrenutih aplikacija, servisa i pozadinskih procesa. Izaberite proces i kliknite <strong>End Task</strong> za prinudno zatvaranje.<br>• <strong>Performance</strong> tab: grafički prikaz zauzeća CPU, RAM memorije i hard diska u realnom vremenu.<br>• <strong>Details</strong> tab: detaljniji podaci o procesima (PID, prioritet, korisnik).<br>• <strong>Services</strong> tab: pokretanje/zaustavljanje Windows servisa.',
+        hint: 'Ctrl+Shift+Esc → Task Manager → Processes / Performance / Details / Services',
+        sim: 'a17TaskManager'
+      },
+      {
+        title: 'Task Scheduler: backup JelenaDokumenti svakog ponedeljka u 08:00',
+        body: 'Otvorite <strong>Start → Task Scheduler</strong>. Desni klik na <strong>Task Scheduler Library → Create Basic Task...</strong>.<br>• <strong>Name:</strong> Backup Jelena → Next<br>• <strong>Trigger:</strong> Weekly → Next<br>• <strong>Time:</strong> 08:00:00, štikliraj samo <strong>Monday</strong> → Next<br>• <strong>Action:</strong> Start a program → Next<br>• <strong>Program/script:</strong> <code>robocopy</code><br>• <strong>Add arguments:</strong> <code>C:\\Users\\Jelena C:\\Izvestaji2 /E</code> → Next → Finish.',
+        hint: 'Task Scheduler → Task Scheduler Library desni klik → Create Basic Task → Backup Jelena → Weekly → Monday → 08:00 → robocopy',
+        sim: 'a17TaskScheduler'
+      }
+    ]
   }
 ];
 
@@ -809,7 +870,7 @@ const TASKS = [
 let useVM = true;
 let currentTask = 0;
 let currentStep = -1;
-let doneSteps = [new Set(), new Set(), new Set()];
+let doneSteps = [new Set(), new Set(), new Set(), new Set()];
 
 // ============================================================
 // INIT
@@ -2105,7 +2166,7 @@ const SIMULATORS = {
   <div class="win-window" style="min-width:580px;max-width:620px;">
     <div class="win-titlebar" style="background:#4285f4;">
       <span style="font-size:14px;margin-right:6px;">🧩</span>
-      <span class="win-title" style="font-size:13px;">Chrome Web Store – Mail Checker Extension</span>
+      <span class="win-title" style="font-size:13px;">Chrome Web Store – MailSuite for Gmail</span>
       <div class="win-controls">
         <div class="win-ctrl close" onclick="closeSim()">✕</div>
       </div>
@@ -2114,20 +2175,28 @@ const SIMULATORS = {
       <!-- Chrome top bar -->
       <div style="background:#dee1e6;padding:6px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #ccc;">
         <div style="background:#fff;border:1px solid #ccc;border-radius:12px;flex:1;padding:4px 12px;font-size:12px;color:#555;">
-          🔒 chrome.google.com/webstore/detail/checker-plus-for-gmail
+          🔒 chromewebstore.google.com/detail/mailsuite-for-gmail
         </div>
       </div>
       <!-- Extension page -->
       <div style="padding:20px;">
         <!-- Header -->
         <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #e0e0e0;">
-          <div style="width:64px;height:64px;background:linear-gradient(135deg,#4285f4,#34a853);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0;">📬</div>
+          <!-- MailSuite icon: envelope with checkmark -->
+          <div style="width:64px;height:64px;background:linear-gradient(135deg,#1a73e8,#0d47a1);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;">
+            <svg width="40" height="32" viewBox="0 0 40 32" fill="none">
+              <rect x="1" y="1" width="38" height="30" rx="3" fill="white" opacity="0.15" stroke="white" stroke-width="1.5"/>
+              <polyline points="1,4 20,18 39,4" stroke="white" stroke-width="2" fill="none"/>
+              <circle cx="30" cy="22" r="8" fill="#34a853"/>
+              <polyline points="26,22 29,25 34,19" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
           <div style="flex:1;">
-            <div style="font-size:18px;font-weight:600;margin-bottom:4px;">Checker Plus for Gmail™</div>
-            <div style="font-size:12px;color:#555;margin-bottom:6px;">by jasonsavard.com</div>
+            <div style="font-size:18px;font-weight:600;margin-bottom:4px;">MailSuite for Gmail™</div>
+            <div style="font-size:12px;color:#555;margin-bottom:6px;">by mailsuite.com · Formerly Mailtrack</div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-              <span style="color:#f59e0b;font-size:13px;">★★★★★</span>
-              <span style="font-size:12px;color:#555;">4.7 · 1,200,000+ users</span>
+              <span style="color:#f59e0b;font-size:13px;">★★★★☆</span>
+              <span style="font-size:12px;color:#555;">4.4 · 3,000,000+ users</span>
               <span style="background:#e8f5e9;color:#2e7d32;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;">Free</span>
             </div>
           </div>
@@ -2139,28 +2208,28 @@ const SIMULATORS = {
         <div style="margin-bottom:16px;">
           <div style="font-size:13px;font-weight:600;margin-bottom:6px;">Overview</div>
           <div style="font-size:12px;color:#333;line-height:1.6;">
-            Receive desktop notifications and easily check your Gmail™ without opening a new tab. 
-            Get notified when new emails arrive, see a count of unread messages on the extension icon, 
-            and quickly preview emails without leaving the current page.
+            MailSuite (formerly Mailtrack) adds email tracking to Gmail. See <strong>two checkmarks ✓✓</strong> when your 
+            email has been read, and get instant notifications. Perfect for knowing when colleagues or 
+            clients have opened your messages.
           </div>
         </div>
         <!-- Features -->
         <div style="background:#fff;border:1px solid #e0e0e0;border-radius:4px;padding:14px;margin-bottom:16px;">
           <div style="font-size:12px;font-weight:600;margin-bottom:8px;color:#333;">Key features:</div>
           <div style="font-size:12px;color:#444;display:flex;flex-direction:column;gap:5px;">
-            <div>✅ Desktop notifications for new emails</div>
-            <div>✅ Badge showing unread email count</div>
-            <div>✅ Preview emails without opening Gmail</div>
-            <div>✅ Works with multiple Gmail accounts</div>
-            <div>✅ Mark as read, delete, or archive directly</div>
+            <div>✓✓ Real-time email read receipts (dva tikića = pročitano)</div>
+            <div>🔔 Instant notifications when email is opened</div>
+            <div>📊 Detailed tracking per recipient</div>
+            <div>📅 Timestamp of when email was read</div>
+            <div>🔗 Link click tracking</div>
           </div>
         </div>
         <!-- Confirm dialog (hidden) -->
         <div id="extConfirmDialog" style="display:none;background:#fff;border:1px solid #ccc;border-radius:4px;padding:16px;box-shadow:0 4px 12px rgba(0,0,0,0.15);">
-          <div style="font-size:14px;font-weight:600;margin-bottom:10px;">Add "Checker Plus for Gmail™"?</div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:10px;">Add "MailSuite for Gmail™"?</div>
           <div style="font-size:12px;color:#555;margin-bottom:4px;">It can:</div>
           <ul style="font-size:12px;color:#333;margin:0 0 14px 16px;line-height:1.7;">
-            <li>Read and change your data on all websites</li>
+            <li>Read and change your data on mail.google.com</li>
             <li>Display notifications</li>
             <li>Read your browsing history</li>
           </ul>
@@ -2171,11 +2240,414 @@ const SIMULATORS = {
         </div>
         <!-- Installed state (hidden) -->
         <div id="extInstalledMsg" style="display:none;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:4px;padding:12px;font-size:12px;color:#2e7d32;">
-          ✅ <strong>Checker Plus for Gmail™</strong> je dodat u Chrome! Ikonica se pojavljuje u toolbar-u. Kliknite na nju da podesite notifikacije.
+          ✅ <strong>MailSuite for Gmail™</strong> dodat u Chrome! Otvorite Gmail – videćete ✓✓ pored poslatih mejlova kad ih primalac pročita.
         </div>
       </div>
     </div>
-    <div class="feedback-bar win-feedback">💡 Kliknite "Add to Chrome" da instalirate ekstenziju za praćenje mejlova</div>
+    <div class="feedback-bar win-feedback">💡 Kliknite "Add to Chrome" da instalirate MailSuite – prikazuje ✓✓ kada je mejl pročitan</div>
+  </div>
+  `,
+
+  // ---- A17 SIMULATORS ----
+  a17NewUser: () => `
+  <div class="win-window" style="min-width:700px;">
+    <div class="win-titlebar">
+      <div class="win-icon-sm"><span></span><span></span><span></span><span></span></div>
+      <span class="win-title">Computer Management – Local Users and Groups</span>
+      <div class="win-controls">
+        <div class="win-ctrl">─</div><div class="win-ctrl">□</div>
+        <div class="win-ctrl close" onclick="closeSim()">✕</div>
+      </div>
+    </div>
+    <div class="win-body" style="background:#f3f3f3;display:flex;font-family:Segoe UI,Arial,sans-serif;min-height:360px;">
+      <!-- Tree -->
+      <div style="width:210px;background:#fff;border-right:1px solid #ddd;padding:6px;font-size:12px;flex-shrink:0;color:#222;">
+        <div style="padding:3px 6px;color:#555;">▼ 🖥️ Computer Management</div>
+        <div style="padding-left:14px;">
+          <div style="padding:3px 6px;color:#555;">▼ 🔧 System Tools</div>
+          <div style="padding-left:14px;">
+            <div style="padding:3px 6px;color:#888;">📋 Task Scheduler</div>
+            <div style="padding:3px 6px;color:#888;">📊 Event Viewer</div>
+            <div style="padding:3px 6px;color:#888;">📁 Shared Folders</div>
+            <div style="padding:3px 6px;font-weight:600;color:#0078d4;">▼ 👥 Local Users and Groups</div>
+            <div style="padding-left:14px;">
+              <div id="a17UsersNode" style="padding:3px 8px;background:#e5f0fb;border-left:3px solid #0078d4;color:#0078d4;font-weight:600;cursor:pointer;" onclick="a17ShowUsers()">👤 Users</div>
+              <div style="padding:3px 8px;color:#888;cursor:pointer;" onclick="winFeedback('Groups – ovde se nalaze grupe korisnika','hint')">👥 Groups</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Content -->
+      <div style="flex:1;display:flex;flex-direction:column;">
+        <div style="background:#e8e8e8;padding:4px 10px;font-size:11px;color:#555;border-bottom:1px solid #ccc;">Users</div>
+        <div style="flex:1;padding:8px;overflow-y:auto;" id="a17UserList">
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <thead><tr style="background:#e8e8e8;"><th style="text-align:left;padding:4px 8px;border-bottom:1px solid #ccc;">Name</th><th style="text-align:left;padding:4px 8px;border-bottom:1px solid #ccc;">Full Name</th><th style="text-align:left;padding:4px 8px;border-bottom:1px solid #ccc;">Description</th></tr></thead>
+            <tbody id="a17UserTbody">
+              <tr><td style="padding:4px 8px;">👤 Administrator</td><td style="padding:4px 8px;"></td><td style="padding:4px 8px;color:#888;">Built-in account for administering...</td></tr>
+              <tr style="background:#f7f7f7;"><td style="padding:4px 8px;">👤 Guest</td><td style="padding:4px 8px;"></td><td style="padding:4px 8px;color:#888;">Built-in account for guest access...</td></tr>
+            </tbody>
+          </table>
+          <div id="a17CtxMenu" style="display:none;position:absolute;background:#fff;border:1px solid #ccc;box-shadow:0 4px 12px rgba(0,0,0,0.15);min-width:160px;z-index:100;font-size:12px;">
+            <div style="padding:6px 14px;cursor:pointer;color:#0078d4;font-weight:600;" onmouseenter="this.style.background='#e5f0fb'" onmouseleave="this.style.background=''" onclick="a17OpenNewUser()">New User...</div>
+            <div style="padding:6px 14px;cursor:pointer;color:#555;" onmouseenter="this.style.background='#f0f0f0'" onmouseleave="this.style.background=''">Refresh</div>
+            <div style="padding:6px 14px;cursor:pointer;color:#555;" onmouseenter="this.style.background='#f0f0f0'" onmouseleave="this.style.background=''">Export List...</div>
+          </div>
+        </div>
+        <div style="background:#e8e8e8;padding:4px 10px;font-size:11px;color:#555;border-top:1px solid #ccc;">💡 Desni klik u listi korisnika za New User...</div>
+      </div>
+    </div>
+    <!-- New User Dialog -->
+    <div id="a17NewUserDlg" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:300;">
+      <div class="win-window" style="min-width:400px;font-family:Segoe UI,Arial,sans-serif;">
+        <div style="background:#0078d4;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-radius:4px 4px 0 0;">
+          <span style="color:white;font-size:12px;font-weight:600;">New User</span>
+          <span onclick="document.getElementById('a17NewUserDlg').style.display='none'" style="color:white;cursor:pointer;">✕</span>
+        </div>
+        <div style="background:#f3f3f3;padding:20px;">
+          <div style="display:grid;grid-template-columns:130px 1fr;gap:8px;align-items:center;margin-bottom:6px;">
+            <label style="font-size:12px;">User name:</label>
+            <input id="a17UnInput" type="text" style="border:1px solid #aaa;padding:4px 8px;font-size:12px;border-radius:2px;" placeholder="npr. Nikola"/>
+            <label style="font-size:12px;">Full name:</label>
+            <input type="text" style="border:1px solid #aaa;padding:4px 8px;font-size:12px;border-radius:2px;"/>
+            <label style="font-size:12px;">Description:</label>
+            <input type="text" style="border:1px solid #aaa;padding:4px 8px;font-size:12px;border-radius:2px;"/>
+            <label style="font-size:12px;">Password:</label>
+            <input id="a17PwInput" type="password" style="border:1px solid #aaa;padding:4px 8px;font-size:12px;border-radius:2px;" placeholder="••••••••••"/>
+            <label style="font-size:12px;">Confirm password:</label>
+            <input id="a17PwConfirm" type="password" style="border:1px solid #aaa;padding:4px 8px;font-size:12px;border-radius:2px;" placeholder="••••••••••"/>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin:14px 0;">
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;color:#888;"><input type="checkbox" id="a17MustChange" checked disabled/> <span>User must change password at next logon</span></label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;border:2px solid #0078d4;padding:4px 8px;border-radius:3px;background:#e5f0fb;"><input type="checkbox" id="a17CannotChange" checked/> <strong>User cannot change password</strong></label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;border:2px solid #0078d4;padding:4px 8px;border-radius:3px;background:#e5f0fb;"><input type="checkbox" id="a17NeverExpires" checked/> <strong>Password never expires</strong></label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;"><input type="checkbox" id="a17Disabled"/> Account is disabled</label>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;border-top:1px solid #ddd;padding-top:14px;">
+            <button onclick="a17CreateUser()" style="background:#0078d4;border:none;color:white;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">Create</button>
+            <button onclick="document.getElementById('a17NewUserDlg').style.display='none'" style="background:#e0e0e0;border:1px solid #aaa;color:#333;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="feedback-bar win-feedback">💡 Desni klik u tabeli → New User... → unesite podatke i kliknite Create</div>
+  </div>
+  `,
+
+  a17GroupPolicy: () => `
+  <div class="win-window" style="min-width:820px;">
+    <div class="win-titlebar">
+      <div class="win-icon-sm"><span></span><span></span><span></span><span></span></div>
+      <span class="win-title">Local Group Policy Editor</span>
+      <div class="win-controls">
+        <div class="win-ctrl">─</div><div class="win-ctrl">□</div>
+        <div class="win-ctrl close" onclick="closeSim()">✕</div>
+      </div>
+    </div>
+    <div class="win-body" style="background:#f3f3f3;display:flex;font-family:Segoe UI,Arial,sans-serif;min-height:380px;">
+      <div style="width:280px;background:#fff;border-right:1px solid #ddd;padding:6px;font-size:12px;overflow-y:auto;flex-shrink:0;color:#222;" id="a17GpTree">
+        ${a17GpTreeHTML()}
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;">
+        <div style="background:#e8e8e8;padding:4px 10px;font-size:11px;color:#555;border-bottom:1px solid #ccc;" id="a17GpStatus">
+          Local Computer Policy \\ User Configuration \\ Administrative Templates
+        </div>
+        <div style="flex:1;display:flex;overflow:hidden;">
+          <div style="flex:1;overflow-y:auto;" id="a17GpPolicyPane">
+            <div style="padding:16px;font-size:12px;color:#666;">Kliknite na kategoriju u stablu da biste videli polise</div>
+          </div>
+          <div style="width:220px;border-left:1px solid #ddd;background:#fafafa;padding:10px;font-size:11px;color:#444;overflow-y:auto;flex-shrink:0;" id="a17GpDescPane">
+            <div style="color:#888;font-style:italic;">Izaberite polisu da biste videli opis</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="a17GpDialog" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:600;min-width:480px;background:#fff;border:1px solid #aaa;border-radius:4px;box-shadow:0 8px 24px rgba(0,0,0,0.3);font-family:Segoe UI,Arial,sans-serif;">
+      <div style="background:#0078d4;padding:8px 12px;border-radius:4px 4px 0 0;display:flex;align-items:center;justify-content:space-between;">
+        <span style="color:white;font-size:12px;font-weight:600;" id="a17GpDlgTitle">Policy</span>
+        <span onclick="document.getElementById('a17GpDialog').style.display='none'" style="color:white;cursor:pointer;font-size:14px;">✕</span>
+      </div>
+      <div style="display:flex;min-height:240px;">
+        <div style="width:160px;background:#f3f3f3;border-right:1px solid #ddd;padding:12px;flex-shrink:0;">
+          <label style="display:flex;align-items:center;gap:6px;margin-bottom:10px;font-size:12px;cursor:pointer;"><input type="radio" name="a17gpstate" id="a17GpNC" value="Not Configured" checked/> Not Configured</label>
+          <label style="display:flex;align-items:center;gap:6px;margin-bottom:10px;font-size:12px;cursor:pointer;"><input type="radio" name="a17gpstate" id="a17GpEN" value="Enabled"/> Enabled</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;"><input type="radio" name="a17gpstate" id="a17GpDI" value="Disabled"/> Disabled</label>
+        </div>
+        <div style="flex:1;padding:14px;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:6px;" id="a17GpDlgPName"></div>
+          <div style="font-size:12px;font-weight:600;color:#555;margin-bottom:4px;">Comment:</div>
+          <textarea style="width:100%;height:40px;border:1px solid #aaa;font-size:11px;padding:4px;resize:none;"></textarea>
+          <div id="a17GpDlgExtra" style="margin-top:10px;"></div>
+          <div style="font-size:12px;font-weight:600;color:#555;margin-top:10px;margin-bottom:4px;">Help:</div>
+          <div style="font-size:11px;color:#555;line-height:1.5;" id="a17GpDlgDesc"></div>
+        </div>
+      </div>
+      <div style="background:#f3f3f3;border-top:1px solid #ddd;padding:8px 12px;display:flex;justify-content:flex-end;gap:8px;">
+        <button onclick="a17GpApply(false)" style="background:#0078d4;border:none;color:white;padding:5px 20px;border-radius:3px;cursor:pointer;font-size:12px;">OK</button>
+        <button onclick="document.getElementById('a17GpDialog').style.display='none'" style="background:#e0e0e0;border:1px solid #aaa;color:#333;padding:5px 20px;border-radius:3px;cursor:pointer;font-size:12px;">Cancel</button>
+        <button onclick="a17GpApply(true)" style="background:#e0e0e0;border:1px solid #aaa;color:#333;padding:5px 20px;border-radius:3px;cursor:pointer;font-size:12px;">Apply</button>
+      </div>
+    </div>
+    <div class="feedback-bar win-feedback">💡 Navigirajte kroz stablo i dvaput kliknite na polisu za uređivanje</div>
+  </div>
+  `,
+
+  a17FolderSecurity: () => `
+  <div class="win-window" style="min-width:700px;">
+    <div class="win-titlebar">
+      <div class="win-icon-sm"><span></span><span></span><span></span><span></span></div>
+      <span class="win-title">File Explorer – Local Disk (C:)</span>
+      <div class="win-controls">
+        <div class="win-ctrl">─</div><div class="win-ctrl">□</div>
+        <div class="win-ctrl close" onclick="closeSim()">✕</div>
+      </div>
+    </div>
+    <div class="win-body" style="background:#f3f3f3;font-family:Segoe UI,Arial,sans-serif;">
+      <div style="background:#e8e8e8;padding:5px 10px;border-bottom:1px solid #ccc;font-size:12px;color:#555;display:flex;align-items:center;gap:6px;">
+        <span>◀ ▶ ↑</span>
+        <div style="background:#fff;border:1px solid #ccc;border-radius:12px;flex:1;padding:3px 10px;font-size:12px;color:#555;">This PC &gt; Local Disk (C:)</div>
+      </div>
+      <div style="display:flex;min-height:300px;">
+        <!-- Sidebar -->
+        <div style="width:160px;background:#fff;border-right:1px solid #ddd;padding:8px;font-size:12px;color:#555;flex-shrink:0;">
+          <div style="margin-bottom:4px;cursor:pointer;">📌 Quick access</div>
+          <div style="margin-bottom:4px;cursor:pointer;padding-left:8px;">🖥️ Desktop</div>
+          <div style="margin-bottom:8px;cursor:pointer;padding-left:8px;color:#0078d4;font-weight:600;">💿 Local Disk (C:)</div>
+        </div>
+        <!-- File list -->
+        <div style="flex:1;padding:10px;position:relative;" oncontextmenu="a17FolderCtx(event)" onclick="a17HideCtx()">
+          <div style="display:flex;flex-wrap:wrap;gap:16px;align-content:flex-start;">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:80px;cursor:pointer;padding:6px;border-radius:4px;" onmouseenter="this.style.background='#e5f0fb'" onmouseleave="this.style.background=''">
+              <span style="font-size:36px;">📁</span><span style="font-size:11px;text-align:center;">Program Files</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:80px;cursor:pointer;padding:6px;border-radius:4px;" onmouseenter="this.style.background='#e5f0fb'" onmouseleave="this.style.background=''">
+              <span style="font-size:36px;">📁</span><span style="font-size:11px;text-align:center;">Users</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:80px;cursor:pointer;padding:6px;border-radius:4px;" onmouseenter="this.style.background='#e5f0fb'" onmouseleave="this.style.background=''">
+              <span style="font-size:36px;">📁</span><span style="font-size:11px;text-align:center;">Windows</span>
+            </div>
+            <div id="a17FolderNikola" style="display:none;flex-direction:column;align-items:center;gap:4px;width:80px;cursor:pointer;padding:6px;border-radius:4px;" oncontextmenu="a17FolderRightClick(event,'NikolaDokumenti')" onmouseenter="this.style.background='#e5f0fb'" onmouseleave="this.style.background=''">
+              <span style="font-size:36px;">🔒📁</span><span style="font-size:11px;text-align:center;color:#0078d4;font-weight:600;">NikolaDokumenti</span>
+            </div>
+            <div id="a17FolderJelena" style="display:none;flex-direction:column;align-items:center;gap:4px;width:80px;cursor:pointer;padding:6px;border-radius:4px;" oncontextmenu="a17FolderRightClick(event,'JelenaDokumenti')" onmouseenter="this.style.background='#e5f0fb'" onmouseleave="this.style.background=''">
+              <span style="font-size:36px;">🔒📁</span><span style="font-size:11px;text-align:center;color:#0078d4;font-weight:600;">JelenaDokumenti</span>
+            </div>
+            <div style="width:100%;margin-top:4px;font-size:11px;color:#888;" id="a17FolderHint">Desni klik u praznom prostoru za opciju kreiranja novog foldera</div>
+          </div>
+          <!-- Context menu -->
+          <div id="a17FolderCtxMenu" style="display:none;position:absolute;background:#fff;border:1px solid #ccc;box-shadow:0 4px 12px rgba(0,0,0,0.15);min-width:180px;z-index:100;font-size:12px;">
+            <div style="padding:6px 14px;cursor:pointer;font-weight:600;color:#0078d4;" onmouseenter="this.style.background='#e5f0fb'" onmouseleave="this.style.background=''" onclick="a17CreateFolders()">📁 Napravi foldere (Nikola+Jelena)</div>
+            <div style="padding:6px 14px;cursor:pointer;color:#555;" onmouseenter="this.style.background='#f0f0f0'" onmouseleave="this.style.background=''">New → Text Document</div>
+            <div style="padding:6px 14px;cursor:pointer;color:#555;border-top:1px solid #eee;" onmouseenter="this.style.background='#f0f0f0'" onmouseleave="this.style.background=''">Properties</div>
+          </div>
+          <!-- Right-click on folder ctx -->
+          <div id="a17FolderRCtxMenu" style="display:none;position:absolute;background:#fff;border:1px solid #ccc;box-shadow:0 4px 12px rgba(0,0,0,0.15);min-width:160px;z-index:100;font-size:12px;">
+            <div style="padding:6px 14px;cursor:pointer;color:#0078d4;font-weight:600;" onmouseenter="this.style.background='#e5f0fb'" onmouseleave="this.style.background=''" onclick="a17OpenSecurity()">Properties → Security</div>
+            <div style="padding:6px 14px;cursor:pointer;color:#555;" onmouseenter="this.style.background='#f0f0f0'" onmouseleave="this.style.background=''">Open</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Security dialog -->
+    <div id="a17SecDlg" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:400;font-family:Segoe UI,Arial,sans-serif;">
+      <div class="win-window" style="min-width:480px;">
+        <div style="background:#0078d4;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-radius:4px 4px 0 0;">
+          <span style="color:white;font-size:12px;font-weight:600;" id="a17SecTitle">Properties</span>
+          <span onclick="document.getElementById('a17SecDlg').style.display='none'" style="color:white;cursor:pointer;">✕</span>
+        </div>
+        <div style="background:#f3f3f3;padding:0;">
+          <div style="display:flex;background:#e0e0e0;border-bottom:1px solid #ccc;font-size:12px;">
+            ${['General','Sharing','Security','Previous Versions','Customize'].map((t,i)=>`<div style="padding:6px 12px;cursor:pointer;${i===2?'border-bottom:2px solid #0078d4;color:#0078d4;background:#f3f3f3;font-weight:600;':'color:#555;'}">${t}</div>`).join('')}
+          </div>
+          <div style="padding:14px;">
+            <div style="font-size:12px;color:#555;margin-bottom:8px;">Group or user names:</div>
+            <div style="border:1px solid #aaa;background:#fff;min-height:80px;margin-bottom:8px;font-size:12px;" id="a17SecUsers">
+              <div style="padding:4px 8px;color:#888;">Učitavanje...</div>
+            </div>
+            <div style="display:flex;gap:6px;margin-bottom:12px;">
+              <button onclick="a17SecAdd()" style="background:#e0e0e0;border:1px solid #aaa;padding:4px 14px;font-size:11px;cursor:pointer;border-radius:2px;">Add...</button>
+              <button onclick="a17SecRemove()" style="background:#e0e0e0;border:1px solid #aaa;padding:4px 14px;font-size:11px;cursor:pointer;border-radius:2px;">Remove</button>
+              <button onclick="winFeedback('Kliknite Advanced za napredna podešavanja nasleđivanja','hint')" style="background:#0078d4;border:none;color:white;padding:4px 14px;font-size:11px;cursor:pointer;border-radius:2px;">Advanced</button>
+            </div>
+            <div style="font-size:12px;color:#555;margin-bottom:6px;" id="a17SecPermLabel">Permissions for selected user:</div>
+            <div style="border:1px solid #aaa;background:#fff;padding:8px;font-size:12px;min-height:60px;" id="a17SecPerms">
+              <div style="color:#888;">Izaberite korisnika gore</div>
+            </div>
+            <div id="a17SecFb" style="margin-top:10px;font-size:12px;display:none;"></div>
+          </div>
+          <div style="background:#e8e8e8;border-top:1px solid #ccc;padding:8px 12px;display:flex;justify-content:flex-end;gap:8px;">
+            <button onclick="a17SecSave()" style="background:#0078d4;border:none;color:white;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">OK</button>
+            <button onclick="document.getElementById('a17SecDlg').style.display='none'" style="background:#e0e0e0;border:1px solid #aaa;color:#333;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="feedback-bar win-feedback">💡 Desni klik u praznom prostoru → kreirajte foldere NikolaDokumenti i JelenaDokumenti → Properties → Security</div>
+  </div>
+  `,
+
+  a17TaskScheduler: () => `
+  <div class="win-window" style="min-width:760px;">
+    <div class="win-titlebar">
+      <div class="win-icon-sm"><span></span><span></span><span></span><span></span></div>
+      <span class="win-title">Task Scheduler</span>
+      <div class="win-controls">
+        <div class="win-ctrl">─</div><div class="win-ctrl">□</div>
+        <div class="win-ctrl close" onclick="closeSim()">✕</div>
+      </div>
+    </div>
+    <div class="win-body" style="background:#f3f3f3;display:flex;min-height:360px;font-family:Segoe UI,Arial,sans-serif;color:#1a1a1a;">
+      <div style="width:200px;background:#fff;border-right:1px solid #ddd;padding:8px;font-size:12px;flex-shrink:0;">
+        <div style="font-weight:bold;color:#333;margin-bottom:8px;padding:2px 6px;">📋 Task Scheduler (Local)</div>
+        <div id="a17TsLibNode" style="cursor:pointer;padding:4px 8px;background:#e5f0fb;border-left:3px solid #0078d4;color:#0078d4;font-weight:600;" oncontextmenu="a17TsLibCtx(event)">📚 Task Scheduler Library</div>
+        <div style="padding:4px 8px;color:#888;cursor:pointer;padding-left:20px;font-size:11px;" onclick="winFeedback('Desni klik na Task Scheduler Library za Create Basic Task','hint')">▶ Microsoft</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;">
+        <div style="display:flex;gap:6px;padding:8px;border-bottom:1px solid #ddd;background:#f8f8f8;">
+          <button onclick="a17StartCreateTask()" style="background:#0078d4;border:none;color:white;padding:5px 12px;border-radius:2px;cursor:pointer;font-size:12px;">🗓️ Create Basic Task...</button>
+          <button onclick="winFeedback('Create Task – napredna opcija','hint')" style="background:#e0e0e0;border:1px solid #ccc;color:#333;padding:5px 12px;border-radius:2px;cursor:pointer;font-size:12px;">Create Task...</button>
+        </div>
+        <div style="flex:1;overflow:auto;padding:8px;">
+          <table style="width:100%;font-size:12px;border-collapse:collapse;" id="a17TsTable">
+            <thead><tr style="background:#e8e8e8;"><th style="text-align:left;padding:4px 8px;border-bottom:1px solid #ccc;">Name</th><th style="padding:4px 8px;border-bottom:1px solid #ccc;">Status</th><th style="text-align:left;padding:4px 8px;border-bottom:1px solid #ccc;">Triggers</th><th style="text-align:left;padding:4px 8px;border-bottom:1px solid #ccc;">Next Run Time</th></tr></thead>
+            <tbody id="a17TsBody"><tr><td colspan="4" style="padding:16px;color:#888;text-align:center;">Nema zakazanih zadataka. Kliknite "Create Basic Task..."</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- TS Ctx Menu -->
+    <div id="a17TsCtxMenu" style="display:none;position:fixed;background:#fff;border:1px solid #ccc;box-shadow:0 4px 12px rgba(0,0,0,0.15);min-width:180px;z-index:300;font-size:12px;font-family:Segoe UI,Arial,sans-serif;">
+      <div style="padding:7px 14px;cursor:pointer;color:#0078d4;font-weight:600;" onmouseenter="this.style.background='#e5f0fb'" onmouseleave="this.style.background=''" onclick="a17StartCreateTask()">🗓️ Create Basic Task...</div>
+      <div style="padding:7px 14px;cursor:pointer;color:#555;" onmouseenter="this.style.background='#f0f0f0'" onmouseleave="this.style.background=''">Create Task...</div>
+      <div style="padding:7px 14px;cursor:pointer;color:#555;" onmouseenter="this.style.background='#f0f0f0'" onmouseleave="this.style.background=''">Import Task...</div>
+    </div>
+    <!-- Create Basic Task Wizard -->
+    <div id="a17TsWizard" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:400;">
+      <div class="win-window" style="min-width:520px;font-family:Segoe UI,Arial,sans-serif;">
+        <div style="background:#0078d4;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-radius:4px 4px 0 0;">
+          <span style="color:white;font-size:12px;font-weight:600;">Create Basic Task Wizard</span>
+          <span onclick="document.getElementById('a17TsWizard').style.display='none'" style="color:white;cursor:pointer;">✕</span>
+        </div>
+        <div style="display:flex;min-height:280px;">
+          <div style="width:150px;background:#1a3a6a;padding:14px;font-size:11px;color:#aaa;flex-shrink:0;" id="a17TsSidebar">
+            <div style="color:white;font-weight:bold;font-size:12px;margin-bottom:14px;">Create Basic Task</div>
+            <div id="a17TsStep1" style="color:white;font-weight:bold;margin-bottom:8px;">▶ Create a Basic Task</div>
+            <div id="a17TsStep2" style="opacity:0.5;margin-bottom:8px;">Trigger</div>
+            <div id="a17TsStep3" style="opacity:0.5;margin-bottom:8px;">Weekly</div>
+            <div id="a17TsStep4" style="opacity:0.5;margin-bottom:8px;">Action</div>
+            <div id="a17TsStep5" style="opacity:0.5;margin-bottom:8px;">Start a Program</div>
+            <div id="a17TsStep6" style="opacity:0.5;">Finish</div>
+          </div>
+          <div style="flex:1;" id="a17TsWizBody">
+            ${a17TsPage(1)}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="feedback-bar win-feedback">💡 Desni klik na "Task Scheduler Library" → Create Basic Task → Backup Jelena → Weekly → Monday → 08:00</div>
+  </div>
+  `,
+
+  a17TaskManager: () => `
+  <div class="win-window" style="min-width:700px;">
+    <div class="win-titlebar">
+      <div class="win-icon-sm"><span></span><span></span><span></span><span></span></div>
+      <span class="win-title">Task Manager</span>
+      <div class="win-controls">
+        <div class="win-ctrl">─</div><div class="win-ctrl">□</div>
+        <div class="win-ctrl close" onclick="closeSim()">✕</div>
+      </div>
+    </div>
+    <div class="win-body" style="background:#f3f3f3;font-family:Segoe UI,Arial,sans-serif;">
+      <!-- Tabs -->
+      <div style="display:flex;background:#e0e0e0;border-bottom:1px solid #ccc;font-size:12px;overflow-x:auto;">
+        ${['Processes','Performance','App history','Startup','Users','Details','Services'].map((t,i)=>`<div id="tmTab${i}" onclick="a17TmTab(${i})" style="padding:8px 14px;cursor:pointer;white-space:nowrap;${i===0?'border-bottom:2px solid #0078d4;color:#0078d4;background:#f3f3f3;font-weight:600;':'color:#333;'}" onmouseenter="if(a17TmActiveTab!==${i})this.style.background='#d0d0d0'" onmouseleave="if(a17TmActiveTab!==${i})this.style.background=''">${t}</div>`).join('')}
+      </div>
+      <!-- Processes tab -->
+      <div id="tmPanel0" style="display:block;">
+        <div style="background:#f8f8f8;padding:4px 8px;display:flex;gap:8px;border-bottom:1px solid #ddd;">
+          <button onclick="a17TmEndTask()" style="background:#c42b1c;border:none;color:white;padding:4px 12px;font-size:11px;border-radius:2px;cursor:pointer;">End Task</button>
+          <button onclick="winFeedback('Run new task – pokrenite novi program','hint')" style="background:#e0e0e0;border:1px solid #aaa;color:#333;padding:4px 12px;font-size:11px;border-radius:2px;cursor:pointer;">Run new task</button>
+        </div>
+        <div style="overflow-y:auto;max-height:260px;">
+          <table style="width:100%;font-size:12px;border-collapse:collapse;" id="a17TmTable">
+            <thead style="position:sticky;top:0;z-index:1;">
+              <tr style="background:#e8e8e8;">
+                <th style="text-align:left;padding:5px 10px;border-bottom:1px solid #ccc;min-width:200px;">Name</th>
+                <th style="padding:5px 10px;border-bottom:1px solid #ccc;min-width:80px;">Status</th>
+                <th style="padding:5px 10px;border-bottom:1px solid #ccc;min-width:70px;">CPU</th>
+                <th style="padding:5px 10px;border-bottom:1px solid #ccc;min-width:70px;">Memory</th>
+                <th style="padding:5px 10px;border-bottom:1px solid #ccc;min-width:70px;">Disk</th>
+                <th style="padding:5px 10px;border-bottom:1px solid #ccc;min-width:70px;">Network</th>
+              </tr>
+            </thead>
+            <tbody id="a17TmBody">
+              ${[
+                ['Apps','','','',''],
+                ['🌐 Google Chrome (5)','Running','3.2%','512 MB','0 MB/s','0 Mbps'],
+                ['📄 Microsoft Word','Running','0.1%','284 MB','0 MB/s','0 Mbps'],
+                ['📊 Task Manager','Running','0.8%','32 MB','0 MB/s','0 Mbps'],
+                ['','','','',''],
+                ['Background processes','','','',''],
+                ['🔵 Windows Update','Running','0.0%','8 MB','0.1 MB/s','0 Mbps'],
+                ['⚙️ Antimalware Service','Running','1.2%','128 MB','0 MB/s','0 Mbps'],
+                ['🔊 Windows Audio','Running','0.0%','6 MB','0 MB/s','0 Mbps'],
+                ['🖨️ Print Spooler','Running','0.0%','4 MB','0 MB/s','0 Mbps'],
+                ['','','','',''],
+                ['Windows processes','','','',''],
+                ['⚙️ System','Running','0.5%','4 MB','0 MB/s','0 Mbps'],
+                ['💻 Desktop Window Manager','Running','1.8%','96 MB','0 MB/s','0 Mbps'],
+              ].map((r,i) => {
+                if (!r[1]) return `<tr style="background:#e8e8e8;"><td colspan="6" style="padding:4px 10px;font-size:11px;font-weight:600;color:#555;">${r[0]}</td></tr>`;
+                return `<tr id="tmRow${i}" style="${i%2===0?'':'background:#f7f7f7'};cursor:pointer;" onclick="a17TmSelectRow(${i})" onmouseenter="this.style.background='#dde8f5'" onmouseleave="a17TmRowLeave(${i})">
+                  <td style="padding:5px 10px;">${r[0]}</td>
+                  <td style="padding:5px 10px;color:#107c10;text-align:center;">${r[1]}</td>
+                  <td style="padding:5px 10px;text-align:right;">${r[2]}</td>
+                  <td style="padding:5px 10px;text-align:right;">${r[3]}</td>
+                  <td style="padding:5px 10px;text-align:right;">${r[4]}</td>
+                  <td style="padding:5px 10px;text-align:right;">${r[5]}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Performance tab -->
+      <div id="tmPanel1" style="display:none;padding:12px;">
+        <div style="display:flex;gap:8px;">
+          <div style="width:140px;background:#fff;border:1px solid #ddd;border-radius:3px;padding:8px;font-size:11px;flex-shrink:0;">
+            <div id="tmPerfCPU" onclick="a17TmShowPerf('cpu')" style="padding:6px;border-radius:3px;cursor:pointer;background:#e5f0fb;border-left:3px solid #0078d4;margin-bottom:4px;"><div style="font-weight:600;color:#0078d4;">CPU</div><div style="color:#555;font-size:10px;">1% usage</div></div>
+            <div id="tmPerfMem" onclick="a17TmShowPerf('mem')" style="padding:6px;border-radius:3px;cursor:pointer;margin-bottom:4px;" onmouseenter="this.style.background='#f0f0f0'" onmouseleave="if(a17TmPerfActive!=='mem')this.style.background=''"><div style="font-weight:600;color:#333;">Memory</div><div style="color:#555;font-size:10px;">2.1/4 GB</div></div>
+            <div id="tmPerfDisk" onclick="a17TmShowPerf('disk')" style="padding:6px;border-radius:3px;cursor:pointer;" onmouseenter="this.style.background='#f0f0f0'" onmouseleave="if(a17TmPerfActive!=='disk')this.style.background=''"><div style="font-weight:600;color:#333;">Disk 0 (C:)</div><div style="color:#555;font-size:10px;">5% usage</div></div>
+          </div>
+          <div style="flex:1;" id="tmPerfContent">
+            <div style="font-size:14px;font-weight:600;color:#0078d4;margin-bottom:8px;">CPU – Intel Core i5</div>
+            <div style="background:#fff;border:1px solid #ddd;border-radius:3px;padding:10px;height:120px;position:relative;overflow:hidden;margin-bottom:8px;">
+              <svg viewBox="0 0 300 80" width="100%" height="100%" preserveAspectRatio="none">
+                <polyline points="0,70 30,65 60,55 90,68 120,40 150,50 180,35 210,60 240,45 270,58 300,30" fill="none" stroke="#0078d4" stroke-width="2"/>
+                <polygon points="0,70 30,65 60,55 90,68 120,40 150,50 180,35 210,60 240,45 270,58 300,30 300,80 0,80" fill="rgba(0,120,212,0.1)"/>
+              </svg>
+              <div style="position:absolute;top:4px;right:8px;font-size:20px;font-weight:300;color:#0078d4;">1%</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;">
+              <div style="background:#fff;border:1px solid #ddd;padding:8px;border-radius:3px;"><div style="color:#555;">Utilization</div><div style="font-weight:600;color:#0078d4;">1%</div></div>
+              <div style="background:#fff;border:1px solid #ddd;padding:8px;border-radius:3px;"><div style="color:#555;">Speed</div><div style="font-weight:600;">2.8 GHz</div></div>
+              <div style="background:#fff;border:1px solid #ddd;padding:8px;border-radius:3px;"><div style="color:#555;">Processes</div><div style="font-weight:600;">112</div></div>
+              <div style="background:#fff;border:1px solid #ddd;padding:8px;border-radius:3px;"><div style="color:#555;">Threads</div><div style="font-weight:600;">1,240</div></div>
+              <div style="background:#fff;border:1px solid #ddd;padding:8px;border-radius:3px;"><div style="color:#555;">Cores</div><div style="font-weight:600;">4</div></div>
+              <div style="background:#fff;border:1px solid #ddd;padding:8px;border-radius:3px;"><div style="color:#555;">Logical processors</div><div style="font-weight:600;">8</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Other tabs -->
+      <div id="tmPanel2" style="display:none;padding:20px;font-size:12px;color:#555;">App history tab – prikazuje korišćenje resursa po aplikacijama kroz vreme.</div>
+      <div id="tmPanel3" style="display:none;padding:20px;font-size:12px;color:#555;">Startup tab – upravljanje programima koji se pokreću pri startu sistema.</div>
+      <div id="tmPanel4" style="display:none;padding:20px;font-size:12px;color:#555;">Users tab – prikaz korisnika koji su prijavljeni i resursi koje koriste.</div>
+      <div id="tmPanel5" style="display:none;padding:20px;font-size:12px;color:#555;">Details tab – detaljan prikaz svakog procesa sa PID brojem i prioritetom.</div>
+      <div id="tmPanel6" style="display:none;padding:20px;font-size:12px;color:#555;">Services tab – upravljanje Windows servisima (pokretanje, zaustavljanje).</div>
+    </div>
+    <div class="feedback-bar win-feedback">💡 <strong>Processes</strong>: lista procesa + End Task &nbsp;|&nbsp; <strong>Performance</strong>: CPU/RAM/Disk grafici &nbsp;|&nbsp; Ctrl+Alt+Del → Task Manager</div>
   </div>
   `
 };
@@ -3228,6 +3700,403 @@ function mwOK() {
   } else {
     winFeedback('Postavi vrednost na 10 linija pa klikni OK!','error');
   }
+}
+
+// -- A17 Functions --
+const A17_GP_POLICIES = {
+  personalization: {
+    title: 'Control Panel / Personalization',
+    policies: [
+      { name: 'Prevent changing desktop background', desc: 'Zabranjuje korisnicima promenu pozadinske slike radne površine. Kada je Enabled, opcija promene wallpaper-a je onemogućena u Personalization.', state: 'not_configured', target: true, id: 'a17gp_wall' },
+      { name: 'Prevent changing theme', desc: 'Zabranjuje promenu teme (theme) sistema.', state: 'not_configured', target: false, id: 'a17gp_theme' },
+      { name: 'Prevent changing screen saver', desc: 'Zabranjuje promenu screen saver-a.', state: 'not_configured', target: false, id: 'a17gp_ss' },
+    ]
+  },
+  controlpanel: {
+    title: 'Control Panel',
+    policies: [
+      { name: 'Hide specified Control Panel items', desc: 'Sakriva određene stavke iz Control Panel-a. Nakon Enabled, kliknite Show... i unesite Microsoft.UserAccounts da sakrijete User Accounts iz Control Panel-a.', state: 'not_configured', target: true, id: 'a17gp_hidecp', hasShowList: true },
+      { name: 'Prohibit access to Control Panel and PC settings', desc: 'Potpuno blokira pristup Control Panel-u i PC Settings.', state: 'not_configured', target: false, id: 'a17gp_nocp' },
+    ]
+  },
+  removable: {
+    title: 'Computer Configuration / System / Removable Storage Access',
+    policies: [
+      { name: 'All Removable Storage classes: Deny all access', desc: 'Blokira sve prenosive uređaje (USB, CD/DVD...). Kada je Enabled, nijedno prenosivo skladište ne može se koristiti – ni čitanje ni pisanje.', state: 'not_configured', target: true, id: 'a17gp_usb' },
+      { name: 'Removable Disks: Deny read access', desc: 'Blokira samo čitanje sa USB diskova.', state: 'not_configured', target: false, id: 'a17gp_usbr' },
+      { name: 'Removable Disks: Deny write access', desc: 'Blokira samo pisanje na USB diskove.', state: 'not_configured', target: false, id: 'a17gp_usbw' },
+    ]
+  }
+};
+let a17GpCurrentPolicy = null;
+let a17ShowListValue = '';
+
+function a17GpTreeHTML() {
+  return `<div style="user-select:none;padding:2px 0;color:#222;">
+    <div style="display:flex;align-items:center;gap:4px;padding:3px 8px;cursor:pointer;" onclick="toggleA17Node('a17_lcp')">
+      <span id="a17_lcp_arrow" style="font-size:10px;">▼</span> <span style="font-size:16px;">🖥️</span> <span style="font-weight:600;font-size:12px;">Local Computer Policy</span>
+    </div>
+    <div id="a17_lcp" style="padding-left:14px;">
+      <div style="display:flex;align-items:center;gap:4px;padding:3px 8px;cursor:pointer;" onclick="toggleA17Node('a17_compconf')">
+        <span id="a17_compconf_arrow" style="font-size:10px;">▼</span> <span style="font-size:14px;">💻</span> <span style="font-size:12px;font-weight:600;">Computer Configuration</span>
+      </div>
+      <div id="a17_compconf" style="padding-left:14px;">
+        <div style="padding:3px 8px;color:#888;font-size:12px;">📁 Software Settings</div>
+        <div style="padding:3px 8px;color:#888;font-size:12px;">📁 Windows Settings</div>
+        <div style="display:flex;align-items:center;gap:4px;padding:3px 8px;cursor:pointer;" onclick="toggleA17Node('a17_cc_at')">
+          <span id="a17_cc_at_arrow" style="font-size:10px;">▼</span> <span style="font-size:14px;">📁</span> <span style="font-size:12px;">Administrative Templates</span>
+        </div>
+        <div id="a17_cc_at" style="padding-left:14px;">
+          <div style="display:flex;align-items:center;gap:4px;padding:3px 8px;cursor:pointer;" onclick="toggleA17Node('a17_cc_sys')">
+            <span id="a17_cc_sys_arrow" style="font-size:10px;">▼</span> <span style="font-size:14px;">📁</span> <span style="font-size:12px;">System</span>
+          </div>
+          <div id="a17_cc_sys" style="padding-left:14px;">
+            <div style="display:flex;align-items:center;gap:4px;padding:3px 8px;cursor:pointer;background:#dde8f5;font-weight:600;color:#0078d4;" onclick="a17GpShowPolicies('removable')">
+              <span style="font-size:14px;">📁</span> <span style="font-size:12px;">Removable Storage Access</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;padding:3px 8px;cursor:pointer;" onclick="toggleA17Node('a17_uc')">
+        <span id="a17_uc_arrow" style="font-size:10px;">▼</span> <span style="font-size:14px;">👤</span> <span style="font-size:12px;font-weight:600;">User Configuration</span>
+      </div>
+      <div id="a17_uc" style="padding-left:14px;">
+        <div style="padding:3px 8px;color:#888;font-size:12px;">📁 Software Settings</div>
+        <div style="padding:3px 8px;color:#888;font-size:12px;">📁 Windows Settings</div>
+        <div style="display:flex;align-items:center;gap:4px;padding:3px 8px;cursor:pointer;" onclick="toggleA17Node('a17_at')">
+          <span id="a17_at_arrow" style="font-size:10px;">▼</span> <span style="font-size:14px;">📁</span> <span style="font-size:12px;">Administrative Templates</span>
+        </div>
+        <div id="a17_at" style="padding-left:14px;">
+          <div style="display:flex;align-items:center;gap:4px;padding:3px 8px;cursor:pointer;background:#dde8f5;font-weight:600;color:#0078d4;" onclick="a17GpShowPolicies('controlpanel')">
+            <span style="font-size:14px;">📁</span> <span style="font-size:12px;">Control Panel</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;padding:3px 8px;cursor:pointer;" onclick="toggleA17Node('a17_cp_sub')">
+            <span id="a17_cp_sub_arrow" style="font-size:10px;">▼</span> <span style="font-size:14px;">📁</span> <span style="font-size:12px;">└ Personalization</span>
+          </div>
+          <div id="a17_cp_sub" style="padding-left:14px;">
+            <div style="display:flex;align-items:center;gap:4px;padding:3px 8px;cursor:pointer;background:#dde8f5;font-weight:600;color:#0078d4;" onclick="a17GpShowPolicies('personalization')">
+              <span style="font-size:14px;">📁</span> <span style="font-size:12px;">Personalization</span>
+            </div>
+          </div>
+          <div style="padding:3px 8px;color:#888;font-size:12px;cursor:pointer;" onmouseenter="this.style.background='#dde8f5'" onmouseleave="this.style.background=''">📁 Desktop</div>
+          <div style="padding:3px 8px;color:#888;font-size:12px;cursor:pointer;" onmouseenter="this.style.background='#dde8f5'" onmouseleave="this.style.background=''">📁 Start Menu and Taskbar</div>
+          <div style="padding:3px 8px;color:#888;font-size:12px;cursor:pointer;" onmouseenter="this.style.background='#dde8f5'" onmouseleave="this.style.background=''">📁 System</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleA17Node(id) {
+  const el = document.getElementById(id);
+  const arrow = document.getElementById(id + '_arrow');
+  if (!el) return;
+  const open = el.style.display !== 'none';
+  el.style.display = open ? 'none' : 'block';
+  if (arrow) arrow.textContent = open ? '▶' : '▼';
+}
+
+function a17GpShowPolicies(category) {
+  const pane = document.getElementById('a17GpPolicyPane');
+  const status = document.getElementById('a17GpStatus');
+  if (!pane) return;
+  const section = A17_GP_POLICIES[category];
+  if (!section) return;
+  const policies = section.policies;
+  pane.innerHTML = `
+    <div style="background:#e8e8e8;padding:4px 10px;border-bottom:1px solid #ccc;font-size:11px;color:#555;display:flex;">
+      <span style="flex:1;font-weight:600;">Setting</span><span style="min-width:110px;font-weight:600;">State</span>
+    </div>
+    ${policies.map((p,idx) => {
+      const isTarget = p.target;
+      const stateColor = p.state==='Enabled'?'#107c10':p.state==='Disabled'?'#c42b1c':'#555';
+      const rowBg = isTarget ? '#fff8e1' : (idx%2===0?'#fff':'#f7f7f7');
+      return `<div style="display:flex;align-items:center;padding:6px 10px;cursor:pointer;background:${rowBg};border-left:${isTarget?'3px solid #f59e0b':'3px solid transparent'};font-size:12px;color:#1a1a1a;"
+        onmouseenter="this.style.background='${isTarget?'#ffe082':'#dde8f5'}'" onmouseleave="this.style.background='${rowBg}'"
+        onclick="a17GpSelectPolicy('${category}',${idx})" ondblclick="a17GpOpenDialog('${category}',${idx})">
+        <span style="font-size:15px;margin-right:8px;">${isTarget?'⭐':'📄'}</span>
+        <span style="flex:1;${isTarget?'font-weight:600;':''}">${p.name}</span>
+        <span style="min-width:110px;text-align:right;color:${stateColor};font-size:11px;" id="${p.id}_state">${p.state.replace('_',' ')}</span>
+      </div>`;
+    }).join('')}
+    <div style="padding:6px 10px;font-size:11px;color:#888;border-top:1px solid #eee;">⭐ = potrebna za zadatak &nbsp;|&nbsp; Dvaput kliknite za uređivanje</div>
+  `;
+  if (status) status.textContent = section.title;
+}
+
+function a17GpSelectPolicy(cat, idx) {
+  const p = A17_GP_POLICIES[cat].policies[idx];
+  a17GpCurrentPolicy = {cat, idx};
+  const desc = document.getElementById('a17GpDescPane');
+  if (desc) desc.innerHTML = `<div style="font-weight:600;margin-bottom:6px;font-size:12px;">${p.name}</div><div style="font-size:11px;margin-bottom:6px;"><strong>State:</strong> <span style="color:${p.state==='Enabled'?'#107c10':'#555'}">${p.state.replace('_',' ')}</span></div><div style="font-size:11px;line-height:1.6;">${p.desc}</div>`;
+}
+
+function a17GpOpenDialog(cat, idx) {
+  const p = A17_GP_POLICIES[cat].policies[idx];
+  a17GpCurrentPolicy = {cat, idx};
+  const dlg = document.getElementById('a17GpDialog');
+  document.getElementById('a17GpDlgTitle').textContent = p.name;
+  document.getElementById('a17GpDlgPName').textContent = p.name;
+  document.getElementById('a17GpDlgDesc').textContent = p.desc;
+  const states = {not_configured:'a17GpNC', Enabled:'a17GpEN', Disabled:'a17GpDI'};
+  const radio = document.getElementById(states[p.state] || 'a17GpNC');
+  if (radio) radio.checked = true;
+  const extra = document.getElementById('a17GpDlgExtra');
+  if (p.hasShowList) {
+    extra.innerHTML = `<div style="font-size:12px;font-weight:600;margin-bottom:6px;">Options:</div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;">
+        <span>List of disallowed Control Panel items:</span>
+        <button onclick="a17ShowListDialog()" style="background:#e0e0e0;border:1px solid #aaa;padding:3px 12px;border-radius:2px;cursor:pointer;font-size:12px;">Show...</button>
+      </div>
+      <div id="a17ShowListResult" style="margin-top:6px;font-size:11px;color:#107c10;"></div>`;
+  } else { extra.innerHTML = ''; }
+  if (dlg) dlg.style.display = 'block';
+}
+
+function a17ShowListDialog() {
+  const val = prompt('Unesite vrednost (Control Panel item):', 'Microsoft.UserAccounts');
+  if (val) {
+    a17ShowListValue = val;
+    const r = document.getElementById('a17ShowListResult');
+    if (r) r.textContent = '✅ Dodato: ' + val;
+  }
+}
+
+function a17GpApply(keepOpen) {
+  if (!a17GpCurrentPolicy) return;
+  const {cat, idx} = a17GpCurrentPolicy;
+  const radios = document.querySelectorAll('input[name="a17gpstate"]');
+  let state = 'not_configured';
+  radios.forEach(r => { if (r.checked) state = r.value === 'Enabled' ? 'Enabled' : r.value === 'Disabled' ? 'Disabled' : 'not_configured'; });
+  A17_GP_POLICIES[cat].policies[idx].state = state;
+  const p = A17_GP_POLICIES[cat].policies[idx];
+  const stateEl = document.getElementById(p.id+'_state');
+  if (stateEl) { stateEl.textContent = state.replace('_',' '); stateEl.style.color = state==='Enabled'?'#107c10':state==='Disabled'?'#c42b1c':'#555'; }
+  if (!keepOpen) document.getElementById('a17GpDialog').style.display = 'none';
+  if (state === 'Enabled' && p.target) {
+    if (p.hasShowList && !a17ShowListValue) winFeedback('Polisa Enabled, ali unesite "Microsoft.UserAccounts" u Show... listu!', 'hint');
+    else winFeedback('Polisa "' + p.name + '" → Enabled ✓', 'success');
+  } else if (state === 'Enabled') winFeedback('Polisa postavljena na Enabled', 'hint');
+  else winFeedback('Polisa nije Enabled', 'error');
+}
+
+// A17 New User
+let a17CreatedUsers = [];
+function a17ShowUsers() { winFeedback('Kliknite desni klik u tabeli korisnika da biste otvorili New User...', 'hint'); document.getElementById('a17UserList').oncontextmenu = (e) => { e.preventDefault(); const m = document.getElementById('a17CtxMenu'); m.style.display='block'; m.style.position='absolute'; m.style.left=e.offsetX+'px'; m.style.top=e.offsetY+'px'; }; document.getElementById('a17UserList').onclick = () => document.getElementById('a17CtxMenu').style.display='none'; }
+function a17OpenNewUser() { document.getElementById('a17CtxMenu').style.display='none'; document.getElementById('a17NewUserDlg').style.display='block'; }
+function a17CreateUser() {
+  const un = document.getElementById('a17UnInput').value.trim();
+  const pw = document.getElementById('a17PwInput').value;
+  const pw2 = document.getElementById('a17PwConfirm').value;
+  if (!un) { winFeedback('Unesite korisničko ime!', 'error'); return; }
+  if (pw !== pw2) { winFeedback('Lozinke se ne podudaraju!', 'error'); return; }
+  const expected = [{name:'Nikola',pw:'K0risnik01'},{name:'Jelena',pw:'L0zinka10'},{name:'direktor',pw:''}];
+  const match = expected.find(e => e.name.toLowerCase() === un.toLowerCase());
+  a17CreatedUsers.push(un);
+  const tbody = document.getElementById('a17UserTbody');
+  const row = document.createElement('tr');
+  row.style.background = '#f0fff0';
+  row.innerHTML = `<td style="padding:4px 8px;color:#107c10;">✅ 👤 ${un}</td><td style="padding:4px 8px;"></td><td style="padding:4px 8px;font-size:11px;color:#107c10;">Nalog kreiran</td>`;
+  tbody.appendChild(row);
+  document.getElementById('a17NewUserDlg').style.display = 'none';
+  document.getElementById('a17UnInput').value = '';
+  document.getElementById('a17PwInput').value = '';
+  document.getElementById('a17PwConfirm').value = '';
+  if (match && (pw === match.pw || match.pw === '')) winFeedback('Nalog "' + un + '" uspešno kreiran ✓', 'success');
+  else if (match) winFeedback('Nalog kreiran ali proveri lozinku: ' + match.pw, 'hint');
+  else winFeedback('Nalog "' + un + '" kreiran (nije u listi zadatka)', 'hint');
+}
+
+// A17 Folder Security
+let a17CurrentFolder = '';
+let a17FolderSecDone = {NikolaDokumenti: false, JelenaDokumenti: false};
+function a17FolderCtx(e) { e.preventDefault(); const m = document.getElementById('a17FolderCtxMenu'); m.style.display='block'; m.style.left=e.offsetX+'px'; m.style.top=e.offsetY+'px'; }
+function a17HideCtx() { document.getElementById('a17FolderCtxMenu').style.display='none'; document.getElementById('a17FolderRCtxMenu').style.display='none'; }
+function a17CreateFolders() {
+  a17HideCtx();
+  document.getElementById('a17FolderNikola').style.display='flex';
+  document.getElementById('a17FolderJelena').style.display='flex';
+  document.getElementById('a17FolderHint').textContent = 'Desni klik na folder → Properties → Security za podešavanje prava pristupa';
+  winFeedback('Folderi NikolaDokumenti i JelenaDokumenti kreirani na C:\\ ✓', 'success');
+}
+function a17FolderRightClick(e, folder) {
+  e.stopPropagation(); e.preventDefault();
+  a17CurrentFolder = folder;
+  const m = document.getElementById('a17FolderRCtxMenu');
+  m.style.display='block'; m.style.left=e.offsetX+80+'px'; m.style.top=e.offsetY+'px';
+}
+function a17OpenSecurity() {
+  a17HideCtx();
+  const dlg = document.getElementById('a17SecDlg');
+  document.getElementById('a17SecTitle').textContent = a17CurrentFolder + ' Properties – Security';
+  const isNikola = a17CurrentFolder === 'NikolaDokumenti';
+  document.getElementById('a17SecUsers').innerHTML = `
+    <div style="padding:4px 8px;background:#e5f0fb;border-left:3px solid #0078d4;font-size:12px;cursor:pointer;" onclick="a17SelectSecUser(this,'SYSTEM','Full control')">💻 SYSTEM</div>
+    <div style="padding:4px 8px;font-size:12px;cursor:pointer;" onmouseenter="this.style.background='#f0f0f0'" onmouseleave="this.style.background=''" onclick="a17SelectSecUser(this,'Administrators','Full control')">👥 Administrators</div>
+    <div style="padding:4px 8px;font-size:12px;cursor:pointer;" onmouseenter="this.style.background='#f0f0f0'" onmouseleave="this.style.background=''" onclick="a17SelectSecUser(this,'Users','Read &amp; execute')">👥 Users</div>
+    <div style="padding:4px 8px;font-size:12px;cursor:pointer;" onmouseenter="this.style.background='#f0f0f0'" onmouseleave="this.style.background=''" onclick="a17SelectSecUser(this,'Authenticated Users','Modify')">👥 Authenticated Users</div>
+    <div style="padding:4px 8px;font-size:12px;color:#888;font-style:italic;">+ Kliknite Advanced da dodate Nikola/Jelena/direktor sa posebnim pravima</div>
+  `;
+  document.getElementById('a17SecPerms').innerHTML = '<div style="color:#888;">Kliknite na korisnika gore da vidite prava</div>';
+  dlg.style.display='block';
+}
+function a17SelectSecUser(el, user, perms) {
+  document.querySelectorAll('#a17SecUsers div').forEach(d => d.style.background='');
+  el.style.background='#dde8f5';
+  document.getElementById('a17SecPermLabel').textContent = 'Permissions for ' + user + ':';
+  document.getElementById('a17SecPerms').innerHTML = `<div style="font-size:12px;">
+    ${['Full control','Modify','Read & execute','List folder contents','Read','Write'].map(p => `
+    <label style="display:flex;align-items:center;gap:8px;margin-bottom:4px;cursor:pointer;">
+      <input type="checkbox" ${perms.includes('Full') || p===perms || (perms==='Modify'&&['Modify','Read & execute','List folder contents','Read','Write'].includes(p)) || (perms.includes('Read')&&['Read & execute','List folder contents','Read'].includes(p)) ? 'checked' : ''}/>
+      <span>${p}</span>
+    </label>`).join('')}
+  </div>`;
+}
+function a17SecAdd() { winFeedback('Kliknite Advanced → Add → Select a principal → ukucajte Nikola/Jelena/direktor', 'hint'); }
+function a17SecRemove() { winFeedback('Izaberite Users ili Authenticated Users i kliknite Remove', 'hint'); }
+function a17SecSave() {
+  a17FolderSecDone[a17CurrentFolder] = true;
+  document.getElementById('a17SecDlg').style.display='none';
+  const both = a17FolderSecDone.NikolaDokumenti && a17FolderSecDone.JelenaDokumenti;
+  winFeedback('Prava pristupa za ' + a17CurrentFolder + ' sačuvana ✓' + (both ? ' – oba foldera podešena!' : ''), 'success');
+}
+
+// A17 Task Scheduler
+let a17TsStep = 1;
+function a17TsPage(page) {
+  a17TsStep = page;
+  const steps = ['a17TsStep1','a17TsStep2','a17TsStep3','a17TsStep4','a17TsStep5','a17TsStep6'];
+  steps.forEach((s,i) => { const el = document.getElementById(s); if(el){el.style.opacity=i<page?'1':'0.5';el.style.fontWeight=i===page-1?'bold':'normal';el.style.color=i===page-1?'#fff':'#aaa';} });
+  if (page === 1) return `<div style="padding:20px;">
+    <div style="font-size:14px;font-weight:600;margin-bottom:14px;">Create a Basic Task</div>
+    <div style="display:grid;grid-template-columns:100px 1fr;gap:8px;align-items:center;font-size:12px;">
+      <label>Name:</label><input id="a17TsName" type="text" value="Backup Jelena" style="border:1px solid #aaa;padding:5px 8px;font-size:12px;border-radius:2px;"/>
+      <label>Description:</label><textarea style="border:1px solid #aaa;padding:5px 8px;font-size:12px;border-radius:2px;height:50px;resize:none;"></textarea>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px;border-top:1px solid #ddd;padding-top:12px;">
+      <button onclick="document.getElementById('a17TsWizBody').innerHTML=a17TsPage(2)" style="background:#0078d4;border:none;color:white;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">Next &gt;</button>
+      <button onclick="document.getElementById('a17TsWizard').style.display='none'" style="background:#e0e0e0;border:1px solid #aaa;color:#333;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">Cancel</button>
+    </div>
+  </div>`;
+  if (page === 2) return `<div style="padding:20px;">
+    <div style="font-size:14px;font-weight:600;margin-bottom:14px;">Task Trigger – When do you want the task to start?</div>
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
+      ${[['Daily',''],['Weekly','border:2px solid #0078d4;background:#e5f0fb;border-radius:3px;'],['Monthly',''],['One time',''],['When the computer starts',''],['When I log on',''],['When a specific event is logged','']].map(([t,s])=>`<label style="display:flex;align-items:center;gap:10px;padding:6px 8px;cursor:pointer;${s}"><input type="radio" name="a17trigger" ${t==='Weekly'?'checked':''}/> ${t}</label>`).join('')}
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;border-top:1px solid #ddd;padding-top:12px;">
+      <button onclick="document.getElementById('a17TsWizBody').innerHTML=a17TsPage(1)" style="background:#e0e0e0;border:1px solid #aaa;color:#333;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">&lt; Back</button>
+      <button onclick="document.getElementById('a17TsWizBody').innerHTML=a17TsPage(3)" style="background:#0078d4;border:none;color:white;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">Next &gt;</button>
+      <button onclick="document.getElementById('a17TsWizard').style.display='none'" style="background:#e0e0e0;border:1px solid #aaa;color:#333;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">Cancel</button>
+    </div>
+  </div>`;
+  if (page === 3) return `<div style="padding:20px;">
+    <div style="font-size:14px;font-weight:600;margin-bottom:14px;">Weekly</div>
+    <div style="font-size:12px;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+      <label>Start:</label>
+      <input type="date" value="2026-05-14" style="border:1px solid #aaa;padding:4px 6px;font-size:12px;border-radius:2px;"/>
+      <input type="time" id="a17TsTime" value="08:00" style="border:2px solid #0078d4;padding:4px 6px;font-size:13px;border-radius:2px;font-weight:600;"/>
+    </div>
+    <div style="font-size:12px;margin-bottom:8px;">Recur every <input type="number" value="1" style="width:40px;border:1px solid #aaa;padding:3px;font-size:12px;border-radius:2px;"/> week(s) on:</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:12px;">
+      ${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'].map(d=>`<label style="display:flex;align-items:center;gap:4px;padding:4px 8px;border:2px solid ${d==='Monday'?'#0078d4':'#ccc'};border-radius:3px;background:${d==='Monday'?'#e5f0fb':''};cursor:pointer;"><input type="checkbox" ${d==='Monday'?'checked':''}/> ${d}</label>`).join('')}
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;border-top:1px solid #ddd;padding-top:12px;">
+      <button onclick="document.getElementById('a17TsWizBody').innerHTML=a17TsPage(2)" style="background:#e0e0e0;border:1px solid #aaa;color:#333;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">&lt; Back</button>
+      <button onclick="document.getElementById('a17TsWizBody').innerHTML=a17TsPage(4)" style="background:#0078d4;border:none;color:white;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">Next &gt;</button>
+      <button onclick="document.getElementById('a17TsWizard').style.display='none'" style="background:#e0e0e0;border:1px solid #aaa;color:#333;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">Cancel</button>
+    </div>
+  </div>`;
+  if (page === 4) return `<div style="padding:20px;">
+    <div style="font-size:14px;font-weight:600;margin-bottom:14px;">Action – What action do you want the task to perform?</div>
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
+      <label style="display:flex;align-items:center;gap:10px;padding:8px;border:2px solid #0078d4;border-radius:3px;background:#e5f0fb;cursor:pointer;"><input type="radio" name="a17action" checked/> <strong>Start a program</strong></label>
+      <label style="display:flex;align-items:center;gap:10px;padding:6px 8px;cursor:pointer;color:#888;"><input type="radio" name="a17action" disabled/> Send an e-mail (deprecated)</label>
+      <label style="display:flex;align-items:center;gap:10px;padding:6px 8px;cursor:pointer;color:#888;"><input type="radio" name="a17action" disabled/> Display a message (deprecated)</label>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px;border-top:1px solid #ddd;padding-top:12px;">
+      <button onclick="document.getElementById('a17TsWizBody').innerHTML=a17TsPage(3)" style="background:#e0e0e0;border:1px solid #aaa;color:#333;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">&lt; Back</button>
+      <button onclick="document.getElementById('a17TsWizBody').innerHTML=a17TsPage(5)" style="background:#0078d4;border:none;color:white;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">Next &gt;</button>
+      <button onclick="document.getElementById('a17TsWizard').style.display='none'" style="background:#e0e0e0;border:1px solid #aaa;color:#333;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">Cancel</button>
+    </div>
+  </div>`;
+  if (page === 5) return `<div style="padding:20px;">
+    <div style="font-size:14px;font-weight:600;margin-bottom:14px;">Start a Program</div>
+    <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;align-items:center;font-size:12px;margin-bottom:14px;">
+      <label>Program/script:</label>
+      <div style="display:flex;gap:6px;"><input id="a17TsProg" type="text" value="robocopy" style="flex:1;border:2px solid #0078d4;padding:5px 8px;font-size:12px;border-radius:2px;font-weight:600;"/><button style="background:#e0e0e0;border:1px solid #aaa;padding:4px 10px;font-size:12px;cursor:pointer;border-radius:2px;">Browse...</button></div>
+      <label>Add arguments:</label>
+      <input id="a17TsArgs" type="text" value='C:\\Users\\Jelena C:\\Izvestaji2 /E' style="border:2px solid #0078d4;padding:5px 8px;font-size:12px;border-radius:2px;font-weight:600;"/>
+      <label>Start in (optional):</label>
+      <input type="text" style="border:1px solid #aaa;padding:5px 8px;font-size:12px;border-radius:2px;"/>
+    </div>
+    <div style="background:#fff8e1;border:1px solid #f59e0b;border-radius:3px;padding:8px;font-size:11px;color:#555;">
+      💡 <strong>robocopy</strong> = Windows alat za kopiranje. Argumenti: <code>C:\Users\Jelena C:\Izvestaji2 /E</code> — kopira sve iz Jelenine home mape u C:\Izvestaji2
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px;border-top:1px solid #ddd;padding-top:12px;">
+      <button onclick="document.getElementById('a17TsWizBody').innerHTML=a17TsPage(4)" style="background:#e0e0e0;border:1px solid #aaa;color:#333;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">&lt; Back</button>
+      <button onclick="document.getElementById('a17TsWizBody').innerHTML=a17TsPage(6)" style="background:#0078d4;border:none;color:white;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">Next &gt;</button>
+      <button onclick="document.getElementById('a17TsWizard').style.display='none'" style="background:#e0e0e0;border:1px solid #aaa;color:#333;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">Cancel</button>
+    </div>
+  </div>`;
+  if (page === 6) return `<div style="padding:20px;">
+    <div style="font-size:14px;font-weight:600;margin-bottom:14px;">Summary</div>
+    <div style="background:#fff;border:1px solid #ddd;border-radius:3px;padding:14px;font-size:12px;margin-bottom:14px;">
+      <div style="display:grid;grid-template-columns:120px 1fr;gap:6px;color:#333;">
+        <span style="color:#555;">Name:</span><span style="font-weight:600;">Backup Jelena</span>
+        <span style="color:#555;">Trigger:</span><span>Weekly; At 08:00 every Monday of every week</span>
+        <span style="color:#555;">Action:</span><span>Start a program; robocopy C:\\Users\\Jelena C:\\Izvestaji2 /E</span>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;border-top:1px solid #ddd;padding-top:12px;">
+      <button onclick="document.getElementById('a17TsWizBody').innerHTML=a17TsPage(5)" style="background:#e0e0e0;border:1px solid #aaa;color:#333;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">&lt; Back</button>
+      <button onclick="a17TsFinish()" style="background:#0078d4;border:none;color:white;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;font-weight:600;">Finish</button>
+      <button onclick="document.getElementById('a17TsWizard').style.display='none'" style="background:#e0e0e0;border:1px solid #aaa;color:#333;padding:5px 20px;border-radius:2px;cursor:pointer;font-size:12px;">Cancel</button>
+    </div>
+  </div>`;
+  return '';
+}
+function a17StartCreateTask() { document.getElementById('a17TsCtxMenu').style.display='none'; document.getElementById('a17TsWizard').style.display='block'; document.getElementById('a17TsWizBody').innerHTML=a17TsPage(1); }
+function a17TsLibCtx(e) { e.preventDefault(); const m=document.getElementById('a17TsCtxMenu'); m.style.display='block'; m.style.left=e.clientX+'px'; m.style.top=e.clientY+'px'; }
+function a17TsFinish() {
+  document.getElementById('a17TsWizard').style.display='none';
+  document.getElementById('a17TsBody').innerHTML=`<tr style="background:#f0fff0;"><td style="padding:6px 10px;color:#0060c7;font-weight:600;">✅ Backup Jelena</td><td style="padding:6px 10px;text-align:center;color:#107c10;">Ready</td><td style="padding:6px 10px;">Weekly, every Monday at 08:00</td><td style="padding:6px 10px;">5/18/2026 08:00:00</td></tr>`;
+  winFeedback('Zadatak "Backup Jelena" kreiran – svakog ponedeljka u 08:00 ✓', 'success');
+}
+
+// A17 Task Manager
+let a17TmActiveTab = 0;
+let a17TmPerfActive = 'cpu';
+let a17TmSelectedRow = -1;
+function a17TmTab(i) {
+  a17TmActiveTab = i;
+  for(let j=0;j<7;j++){
+    const tab=document.getElementById('tmTab'+j);
+    const panel=document.getElementById('tmPanel'+j);
+    if(tab){tab.style.borderBottom=j===i?'2px solid #0078d4':'';tab.style.color=j===i?'#0078d4':'#333';tab.style.fontWeight=j===i?'600':'';tab.style.background=j===i?'#f3f3f3':'';}
+    if(panel)panel.style.display=j===i?'block':'none';
+  }
+}
+function a17TmSelectRow(i) {
+  document.querySelectorAll('#a17TmBody tr').forEach(r=>r.style.background='');
+  const row=document.getElementById('tmRow'+i);
+  if(row){row.style.background='#dde8f5';a17TmSelectedRow=i;}
+}
+function a17TmRowLeave(i){if(a17TmSelectedRow!==i){const r=document.getElementById('tmRow'+i);if(r)r.style.background=i%2===0?'':'#f7f7f7';}}
+function a17TmEndTask() {
+  if(a17TmSelectedRow<0){winFeedback('Prvo izaberite proces iz liste!','error');return;}
+  const row=document.getElementById('tmRow'+a17TmSelectedRow);
+  if(row){row.style.background='#ffe0e0';setTimeout(()=>{row.remove();winFeedback('Proces je završen (End Task) ✓','success');a17TmSelectedRow=-1;},800);}
+}
+function a17TmShowPerf(type) {
+  a17TmPerfActive=type;
+  ['cpu','mem','disk'].forEach(t=>{const el=document.getElementById('tmPerf'+t.charAt(0).toUpperCase()+t.slice(1));if(el){el.style.background=t===type?'#e5f0fb':'';el.style.borderLeft=t===type?'3px solid #0078d4':'3px solid transparent';}});
+  const content=document.getElementById('tmPerfContent');
+  const charts={
+    cpu:`<div style="font-size:14px;font-weight:600;color:#0078d4;margin-bottom:8px;">CPU – Intel Core i5-8400</div><div style="background:#fff;border:1px solid #ddd;border-radius:3px;padding:10px;height:100px;position:relative;overflow:hidden;margin-bottom:8px;"><svg viewBox="0 0 300 70" width="100%" height="100%" preserveAspectRatio="none"><polyline points="0,60 30,55 60,45 90,58 120,30 150,40 180,25 210,50 240,35 270,48 300,20" fill="none" stroke="#0078d4" stroke-width="2"/><polygon points="0,60 30,55 60,45 90,58 120,30 150,40 180,25 210,50 240,35 270,48 300,20 300,70 0,70" fill="rgba(0,120,212,0.1)"/></svg><div style="position:absolute;top:4px;right:8px;font-size:18px;font-weight:300;color:#0078d4;">1%</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;">${[['Utilization','1%'],['Speed','2.8 GHz'],['Processes','112'],['Threads','1,240'],['Cores','4'],['Logical','8']].map(([k,v])=>`<div style="background:#fff;border:1px solid #ddd;padding:6px;border-radius:2px;"><div style="color:#555;">${k}</div><div style="font-weight:600;">${v}</div></div>`).join('')}</div>`,
+    mem:`<div style="font-size:14px;font-weight:600;color:#7a4bf5;margin-bottom:8px;">Memory – 4.0 GB DDR4</div><div style="background:#fff;border:1px solid #ddd;border-radius:3px;padding:10px;height:100px;position:relative;overflow:hidden;margin-bottom:8px;"><svg viewBox="0 0 300 70" width="100%" height="100%" preserveAspectRatio="none"><rect x="0" y="0" width="300" height="70" fill="#f8f0ff"/><rect x="0" y="37" width="300" height="33" fill="rgba(122,75,245,0.15)"/><polyline points="0,40 50,38 100,35 150,36 200,33 250,34 300,32" fill="none" stroke="#7a4bf5" stroke-width="2"/></svg><div style="position:absolute;top:4px;right:8px;font-size:18px;font-weight:300;color:#7a4bf5;">53%</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;">${[['In use','2.1 GB'],['Available','1.9 GB'],['Committed','3.2/8 GB'],['Cached','1.4 GB'],['Paged pool','280 MB'],['Non-paged','180 MB']].map(([k,v])=>`<div style="background:#fff;border:1px solid #ddd;padding:6px;border-radius:2px;"><div style="color:#555;">${k}</div><div style="font-weight:600;">${v}</div></div>`).join('')}</div>`,
+    disk:`<div style="font-size:14px;font-weight:600;color:#167c10;margin-bottom:8px;">Disk 0 (C:) – 50 GB SSD</div><div style="background:#fff;border:1px solid #ddd;border-radius:3px;padding:10px;height:100px;position:relative;overflow:hidden;margin-bottom:8px;"><svg viewBox="0 0 300 70" width="100%" height="100%" preserveAspectRatio="none"><rect x="0" y="0" width="300" height="70" fill="#f0fff0"/><polyline points="0,65 30,62 60,40 90,63 120,60 150,30 180,62 210,58 240,64 270,60 300,63" fill="none" stroke="#167c10" stroke-width="2"/><polygon points="0,65 30,62 60,40 90,63 120,60 150,30 180,62 210,58 240,64 270,60 300,63 300,70 0,70" fill="rgba(22,124,16,0.1)"/></svg><div style="position:absolute;top:4px;right:8px;font-size:18px;font-weight:300;color:#167c10;">5%</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;">${[['Active time','5%'],['Avg response','1.2ms'],['Read speed','2.5 MB/s'],['Write speed','1.1 MB/s'],['Capacity','50 GB'],['Type','SSD']].map(([k,v])=>`<div style="background:#fff;border:1px solid #ddd;padding:6px;border-radius:2px;"><div style="color:#555;">${k}</div><div style="font-weight:600;">${v}</div></div>`).join('')}</div>`
+  };
+  if(content) content.innerHTML = charts[type]||charts.cpu;
 }
 
 // -- Group Policy A2 (Studentska služba) --
