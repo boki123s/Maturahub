@@ -2490,8 +2490,8 @@ const questions = [
       "Tekstualne dokumentacije",
       "Numeričke dokumentacije"
     ],
-    correct: 2,
-    explanation: "Predmer i predračun spada u tekstualnu dokumentaciju — sadrži opise radova i materijala sa cenama, ali nije grafička ni opšta dokumentacija.",
+    correct: 3,
+    explanation: "Predmer i predračun spada u numericku dokumentaciju — sadrži opise radova i materijala sa cenama, ali nije grafička ni opšta dokumentacija.",
     image: ""
   },
 
@@ -2566,7 +2566,7 @@ const questions = [
       "Investitor"
     ],
     correct: 2,
-    explanation: "Investitor formira komisiju za tehnički pregled i određuje njene članove. Može je poveriti i privrednom društvu, ali ne inspektoru rada ni lokalnoj samoupravi.",
+    explanation: "Članove komisije, kao i predsednika komisije, odlukom određuje investitor, a ako poverivršenje tehničkog pregleda privrednom društvu ili nekom drugom pravnom licu onda komisiju određuje odgovorno lice tog privrednog društva, odn. pravnog lica. Inspektor rada nema nadležnost za formiranje komisije za tehnički pregled, već može bitizadužen za nadzor nad sprovođenjem tehničkog pregleda i ispunjavanjem propisanih standarda.",
     image: ""
   },
 
@@ -3724,8 +3724,8 @@ const questions = [
       "proračuni",
       "tehnički uslovi"
     ],
-    correct: [1, 2, 3],
-    explanation: "Tekstualni deo projekta čine tehnički opis, proračuni i tehnički uslovi.",
+    correct: [1, 3],
+    explanation: "Tekstualni deo projekta čine tehnički opis i tehnički uslovi.",
     image: ""
   },
 
@@ -3852,7 +3852,7 @@ const questions = [
     type: "input",
     question: "239. Na izvoru jednosmernog napona vršena su merenja. Rezultati: U=10,4V (1 put), U=9,6V (1 put), U=10,0V (2 puta), U=10,1V (4 puta), U=10,3V (2 puta). Koliko iznosi napon pri čijem merenju je napravljena najveća greška?",
     correct: ["9,6", "9.6", "9,6V", "9.6V"],
-    explanation: "Us = (10,4×1 + 9,6×1 + 10,0×2 + 10,1×4 + 10,3×2) / 10 = 100 / 10 = 10,0V. Najveće odstupanje je za 9,6V (greška 0,4V).",
+    explanation: "Us = (10,4×1 + 9,6×1 + 10,0×2 + 10,1×4 + 10,3×2) / 10 = 100 / 10 = 10,1V. Najveće odstupanje je za 9,6V (greška 0,5V).",
     image: "slike/239.png"
   },
 
@@ -3931,9 +3931,9 @@ const questions = [
     type: "matching",
     question: "244. U tabeli su pojedinačno označeni brojevima simboli električnih komponenti, a na desnoj strani su dati nazivi tranzistora. Na liniji pored naziva električne komponente upisati broj odgovarajućeg simbola.",
     pairs: [
-      { left: "Simbol broj 3 – tranzistor sa oznakom svetlosnih strelica ka bazi", right: "Fototranzistor" },
-      { left: "Simbol broj 1 – tranzistor sa strelicom emitera koja pokazuje od baze", right: "NPN tranzistor" },
-      { left: "Simbol broj 2 – tranzistor sa strelicom emitera koja pokazuje ka bazi", right: "PNP tranzistor" }
+      { left: "Simbol broj 3", right: "Fototranzistor" },
+      { left: "Simbol broj 1", right: "NPN tranzistor" },
+      { left: "Simbol broj 2", right: "PNP tranzistor" }
     ],
     correct: [],
     explanation: "NPN (1): strela emitera od baze; PNP (2): strela emitera ka bazi; Fototranzistor (3): strelice svetlosti ka bazi.",
@@ -3981,16 +3981,16 @@ const questions = [
     type: "matching",
     question: "247. U tehničkoj dokumentaciji projekti su označeni rednim brojem i obavezno složeni u svesci prema utvrđenom redosledu. Potrebno je navesti tačan redosled projekata u svesci.",
     pairs: [
-      { left: "Projekat koji dolazi na mesto 9 – uređenje spoljašnosti sa sinhron-planom", right: "Spoljno uređenje sa sinhron-planom instalacija i priključaka, pejzažna arhitektura i hortikultura" },
-      { left: "Projekat koji dolazi na mesto 1 – osnova svakog objekta", right: "Arhitektura" },
-      { left: "Projekat koji dolazi na mesto 2 – nosiva konstrukcija objekta", right: "Konstrukcija i drugi građevinski projekti" },
-      { left: "Projekat koji dolazi na mesto 10 – poslednji, pripremni zemeljani radovi", right: "Pripremni radovi (rušenje, zemljani radovi, obezbeđenje temeljne jame)" },
-      { left: "Projekat koji dolazi na mesto 3 – voda, kanalizacija, grejanje", right: "Hidrotehničke instalacije" },
-      { left: "Projekat koji dolazi na mesto 5 – telekomunikacije i signalizacija", right: "Telekomunikacione i signalne instalacije" },
-      { left: "Projekat koji dolazi na mesto 4 – električna energija", right: "Elektroenergetske instalacije" },
-      { left: "Projekat koji dolazi na mesto 6 – mašinske instalacije", right: "Mašinske instalacije" },
-      { left: "Projekat koji dolazi na mesto 8 – saobraćaj i signalizacija", right: "Saobraćaj i saobraćajna signalizacija" },
-      { left: "Projekat koji dolazi na mesto 7 – tehnološki procesi", right: "Tehnologija" }
+      { left: "Projekat koji dolazi na mesto 9", right: "Spoljno uređenje sa sinhron-planom instalacija i priključaka, pejzažna arhitektura i hortikultura" },
+      { left: "Projekat koji dolazi na mesto 1", right: "Arhitektura" },
+      { left: "Projekat koji dolazi na mesto 2 ", right: "Konstrukcija i drugi građevinski projekti" },
+      { left: "Projekat koji dolazi na mesto 10", right: "Pripremni radovi (rušenje, zemljani radovi, obezbeđenje temeljne jame)" },
+      { left: "Projekat koji dolazi na mesto 3", right: "Hidrotehničke instalacije" },
+      { left: "Projekat koji dolazi na mesto 5", right: "Telekomunikacione i signalne instalacije" },
+      { left: "Projekat koji dolazi na mesto 4", right: "Elektroenergetske instalacije" },
+      { left: "Projekat koji dolazi na mesto 6", right: "Mašinske instalacije" },
+      { left: "Projekat koji dolazi na mesto 8", right: "Saobraćaj i saobraćajna signalizacija" },
+      { left: "Projekat koji dolazi na mesto 7", right: "Tehnologija" }
     ],
     correct: [],
     explanation: "Zakonski propisani redosled: 1-Arhitektura, 2-Konstrukcija, 3-Hidro, 4-Elektro, 5-Telekomunikacije, 6-Mašinske, 7-Tehnologija, 8-Saobraćaj, 9-Spoljno uređenje, 10-Pripremni radovi.",
@@ -4004,12 +4004,12 @@ const questions = [
     type: "matching",
     question: "248. Pri izradi projekta delovi projekta rade se tačnim redosledom. Potrebno je navesti redosled izrade pojedinih delova projekta.",
     pairs: [
-      { left: "Deo projekta koji se izrađuje treći po redu – osnovna razrada", right: "Idejni projekat" },
-      { left: "Deo projekta koji se izrađuje četvrti po redu – za dobijanje dozvole", right: "Projekat za građevinsku dozvolu" },
-      { left: "Deo projekta koji se izrađuje drugi po redu – konceptualno rešenje", right: "Idejno rešenje" },
-      { left: "Deo projekta koji se izrađuje peti po redu – detaljna razrada za gradnju", right: "Projekat za izvođenje" },
-      { left: "Deo projekta koji se izrađuje prvi po redu – najopštiji nivo planiranja", right: "Generalni projekat" },
-      { left: "Deo projekta koji se izrađuje šesti po redu – dokumentacija završenog stanja", right: "Projekat izvedenog stanja" }
+      { left: "Deo projekta koji se izrađuje treći po redu", right: "Idejni projekat" },
+      { left: "Deo projekta koji se izrađuje četvrti po redu", right: "Projekat za građevinsku dozvolu" },
+      { left: "Deo projekta koji se izrađuje drugi po redu", right: "Idejno rešenje" },
+      { left: "Deo projekta koji se izrađuje peti po redu", right: "Projekat za izvođenje" },
+      { left: "Deo projekta koji se izrađuje prvi po redu", right: "Generalni projekat" },
+      { left: "Deo projekta koji se izrađuje šesti po redu", right: "Projekat izvedenog stanja" }
     ],
     correct: [],
     explanation: "Redosled: 1-Generalni projekat, 2-Idejno rešenje, 3-Idejni projekat, 4-Projekat za građevinsku dozvolu, 5-Projekat za izvođenje, 6-Projekat izvedenog stanja.",
@@ -4023,11 +4023,11 @@ const questions = [
     type: "matching",
     question: "249. Na elektičnoj šemi prikazanoj na slici brojevima su označene električne komponente. Na linijama pored naziva električnih komponenata upiši broj električne komponente sa slike koju predstavljaju. Za neiskorišćene električne komponente staviti X.",
     pairs: [
-      { left: "Komponenta sa slike označena brojem 1 – izvor jednosmerne struje sa više ćelija", right: "Baterija" },
-      { left: "Komponenta sa slike označena brojem 2 – promenljivi otpornik sa tri izvoda", right: "Potenciometar" },
-      { left: "Komponenta sa slike označena brojem 5 – svetleća dioda", right: "LE dioda" },
-      { left: "Komponenta sa slike označena brojem 3 – veza sa zemljom", right: "Uzemljenje" },
-      { left: "Komponenta sa slike označena brojem 4 – pasivna komponenta koja ograničava struju", right: "Otpornik" },
+      { left: "Komponenta sa slike označena brojem 1 ", right: "Baterija" },
+      { left: "Komponenta sa slike označena brojem 2", right: "Potenciometar" },
+      { left: "Komponenta sa slike označena brojem 5", right: "LE dioda" },
+      { left: "Komponenta sa slike označena brojem 3", right: "Uzemljenje" },
+      { left: "Komponenta sa slike označena brojem 4", right: "Otpornik" },
       { left: "Komponenta koje nema na šemi – oznaka X", right: "Izvor naizmeničnog napona" },
       { left: "Komponenta koje nema na šemi – oznaka X", right: "Fotodioda" }
     ],
@@ -4043,10 +4043,10 @@ const questions = [
     type: "matching",
     question: "250. Predračun za nabavku komponenti opisan je slikom. Na levoj strani dati su izrazi za funkcije unutar ćelije u Excel-u, na desnoj strani date su ćelije za koje je potrebno odabrati funkciju odgovarajućeg formata. Na liniji ispred ćelije upisati redni broj njoj odgovarajuće funkcije.",
     pairs: [
-      { left: "Funkcija =C2*D2 – množi količinu i cenu za prvu stavku (red 2)", right: "E2" },
-      { left: "Funkcija nije ponuđena (X) – ćelija E3 ne zahteva ponuđenu funkciju", right: "E3" },
-      { left: "Funkcija =C4*D4 – množi količinu i cenu za treću stavku (red 4)", right: "E4" },
-      { left: "Funkcija =SUM(E2:E4) – sabira sve pojedinačne cene za ukupan iznos", right: "E6" }
+      { left: "Funkcija =C2*D2", right: "E2" },
+      { left: "Funkcija nije ponuđena (X)", right: "E3" },
+      { left: "Funkcija =C4*D4(red 4)", right: "E4" },
+      { left: "Funkcija =SUM(E2:E4)", right: "E6" }
     ],
     correct: [],
     explanation: "E2: =C2*D2 (količina × cena); E3: nema odgovarajuće funkcije (X); E4: =C4*D4; E6: =SUM(E2:E4) za ukupan zbir.",
@@ -4087,7 +4087,7 @@ const questions = [
     ],
     correct: [],
     explanation: "Redosled: 1-Print Screen, 2-Paint, 3-CTRL+V, 4-Selektovati, 5-Crop, 6-Snimiti, 7-Insertovati u Word.",
-    image: "slike/252.png"
+    image: ""
   }
 
   ];
