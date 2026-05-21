@@ -752,7 +752,7 @@ const questions = [
       "Ransomware",
       "Trapdoor"
     ],
-    correct: 3,
+    correct: 1,
     explanation: "Trapdoor (pozadinska kapija za testiranje) je skriveni ulaz u sistem ostavljen tokom razvoja — zloupotrebljava se za neovlašćeni pristup.",
     image: ""
   },
@@ -816,7 +816,7 @@ const questions = [
       "Uradimo formatiranje hard diska",
       "Uradimo defragmentaciju hard diska"
     ],
-    correct: 1,
+    correct: 2,
     explanation: "Alati poput chkdsk ili Check Disk detektuju loše sektore i označavaju ih kao neupotrebljive kako OS ne bi pokušavao da ih koristi.",
     image: ""
   },
@@ -1004,11 +1004,10 @@ const questions = [
     answers: [
       "Driver Repair Utility",
       "Driver Rollback",
-      "Povratak na prethodni upravljački program",
       "Reverse Driver Application",
       "Windows Driver Compatibility tool"
     ],
-    correct: 2,
+    correct: 1 ,
     explanation: "U Device Manager-u, opcija Roll Back Driver vraća prethodni drajver koji je radio ispravno — idealno kada novi drajver pravi probleme.",
     image: ""
   },
