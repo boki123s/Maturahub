@@ -1522,8 +1522,8 @@ const questions = [
       "Otvoriti System Restore i izabrati vraćanje u prethodno stanje",
       "Pokrenete računar sa diska za oporavak sistema i vratite sliku sistema"
     ],
-    correct: 3,
-    explanation: "Pokretanje sa recovery diska i vraćanje system image-a je jedini način da se obnovi disk D sa svim podacima na njemu u jednom koraku, uz minimalan downtime.",
+    correct: 0,
+    explanation: "",
     image: ""
   },
 
@@ -1747,8 +1747,8 @@ const questions = [
       "DHCP server je mrežnom adapteru dodelio IPv6 adresu",
       "Na mrežnom adapteru omogućen je TCP/IPv6 protokol"
     ],
-    correct: [2, 4],
-    explanation: "U tipičnom listingu ipconfig /all sa DHCP adresiranjem: DHCP server i default gateway mogu biti različiti uređaji. IPv6 adresa se dodeljuje ako je TCP/IPv6 omogućen.",
+    correct: [0, 4],
+    explanation: "",
     image: "slike/122.png"
   },
 
@@ -1765,7 +1765,7 @@ const questions = [
   ],
   correct: [1, 3],
   explanation: "Deljeni folder nije vidljiv zato što virtuelne mašine možda nisu u istoj mreži ili mrežna kartica virtuelne mašine nije pravilno povezana sa fizičkom mrežom. Sharing i NTFS dozvole su pravilno podešene jer Everyone ima Full control za sharing i Read & execute za NTFS.",
-  image: ""
+  image: "slike/123.png"
 },
 
   {
@@ -1797,7 +1797,7 @@ const questions = [
       "U svojstvima za WiFi1, izaberete opciju Look for other wireless networks while connected to this network",
       "U svojstvima za WiFi2, izaberete opciju Look for other wireless networks while connected to this network"
     ],
-    correct: [3, 4],
+    correct: [1, 3, 4],
     explanation: "WiFi2 treba da se automatski poveže kada je dostupan. WiFi1 treba da traži druge mreže (WiFi2) dok je konektovan na WiFi1, kako bi prešao na WiFi2 čim postane dostupan.",
     image: ""
   },
@@ -2757,8 +2757,8 @@ const questions = [
       "na Disk1 3GB, na Disk2 3GB, na Disk3 3GB",
       "na Disk1 6GB, na Disk2 6GB, na Disk3 6GB"
     ],
-    correct: 2,
-    explanation: "Striped volumen (RAID-0) raspodeljuje podatke ravnomerno na sve diskove i koristi sav raspoloživi prostor na svakom disku. Svaki disk zadržava pun kapacitet od 6GB.",
+    correct: 1,
+    explanation: "Ne znam zasto, logicno je valjda 3 3 3 jer vidimo da je preostalo mesto 27, a disk je velicine 30gb",
     image: "slike/105.png"
   },
 
@@ -2856,7 +2856,7 @@ const questions = [
     category: "os",
     type: "input",
     question: "134. Pet diskova, svaki kapaciteta 500 GB, vezani su u RAID-5. Ukupan korisni prostor na disku je __________ TB. Простор који се користи за парност је величине од ________ (odgovor napisi broj sa GB ili TB pa onda zarez, odvojeno, pa onda drugi broj sa GB/TB)",
-    correct: ["2, 500", "2TB, 500TB", "2 TB, 500 GB"],
+    correct: ["2, 500", "2TB, 500GB", "2 TB, 500 GB"],
     explanation: "RAID-5 koristi jedan disk ekvivalent za parnost distribuiran po svim diskovima. Korisni prostor = (N-1) × kapacitet = 4 × 500GB = 2000GB = 2TB. Prostor za parnost iznosi 500GB.",
     image: ""
   },
@@ -2866,8 +2866,8 @@ const questions = [
     id: 135,
     category: "os",
     type: "input",
-    question: "135. Kod tehnike virtuelizacije, operativni sistem koji komunicira sa osnovnim hardverom naziva se __________ (domaćin), a operativni sistem instaliran na virtuelnoj mašini naziva se __________ (gost). Upiši oba pojma odvojena zarezom.",
-    correct: ["host, guest", "Host, Guest", "host,guest", "Host,Guest"],
+    question: "135. Kod tehnike virtuelizacije, operativni sistem koji komunicira sa osnovnim hardverom naziva se __________, a operativni sistem instaliran na virtuelnoj mašini naziva se __________. Upiši oba pojma odvojena zarezom.",
+    correct: ["host, guest", "Host, Guest", "host,guest", "Host,Guest", "Domacin, Gost", "domacin, gost"],
     explanation: "Host OS (domaćin) direktno komunicira sa fizičkim hardverom i pokreće hipervizor. Guest OS (gost) je instaliran unutar virtuelne mašine i ne zna za pravi hardver — komunicira kroz sloj virtualizacije.",
     image: ""
   },
@@ -2952,15 +2952,15 @@ const questions = [
     type: "matching",
     question: "144. Poveži svaku operaciju nad datotekom sa opisom njenog dejstva:",
     pairs: [
-      { left: "Kreiranje", right: "Određivanje prostora u fajl sistemu i unošenje odgovarajuće stavke u direktorijum" },
-      { left: "Upis",     right: "Sistemskim pozivom specificiraju se ime datoteke i podaci koji će biti upisani" },
-      { left: "Čitanje",  right: "Sistemskim pozivom specificiraju se ime datoteke i mesto u memoriji gde će se smestiti očitani blok" },
-      { left: "Brisanje", right: "Oslobađa se sav prostor dodeljen datoteci unutar određenog direktorijuma" }
+      { left: "Određivanje prostora u fajl sistemu i unošenje odgovarajuće stavke u direktorijum", right: "Kreiranje" },
+      { left: "Sistemskim pozivom specificiraju se ime datoteke i podaci koji će biti upisani", right: "Upis" },
+      { left: "Sistemskim pozivom specificiraju se ime datoteke i mesto u memoriji gde će se smestiti očitani blok", right: "Čitanje" },
+      { left: "Oslobađa se sav prostor dodeljen datoteci unutar određenog direktorijuma", right: "Brisanje" }
     ],
     correct: [],
     explanation: "Četiri osnovne operacije nad datotekama u fajl sistemu: kreiranje (alokacija prostora), upis (write sistemski poziv), čitanje (read sistemski poziv) i brisanje (dealokacija i uklanjanje iz direktorijuma).",
     image: ""
-  },
+},
 
   // ── 145 (OS – matching) ─────────────────────────────────────────
   {
@@ -2985,15 +2985,15 @@ const questions = [
     type: "matching",
     question: "146. Poređaj hronološki korake u procesu HTTP komunikacije kada web klijent otvara stranicu http://www.yahoo.com/index.html (označi redosled 1-4):",
     pairs: [
-      { left: "1. korak", right: "DNS razrešavanje — klijent šalje upit DNS serveru za IP adresu www.yahoo.com" },
-      { left: "2. korak", right: "TCP three-way handshake — uspostavljanje veze sa web serverom na portu 80" },
-      { left: "3. korak", right: "Slanje HTTP GET zahteva za /index.html" },
-      { left: "4. korak", right: "Server šalje HTTP odgovor sa sadržajem stranice, klijent prikazuje stranicu" }
+      { left: "DNS razrešavanje — klijent šalje upit DNS serveru za IP adresu www.yahoo.com", right: "1. korak" },
+      { left: "Slanje HTTP GET zahteva za /index.html", right: "3. korak" },
+      { left: "Server šalje HTTP odgovor sa sadržajem stranice, klijent prikazuje stranicu", right: "4. korak" },
+	  { left: "TCP three-way handshake — uspostavljanje veze sa web serverom na portu 80", right: "2. korak" }
     ],
     correct: [],
     explanation: "Redosled HTTP komunikacije: (1) DNS lookup za IP adresu, (2) TCP konekcija (SYN/SYN-ACK/ACK), (3) HTTP GET zahtev, (4) HTTP odgovor i prikazivanje sadržaja.",
     image: ""
-  },
+},
 
   // ── 148 (OS – matching) ─────────────────────────────────────────
   {
@@ -3002,17 +3002,17 @@ const questions = [
     type: "matching",
     question: "148. Poveži svaki naziv napada na računarski sistem sa odgovarajućim objašnjenjem:",
     pairs: [
-      { left: "Ransomware",    right: "Ucenjivački napad — nasilno šifrovanje sadržaja žrtve sa zahtevom za isplatu u zamenu za ključ" },
-      { left: "Code injection",right: "Napad kojim se maliciozni kod ubacuje kroz ranjive delove sajta ili URL" },
-      { left: "DoS/DDoS",      right: "Zagušenje servera zahtevima za pristup određenom resursu" },
-      { left: "Trojan horse",  right: "Maliciozni program koji se maskira kao legitimna aplikacija" },
-      { left: "Sniffers",      right: "Alati koji presreću i analiziraju mrežni saobraćaj" },
-      { left: "Spam",          right: "Masovno slanje neželjenih poruka elektronskom poštom" }
+      { left: "Ucenjivački napad — nasilno šifrovanje sadržaja žrtve sa zahtevom za isplatu u zamenu za ključ", right: "Ransomware" },
+      { left: "Napad kojim se maliciozni kod ubacuje kroz ranjive delove sajta ili URL", right: "Code injection" },
+      { left: "Zagušenje servera zahtevima za pristup određenom resursu", right: "DoS/DDoS" },
+      { left: "Maliciozni program koji se maskira kao legitimna aplikacija", right: "Trojan horse" },
+      { left: "Alati koji presreću i analiziraju mrežni saobraćaj", right: "Sniffers" },
+      { left: "Masovno slanje neželjenih poruka elektronskom poštom", right: "Spam" }
     ],
     correct: [],
     explanation: "Ransomware (npr. WannaCry) enkriptuje fajlove i traži otkup. Code injection (SQL, XSS) ubacuje kod. DoS/DDoS preplavljuje server. Trojan se krije u korisnom softveru. Snifferi hvataju pakete. Spam je neželjena pošta.",
     image: ""
-  },
+},
 
   // ── 149 (OS – matching) ─────────────────────────────────────────
   {
