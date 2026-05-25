@@ -433,7 +433,7 @@ const questions = [
       "8 GB DDR4-SDRAM 2133 MHz"
     ],
     correct: 2,
-    explanation: "DDR4-SDRAM 2400 MHz je optimalan izbor — kompatibilan je sa oba uređaja, a radi na maksimalnoj podržanoj frekvenciji (2400 MHz) čime se postižu najbolje performanse.",
+    explanation: "DDR4-SDRAM 2133 MHz je optimalan izbor — logicno bi bilo da izaberemo ovaj od 2400 MHz, ali sistemska magistrala nije dovoljno brza. To racunamo ovako: f(frekvencija)=1/T(period), nama je period 0,469 * 10^9 (jer su nanosekunde), racunicom u kalkulatoru dobijamo da je to 2.13GHz",
     image: "slike/27.png"
   },
 
@@ -3210,12 +3210,12 @@ const questions = [
     category: "hardver",
     type: "matching",
     question: "39. Na slici su pojedinačno označeni brojevima elementi matične ploče. Poveži naziv elementa sa brojem sa slike:",
-    pairs: [
+    pairs: [      
+	  { left: "PCI Express",          right: "5" },
       { left: "Konektor za napajanje", right: "1" },
-      { left: "Procesor",             right: "2" },
       { left: "DVI",                  right: "3" },
       { left: "VGA",                  right: "4" },
-      { left: "PCI Express",          right: "5" },
+	  { left: "Procesor",             right: "2" },
       { left: "SATA konektori",       right: "6" }
     ],
     correct: [],
@@ -3286,7 +3286,7 @@ const questions = [
       { left: "1. Računar se pregreva i isključuje", right: "Proveriti rad ventilatora i ocistiti" },
 	  { left: "2. Glasni i neobični zvuci kliktanja dolaze iz kućišta", right: "Proveriti da li ima stranih tela u ventilatorima i da li hard diskovi možda otkazuju" },
 	  { left: "3. Napajanje računara je postavljeno ali se računar uporno gasi", right: "Multimetrom testirati napajanje" },
-	  { left: "4. Nedavno instalirani memorijski modul se ne vidi", right: "Glasni i neobični zvuci kliktanja dolaze iz kućišta" }
+	  { left: "4. Nedavno instalirani memorijski modul se ne vidi", right: "Proveriti da li je modul ispravno postavljen." }
     ],
     correct: [],
     explanation: "Dijagnostika po simptomima: nema struje → napajanje/kabl. Nema slike → GPU/kabl monitora. Pregrevanje → hlađenje. Boot greška → BIOS/disk. Zamrzavanje → RAM test. Konkretni parovi zavise od tabele na slici u priručniku.",
@@ -3361,7 +3361,7 @@ const questions = [
   ],
   correct: [],
   explanation: "U blok šemi broj 1 predstavlja severni most, broj 2 južni most, broj 3 procesor koji obavlja operacije korišćenjem instrukcija, a broj 4 operativnu memoriju. Matična ploča nije posebno prikazana u šemi pa je odgovor X.",
-  image: ""
+  image: "slike/47.png"
 },
 
   // ── 48 (Hardver – matching) ─────────────────────────────────────
