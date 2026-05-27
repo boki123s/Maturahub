@@ -2247,8 +2247,8 @@ const questions = [
       "Instalaciju nove mrežne kartice u slobodan PCIE slot na ploči",
       "Instalaciju bežične mrežne kartice i nabavku bežičnog rutera"
     ],
-    correct: 2,
-    explanation: "Dodavanje PCIe mrežne kartice je najjeftinije i najbrže rešenje — ne menja se ništa drugo, a integrisana može biti onemogućena u BIOS-u.",
+    correct: 3,
+    explanation: "Tako kaze zbirka...",
     image: ""
   },
 
@@ -2405,7 +2405,7 @@ const questions = [
       "Iskoristiti opciju 'Use the last known good configuration' pri podizanju"
     ],
     correct: [0, 2],
-    explanation: "BOOTMGR is missing znači da je boot manager oštećen ili nedostaje. Rešenje: Windows Recovery Environment (može obnoviti BOOTMGR) i bootrec /fixboot koji popravlja boot sektor.",
+    explanation: "BOOTMGR is missing znači da je boot manager oštećen ili nedostaje. Rešenje: Windows Recovery Environment (može obnoviti BOOTMGR) i chkdsk /F /R koji popravlja boot disk??.",
     image: ""
   },
 
@@ -3588,7 +3588,7 @@ const questions = [
       "razmak (jedan klik na SPACE taster na tastaturi), nakon toga"
     ],
     correct: 3,
-    explanation: "Ispravno pravilo: bez razmaka između reči i otvorene zagrade, razmak posle zatvorene zagrade, bez razmaka pre zareza.",
+    explanation: "Ispravno pravilo: razmak između reči i otvorene zagrade, razmak posle zatvorene zagrade, bez razmaka pre zareza.",
     image: ""
   },
 
@@ -3904,7 +3904,7 @@ const questions = [
     ],
     correct: [],
     explanation: "Puna debela (1): vidljive konture; Puna tanka (2): kotiranje i šrafure; Isprekidana (3): skrivene ivice; Crta-tačka (4): ose simetrije.",
-    image: "slike/242.png"
+    image: ""
   },
 
   // ── 243 (id 243, originalno 242 – Dokumentacija – matching) ──────────────────────────────
