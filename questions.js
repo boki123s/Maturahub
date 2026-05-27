@@ -432,7 +432,7 @@ const questions = [
       "8 GB DDR3L-SDRAM 1600 MHz",
       "8 GB DDR4-SDRAM 2133 MHz"
     ],
-    correct: 2,
+    correct: 4,
     explanation: "DDR4-SDRAM 2133 MHz je optimalan izbor — logicno bi bilo da izaberemo ovaj od 2400 MHz, ali sistemska magistrala nije dovoljno brza. To racunamo ovako: f(frekvencija)=1/T(period), nama je period 0,469 * 10^9 (jer su nanosekunde), racunicom u kalkulatoru dobijamo da je to 2.13GHz",
     image: "slike/27.png"
   },
