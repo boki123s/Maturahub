@@ -522,7 +522,7 @@ const questions = [
   {
     id: 33,
     category: "hardver",
-    type: "multiple",
+    type: "multi",
     question: "33. Laptop se isključio bez struje, ostao bez ikakvih indikatora napajanja. Korisnik nije proverio da li se baterija puni. Postupak otkrivanja uzroka problema započinjete:",
     answers: [
       "Prijavom problema nadležnom servisu",
@@ -530,8 +530,8 @@ const questions = [
       "Pretpostavkom da je otkazao punjač baterije",
       "Priključenjem punjača drugog laptopa"
     ],
-    correct: 3,
-    explanation: "Priključivanjem punjača drugog laptopa brzo se proverava da li je problem u punjaču ili u bateriji/laptopa — to je najbrži dijagnostički korak.",
+  correct: [3, 4],
+    explanation: "Priključivanjem punjača drugog laptopa brzo se proverava da li je problem u punjaču ili u bateriji/laptopa — to je najbrži dijagnostički korak, ALI TO MORAMO PRVO  DA PRETPOSTAVIMO, ZATO OBAA!!!",
     image: ""
   },
 
@@ -817,7 +817,7 @@ const questions = [
       "Uradimo defragmentaciju hard diska"
     ],
     correct: 2,
-    explanation: "Alati poput chkdsk ili Check Disk detektuju loše sektore i označavaju ih kao neupotrebljive kako OS ne bi pokušavao da ih koristi.",
+    explanation: "Foramtiranjem je tacn odgovor, ZAPAMTI!!!",
     image: ""
   },
 
@@ -927,7 +927,7 @@ const questions = [
       "Ako premaši 450MB korisnik neće moći na dalje da snima nove fajlove"
     ],
     correct: 1,
-    explanation: "Tvrda kvota (hard limit) od 450MB znači da korisnik ne može snimati nove fajlove kada prekorači taj limit. Na 400MB sistem beleži upozorenje ali korisnik još uvek može pisati.",
+    explanation: "Tvrda kvota (hard limit) od 450MB znači da korisnik ne može snimati nove fajlove kada prekorači taj limit. Na 400MB sistem beleži upozorenje ali korisnik još uvek može pisati. OVO PITANJE TEHNICKI IMA 2 ODGOVORA, ALI ZAPAMTITI OVO:  ZA KORISNIKA ZNACI: znaci korisnik vidi obavestenje i to je to za njega, nista mu ne znaci da ne moze vise nista da pise na disk !!! to je samo moja logika!",
     image: "slike/70.png"
   },
 
@@ -1056,7 +1056,7 @@ const questions = [
       "Diskmgmt.mcs"
     ],
     correct: 1,
-    explanation: "Tačna komanda je diskmgmt.msc — pokretanjem u Run (Win+R) otvara se grafički alat za upravljanje diskovima i particijama.",
+    explanation: "Tačna komanda je diskmgmt.msc — pokretanjem u Run (Win+R) otvara se grafički alat za upravljanje diskovima i particijama. **** Zasto msc a ne mcs -- Microsoft Saved Console je skracenica za .MSC",
     image: ""
   },
 
@@ -3430,8 +3430,8 @@ const questions = [
     type: "matching",
     question: "51. Na slici je blok šema matične ploče. Poveži svaki element matične ploče sa brojem sa slike:",
     pairs: [
+	  { left: "Procesor",   right: "2" },
       { left: "PCI slot",   right: "1" },
-      { left: "Procesor",   right: "2" },
       { left: "AGP slot",   right: "3" }
     ],
     correct: [],
