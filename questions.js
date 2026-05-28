@@ -2102,8 +2102,8 @@ const questions = [
       "Napraviti USB disk za oporavak",
       "Napraviti potpunu rezervnu kopiju sistema računara"
     ],
-    correct: 3,
-    explanation: "Potpuna rezervna kopija (full backup / system image) jedina garantuje potpun oporavak — uključuje OS, aplikacije i sve korisničke podatke.",
+    correct: 2,
+    explanation: "Ovako je najjednostavnije ig.",
     image: ""
   },
 
@@ -2910,7 +2910,7 @@ const questions = [
     id: 139,
     category: "os",
     type: "input",
-    question: "139. Na računar su priključena dva diska. Na Disk0 (20GB) kreiran je Spanned volumen P koji koristi 10GB sa Disk0 i sav prostor sa Disk1 (koji ima takođe 10GB slobodnog prostora). Kapacitet volumena P vidljiv korisniku je __________ GB.",
+    question: "Na računar su priključeni diskovi i kreirani volumeni kako je prikazanao na slici. Kapacitet volumena P vidljiv korisniku je: _____ GB",
     correct: ["10", "10GB", "10 GB"],
     explanation: "Spanned volumen spaja nealokovani prostor sa više diskova u jedan logički volumen. 10GB (Disk0) + 10GB (Disk1) = 20GB ukupno vidljivo korisniku.",
     image: "slike/139.png"
