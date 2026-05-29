@@ -942,6 +942,7 @@ questionCategory.innerText = categoryNames[q.category] || "";
           const div = document.createElement("div");
           div.className = "answer";
           div.innerText = item.text;
+          div.dataset.origIdx = item.origIdx;
           var origIdx = item.origIdx;
           div.onclick = function() {
             if (answered) return;
@@ -960,6 +961,7 @@ questionCategory.innerText = categoryNames[q.category] || "";
         answersWithIdx.forEach(function(item) {
           const div = document.createElement("div");
           div.className = "answer";
+          div.dataset.origIdx = item.origIdx;
 
           const box = document.createElement("span");
           box.className = "answer-checkbox";
@@ -1078,10 +1080,11 @@ questionCategory.innerText = categoryNames[q.category] || "";
       // ── multiple ──────────────────────────────────────────────────
       if (q.type === "multiple") {
         const els = document.querySelectorAll(".answer");
-        els.forEach(function(el, index) {
+        els.forEach(function(el) {
           el.style.cursor = "default";
-          if (index === q.correct) el.classList.add("correct");
-          if (index === selectedAnswer && selectedAnswer !== q.correct) el.classList.add("wrong");
+          var origIdx = parseInt(el.dataset.origIdx);
+          if (origIdx === q.correct) el.classList.add("correct");
+          if (origIdx === selectedAnswer && selectedAnswer !== q.correct) el.classList.add("wrong");
         });
 
         isCorrect = (selectedAnswer === q.correct);
@@ -1094,10 +1097,11 @@ questionCategory.innerText = categoryNames[q.category] || "";
         const correctSet = new Set(q.correct || []);
         const els        = document.querySelectorAll(".answer");
 
-        els.forEach(function(el, index) {
+        els.forEach(function(el) {
           el.style.cursor = "default";
-          const userChecked = selectedAnswers.has(index);
-          const isRight     = correctSet.has(index);
+          var origIdx   = parseInt(el.dataset.origIdx);
+          const userChecked = selectedAnswers.has(origIdx);
+          const isRight     = correctSet.has(origIdx);
 
           if (isRight) {
             el.classList.remove("checked", "wrong");
