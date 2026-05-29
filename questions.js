@@ -2912,7 +2912,7 @@ const questions = [
     type: "input",
     question: "Na računar su priključeni diskovi i kreirani volumeni kako je prikazanao na slici. Kapacitet volumena P vidljiv korisniku je: _____ GB",
     correct: ["10", "10GB", "10 GB"],
-    explanation: "Spanned volumen spaja nealokovani prostor sa više diskova u jedan logički volumen. 10GB (Disk0) + 10GB (Disk1) = 20GB ukupno vidljivo korisniku.",
+    explanation: "Spanned (ili striped nmp) volumen znaci da je na 2 diska kao sto vidimo na slici, i od svakog oduzima 5GB, znaci 5+5=10GB",
     image: "slike/139.png"
   },
   
