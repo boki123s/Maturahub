@@ -2751,7 +2751,7 @@ const questions = [
     id: 105,
     category: "os",
     type: "multiple",
-    question: "105. Na računar su priključena tri diska i korisnik vidi particije. Svaki disk ima jedan volumen koji zauzima ceo disk (Disk1=6GB, Disk2=6GB, Disk3=6GB) i kreiran je Striped volumen koji koristi sve tri. Veličine particija na diskovima su:",
+    question: "105. Na računar priključeni su diskovi i korisniku su vidljive particije kako je prikazanao na slikama. Velicine particija na diskovima su:",
     answers: [
       "na Disk1 2GB, na Disk2 2GB, na Disk3 2GB",
       "na Disk1 3GB, na Disk2 3GB, na Disk3 3GB",
