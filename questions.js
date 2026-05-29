@@ -530,7 +530,7 @@ const questions = [
       "Pretpostavkom da je otkazao punjač baterije",
       "Priključenjem punjača drugog laptopa"
     ],
-  correct: [3, 4],
+  correct: [2, 3],
     explanation: "Priključivanjem punjača drugog laptopa brzo se proverava da li je problem u punjaču ili u bateriji/laptopa — to je najbrži dijagnostički korak, ALI TO MORAMO PRVO  DA PRETPOSTAVIMO, ZATO OBAA!!!",
     image: ""
   },
@@ -3632,7 +3632,7 @@ const questions = [
     type: "multiple",
     question: "226. Veličina objekta prikazanog na slici u prirodi je 14,5m x 10m. Objekat treba nacrtati u razmeri 1:50. Potrebno je odabrati sledeću dimenziju papira:",
     answers: [
-      "A3 420x297mm – okvir crteža i kotiranje",
+      "A3 420x297mm",
       "A4 297x210mm",
       "A5 210x148mm",
       "B5 250x176mm"
