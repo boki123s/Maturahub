@@ -3862,10 +3862,10 @@ const questions = [
     type: "matching",
     question: "240. Na slici su brojevima označeni delovi tehničkog crteža. Na linijama pored naziva delova tehničkog crteža upiši broj elementa sa slike koji predstavlja.",
     pairs: [
-      { left: "Deo crteža koji označava stvarnu izmerenu veličinu objekta ispisanu iznad kotne linije", right: "Kotni broj" },
-      { left: "Deo crteža koji pokazuje smer i kraj kotne linije", right: "Strelica" },
-      { left: "Linija koja spaja strelice i iznad koje se upisuje kotni broj", right: "Kotna linija" },
-      { left: "Linija koja polazi od ivice objekta i na kojoj završava kotna linija sa strelicom", right: "Pomoćna kotna linija" }
+      { left: "Kotni broj", right: "4" },
+      { left: "Strelica", right: "3" },
+      { left: "Kotna linija", right: "2" },
+      { left: "Pomocna kotna linija", right: "1" }
     ],
     correct: [],
     explanation: "Kotni broj (4) – vrednost mere; Strelica (3) – kraj kotne linije; Kotna linija (2) – nosi kotni broj; Pomoćna kotna linija (1) – polazi od ivice objekta.",
@@ -3879,11 +3879,11 @@ const questions = [
     type: "matching",
     question: "241. U tabeli su pojedinačno označeni brojevima formati papira, a na desnoj strani su date dimenzije papira u milimetrima. Na liniji pored dimenzije papira upisati broj odgovarajućeg formata papira iz tabele.",
     pairs: [
-      { left: "Format papira A0 (broj 5 u tabeli) – najveći standardni format", right: "841 x 1188" },
-      { left: "Format papira A3 (broj 2 u tabeli) – dvostruko veći od A4", right: "297 x 420" },
-      { left: "Format papira A1 (broj 4 u tabeli) – dvostruko veći od A2", right: "594 x 840" },
-      { left: "Format papira A2 (broj 3 u tabeli) – dvostruko veći od A3", right: "420 x 594" },
-      { left: "Format papira A4 (broj 1 u tabeli) – najčešće korišćen format", right: "210 x 297" }
+      { left: "Format papira A0", right: "841 x 1188" },
+      { left: "Format papira A3", right: "297 x 420" },
+      { left: "Format papira A1", right: "594 x 840" },
+      { left: "Format papira A2", right: "420 x 594" },
+      { left: "Format papira A4", right: "210 x 297" }
     ],
     correct: [],
     explanation: "ISO 216 standard: A4=210×297, A3=297×420, A2=420×594, A1=594×840, A0=841×1188. Svaki veći format je dvostruko veći od prethodnog.",
@@ -3897,10 +3897,10 @@ const questions = [
     type: "matching",
     question: "242. U tabeli su pojedinačno označeni brojevima vrste linija, a na desnoj strani su date njihove namene. Na liniji pored namene upisati broj odgovarajuće vrste linije iz tabele.",
     pairs: [
-      { left: "Puna debela linija (1) – najdeblji tip linije na tehničkom crtežu", right: "Konture i nezaključene ivice" },
-      { left: "Puna tanka linija (2) – tanja varijanta pune linije", right: "Kotne i pomoćne linije, pokazne linije, linije šrafure i konture zaokrenutig preseka" },
-      { left: "Isprekidana tanka linija (3) – linija sastavljena od crtica", right: "Crtanje zaključenih kontura i ivica" },
-      { left: "Crta-tačka-crta, tanka (4) – naizmenično crtica i tačka", right: "Osne linije, simetrale i putanje" }
+      { left: "Puna debela linija", right: "Konture i nezaključene ivice" },
+      { left: "Puna tanka linija", right: "Kotne i pomoćne linije, pokazne linije, linije šrafure i konture zaokrenutig preseka" },
+      { left: "Isprekidana tanka linija", right: "Crtanje zaključenih kontura i ivica" },
+      { left: "Crta-tačka-crta, tanka", right: "Osne linije, simetrale i putanje" }
     ],
     correct: [],
     explanation: "Puna debela (1): vidljive konture; Puna tanka (2): kotiranje i šrafure; Isprekidana (3): skrivene ivice; Crta-tačka (4): ose simetrije.",
@@ -3946,9 +3946,9 @@ const questions = [
     type: "matching",
     question: "245. U tabeli su pojedinačno označeni brojevima simboli električnih komponenti, a na desnoj strani su dati nazivi komponenti napajanja. Na liniji pored naziva električne komponente upisati broj odgovarajućeg simbola.",
     pairs: [
-      { left: "Simbol broj 2 – izvor sa oznakama + i – polariteta", right: "DC napajanje" },
-      { left: "Simbol broj 1 – više spojenih ćelija sa kratkim i dugim linijama", right: "Baterija" },
-      { left: "Simbol broj 3 – izvor sa oznakom talasne linije (~)", right: "AC napajanje" }
+      { left: "Simbol broj 2", right: "DC napajanje" },
+      { left: "Simbol broj 1", right: "Baterija" },
+      { left: "Simbol broj 3", right: "AC napajanje" }
     ],
     correct: [],
     explanation: "Baterija (1): serija kratkih i dugih linija; DC napajanje (2): + i – oznake; AC napajanje (3): talasna linija (~).",
@@ -3962,11 +3962,11 @@ const questions = [
     type: "matching",
     question: "246. Poređati korake za automatsko kreiranje sadržaja dokumenta u Word-u hronološkim redosledom.",
     pairs: [
-      { left: "Korak koji se radi prvi – pre svega ostalog u dokumentu", right: "Označavanje brojeva stranica" },
-      { left: "Korak koji se radi drugi – priprema strukture dokumenta", right: "Izbor i formatiranje naslova i podnaslova" },
-      { left: "Korak koji se radi treći – pozicioniranje u dokumentu", right: "Postavljanje pokazivača na mesto gde se predviđa sadržaj" },
-      { left: "Korak koji se radi četvrti – pristup funkciji u meniju", right: "Unutar References izabrati Table of Contents" },
-      { left: "Korak koji se radi peti – završna podešavanja prikaza", right: "Izbor formata za prikazivanje sadržaja" }
+      { left: "Korak koji se radi prvi", right: "Označavanje brojeva stranica" },
+      { left: "Korak koji se radi drugi", right: "Izbor i formatiranje naslova i podnaslova" },
+      { left: "Korak koji se radi treći", right: "Postavljanje pokazivača na mesto gde se predviđa sadržaj" },
+      { left: "Korak koji se radi četvrti", right: "Unutar References izabrati Table of Contents" },
+      { left: "Korak koji se radi peti", right: "Izbor formata za prikazivanje sadržaja" }
     ],
     correct: [],
     explanation: "Redosled: 1) označiti stranice, 2) formatirati naslove, 3) postaviti kursor, 4) References → Table of Contents, 5) izabrati format.",
@@ -3974,22 +3974,22 @@ const questions = [
   },
 
   // ── 247 (id 247, originalno 246 – Dokumentacija – matching) ──────────────────────────────
-  {
+ {
     id: 247,
     category: "dokumentacija",
     type: "matching",
     question: "247. U tehničkoj dokumentaciji projekti su označeni rednim brojem i obavezno složeni u svesci prema utvrđenom redosledu. Potrebno je navesti tačan redosled projekata u svesci.",
     pairs: [
-      { left: "Projekat koji dolazi na mesto 9", right: "Spoljno uređenje sa sinhron-planom instalacija i priključaka, pejzažna arhitektura i hortikultura" },
-      { left: "Projekat koji dolazi na mesto 1", right: "Arhitektura" },
-      { left: "Projekat koji dolazi na mesto 2 ", right: "Konstrukcija i drugi građevinski projekti" },
-      { left: "Projekat koji dolazi na mesto 10", right: "Pripremni radovi (rušenje, zemljani radovi, obezbeđenje temeljne jame)" },
-      { left: "Projekat koji dolazi na mesto 3", right: "Hidrotehničke instalacije" },
-      { left: "Projekat koji dolazi na mesto 5", right: "Telekomunikacione i signalne instalacije" },
-      { left: "Projekat koji dolazi na mesto 4", right: "Elektroenergetske instalacije" },
-      { left: "Projekat koji dolazi na mesto 6", right: "Mašinske instalacije" },
-      { left: "Projekat koji dolazi na mesto 8", right: "Saobraćaj i saobraćajna signalizacija" },
-      { left: "Projekat koji dolazi na mesto 7", right: "Tehnologija" }
+      { left: "Spoljno uređenje sa sinhron-planom instalacija i priključaka, pejzažna arhitektura i hortikultura", right: "9" },
+      { left: "Arhitektura", right: "1" },
+      { left: "Konstrukcija i drugi građevinski projekti", right: "2" },
+      { left: "Pripremni radovi (rušenje, zemljani radovi, obezbeđenje temeljne jame)", right: "10" },
+      { left: "Hidrotehničke instalacije", right: "3" },
+      { left: "Telekomunikacione i signalne instalacije", right: "5" },
+      { left: "Elektroenergetske instalacije", right: "4" },
+      { left: "Mašinske instalacije", right: "6" },
+      { left: "Saobraćaj i saobraćajna signalizacija", right: "8" },
+      { left: "Tehnologija", right: "7" }
     ],
     correct: [],
     explanation: "Zakonski propisani redosled: 1-Arhitektura, 2-Konstrukcija, 3-Hidro, 4-Elektro, 5-Telekomunikacije, 6-Mašinske, 7-Tehnologija, 8-Saobraćaj, 9-Spoljno uređenje, 10-Pripremni radovi.",
@@ -3997,17 +3997,17 @@ const questions = [
   },
 
   // ── 248 (id 248, originalno 247 – Dokumentacija – matching) ──────────────────────────────
-  {
+{
     id: 248,
     category: "dokumentacija",
     type: "matching",
     question: "248. Pri izradi projekta delovi projekta rade se tačnim redosledom. Potrebno je navesti redosled izrade pojedinih delova projekta.",
     pairs: [
+      { left: "Deo projekta koji se izrađuje prvi po redu", right: "Generalni projekat" },
+      { left: "Deo projekta koji se izrađuje drugi po redu", right: "Idejno rešenje" },
       { left: "Deo projekta koji se izrađuje treći po redu", right: "Idejni projekat" },
       { left: "Deo projekta koji se izrađuje četvrti po redu", right: "Projekat za građevinsku dozvolu" },
-      { left: "Deo projekta koji se izrađuje drugi po redu", right: "Idejno rešenje" },
       { left: "Deo projekta koji se izrađuje peti po redu", right: "Projekat za izvođenje" },
-      { left: "Deo projekta koji se izrađuje prvi po redu", right: "Generalni projekat" },
       { left: "Deo projekta koji se izrađuje šesti po redu", right: "Projekat izvedenog stanja" }
     ],
     correct: [],
@@ -4076,13 +4076,13 @@ const questions = [
     type: "matching",
     question: "252. U programu za crtanje nacrtan je model sistema sa mikroračunarem. Ovaj crtež treba prebaciti u Word dokument kao sliku. Napisati redosled koraka da se to uradi.",
     pairs: [
-      { left: "Korak koji se radi sedmi – poslednji korak, ubacivanje u dokument", right: "Insertovati snimljenu sliku u Word dokument" },
-      { left: "Korak koji se radi drugi – otvaranje programa za obradu slike", right: "Startovati program Paint" },
-      { left: "Korak koji se radi četvrti – izbor dela slike koji je potreban", right: "Selektovati deo slike u Paint-u" },
-      { left: "Korak koji se radi treći – lepljenje screenshot-a u Paint", right: "Pritisnuti CTRL+V na tastaturi" },
-      { left: "Korak koji se radi peti – isecanje selektovanog dela", right: "Crop selektovanog dela slike u Paint-u" },
-      { left: "Korak koji se radi prvi – snimanje ekrana sa crtežom", right: "Print screen nacrtanog modela sistema sa mikroračunarem" },
-      { left: "Korak koji se radi šesti – čuvanje obrađene slike na disk", right: "Snimiti obrađenu sliku u Paint-u" }
+      { left: "Korak koji se radi sedmi", right: "Insertovati snimljenu sliku u Word dokument" },
+      { left: "Korak koji se radi drugi", right: "Startovati program Paint" },
+      { left: "Korak koji se radi četvrti", right: "Selektovati deo slike u Paint-u" },
+      { left: "Korak koji se radi treći", right: "Pritisnuti CTRL+V na tastaturi" },
+      { left: "Korak koji se radi peti", right: "Crop selektovanog dela slike u Paint-u" },
+      { left: "Korak koji se radi prvi", right: "Print screen nacrtanog modela sistema sa mikroračunarem" },
+      { left: "Korak koji se radi šesti", right: "Snimiti obrađenu sliku u Paint-u" }
     ],
     correct: [],
     explanation: "Redosled: 1-Print Screen, 2-Paint, 3-CTRL+V, 4-Selektovati, 5-Crop, 6-Snimiti, 7-Insertovati u Word.",
