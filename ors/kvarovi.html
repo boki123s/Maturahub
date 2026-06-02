@@ -745,13 +745,26 @@ let answered = 0;
 // ============================================================
 // LOAD
 // ============================================================
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function shuffleOptions(q) {
+  return { ...q, options: shuffleArray(q.options) };
+}
+
 function loadTask(key) {
   document.querySelectorAll('.task-btn').forEach(b => {
     b.classList.toggle('active', b.textContent.trim() === key);
   });
   mode = 'task';
   currentTaskKey = key;
-  questions = TASKS[key].questions.map(q => ({ ...q, taskKey: key }));
+  questions = TASKS[key].questions.map(q => shuffleOptions({ ...q, taskKey: key }));
   init();
   render();
 }
@@ -768,7 +781,7 @@ function loadRandom() {
     const j = Math.floor(Math.random() * (i + 1));
     [pool[i], pool[j]] = [pool[j], pool[i]];
   }
-  questions = pool.slice(0, 10);
+  questions = pool.slice(0, 10).map(shuffleOptions);
   init();
   render();
 }
@@ -906,7 +919,7 @@ function submit(qid) {
     const next = questions.find(q => !done[q.id]);
     if (next) {
       const el = document.getElementById(`qb_${next.id}`);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, 350);
 }
