@@ -4505,7 +4505,28 @@ const TASK_REQUIREMENTS = [
   </ul>
   <p style="margin-bottom:8px;">Instalirati neki od programa za obradu video sadržaja i prikačiti ga u <strong>Taskbar</strong>. Podesiti da se svaki fajl sa ekstenzijom <strong>.wmv</strong> ili <strong>.avi</strong> automatski otvara u ovom programu.</p>
   <p style="margin-bottom:8px;">Obezbediti da se svakog petka u 16:00 pravi rezervna kopija direktorijuma <strong>C:\\Projekti</strong>. Rezervnu kopiju podataka smestiti na lokalni D disk.</p>
-  <p>Popuniti obrazac dokumentacije o stanju opreme za računar na kome se dodaje monitor.</p>`
+  <p>Popuniti obrazac dokumentacije o stanju opreme za računar na kome se dodaje monitor.</p>`,
+
+  // A17 - Mrežni administratori
+  `<p style="margin-bottom:10px;font-weight:600;color:var(--text);">Prilog zadatka – A17</p>
+  <p style="margin-bottom:8px;">Kreirati dva standardna korisnička naloga sa korisničkim imenima <strong><em>Nikola</em></strong> i <strong><em>Jelena</em></strong>. Korisnički nalog <strong><em>Nikola</em></strong> ima lozinku <strong><em>K0risnik01</em></strong>, a korisnički nalog <strong><em>Jelena</em></strong> lozinku <strong><em>L0zinka10</em></strong>. Ni jedan od korisnika ne može da menja svoju lozinku.</p>
+  <p style="margin-bottom:8px;">Na korisničkom nalogu <strong><em>Nikola</em></strong> instalirati neki od Internet pretraživača i postaviti prečicu na radnoj površini. Podesiti pretraživač tako da se blokiraju iskačući prozori, da podrazumevana stranica bude <strong>www.nbs.rs</strong>, a <strong>C:\\Sa_neta</strong> bude podrazumevana lokacija za preuzimanje sadržaja.</p>
+  <p style="margin-bottom:8px;">Podesiti radno okruženje ovog naloga tako da ikone na radnoj površini budu postavljene na podjednakoj udaljenosti jedna od druge kao da obrazuju mrežu, da slika na radnoj površini bude slika koja je data u prilogu i da se automatski uključi zaštita ekrana posle 7 minuta neaktivnosti. Kao zaštitu ekrana postaviti plutajuću reč <strong><em>Windows</em></strong>.</p>
+  <p style="margin-bottom:8px;">Osim što su krerani korisnički nalozi, da bi se poboljšala bezbednost sistema, kreirati na korisničkoj particiji dva direktorijuma <strong>NikolaDokumenti</strong> i <strong>JelenaDokumenti</strong> na koje će se zaposleni postavljati svoje izveštaje. Direktorijum <strong>NikolaDokumenti</strong> biće matični direktorijum za korisnički nalog <strong>Nikola</strong> i korisniku sa korisničkim imenom <strong>Jelena</strong> biće zabranjeno da mu pristupi. Direktorijum <strong>JelenaDokumenti</strong> biće matični direktorijum za korisnički nalog <strong>Jelena</strong>, i korisniku sa korisničkim imenom <strong>Nikola</strong> biće zabranjeno da mu pristupi. Već postojeći korisnički nalog sa korisničkim imenom <strong>direktor</strong> ima prava da i jednom i drugom direktorijumu pristupi, ali samo da bi pregledao dokumente.</p>
+  <p style="margin-bottom:8px;">Koristeći grupne polise nadograditi sistem tako da se:</p>
+  <ul style="margin-left:16px;margin-bottom:8px;">
+    <li>zabrani promena pozadinske slike,</li>
+    <li>ukloni stavka <strong><em>User Accounts</em></strong> iz <strong><em>Control Panel</em></strong>-a i</li>
+    <li>onemoguće korišćenje prenosnih uređaja.</li>
+  </ul>
+  <p style="margin-bottom:8px;">Demonstrirati kako se koristi <strong><em>Task Manager</em></strong>:</p>
+  <ul style="margin-left:16px;margin-bottom:8px;">
+    <li>za dobijanje popisa svih pokrenutil programa, aplikacija, servisa i pozadinskih procesa na računaru,</li>
+    <li>za dobijanje informacija koliko hardverskih resursa računara koriste induvidualni programi,</li>
+    <li>za pregled zauzeća glavnih hardverskih komponenti (procesora, <em>RAM</em> memorije i hard diska) i</li>
+    <li>za prisilno zatvaranje nekog od pokrenutil programa/servisa/aplikacija.</li>
+  </ul>
+  <p>Obezbediti da se svakog ponedeljka u 08.00 pravi rezervna kopija direktorijuma <strong><em>Jelena</em></strong>, na direktorijum <strong>C:\\Izvestaji2</strong> lokalnog računara.</p>`
 ];
 
 function renderTaskRequirements(idx) {
@@ -4514,14 +4535,296 @@ function renderTaskRequirements(idx) {
 }
 
 // ============================================================
+// MOBILE UI
+// ============================================================
+function initMobile() {
+  // Override global CSS that locks scroll
+  document.documentElement.style.cssText = 'height:auto;overflow:auto;';
+  document.body.style.cssText = 'height:auto;overflow:auto;overflow-x:hidden;display:block;';
+  document.body.innerHTML = `
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;500;600;700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { height: auto !important; overflow: auto !important; overflow-x: hidden !important; }
+    body { font-family: 'Outfit', sans-serif; background: #0d0f14; color: #e2e8f0; min-height: 100vh; }
+
+    /* TOPBAR */
+    .m-topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: #13151c;
+      border-bottom: 1px solid #2a2f45;
+      padding: 12px 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .m-win-logo { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; width: 22px; height: 22px; flex-shrink: 0; }
+    .m-win-logo span { border-radius: 1.5px; }
+    .m-win-logo span:nth-child(1) { background: #f25022; }
+    .m-win-logo span:nth-child(2) { background: #7fba00; }
+    .m-win-logo span:nth-child(3) { background: #00a4ef; }
+    .m-win-logo span:nth-child(4) { background: #ffb900; }
+    .m-topbar-title { font-size: 14px; font-weight: 700; flex: 1; }
+    .m-topbar-sub { font-size: 10px; color: #5a6478; font-family: 'JetBrains Mono', monospace; }
+
+    /* TASK SELECT */
+    .m-task-bar {
+      background: #13151c;
+      padding: 10px 16px 12px;
+      border-bottom: 1px solid #2a2f45;
+    }
+    .m-task-bar label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #5a6478; font-family: 'JetBrains Mono', monospace; display: block; margin-bottom: 6px; }
+    .m-task-select {
+      width: 100%;
+      background: #1a1d27;
+      border: 1px solid #2a2f45;
+      color: #e2e8f0;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6478' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+    }
+
+    /* PROGRESS */
+    .m-progress {
+      background: #13151c;
+      padding: 10px 16px;
+      border-bottom: 1px solid #2a2f45;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .m-prog-bar { flex: 1; height: 4px; background: #22263a; border-radius: 2px; }
+    .m-prog-fill { height: 100%; background: #22c55e; border-radius: 2px; transition: width 0.4s; }
+    .m-prog-text { font-size: 11px; color: #5a6478; font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+
+    /* ZAHTEV TOGGLE */
+    .m-req-toggle {
+      margin: 12px 16px 0;
+      background: #1a1d27;
+      border: 1px solid #2a2f45;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .m-req-toggle-header {
+      padding: 12px 14px;
+      display: flex; align-items: center; gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .m-req-toggle-header span { font-size: 13px; font-weight: 600; flex: 1; }
+    .m-req-arrow { font-size: 11px; color: #5a6478; transition: transform 0.2s; }
+    .m-req-body {
+      display: none;
+      padding: 0 14px 14px;
+      font-size: 12.5px;
+      color: #8892aa;
+      line-height: 1.7;
+      border-top: 1px solid #2a2f45;
+    }
+    .m-req-body p { margin-bottom: 8px; }
+    .m-req-body ul { margin-left: 16px; margin-bottom: 8px; }
+    .m-req-body strong { color: #e2e8f0; }
+    .m-req-body em { color: #a5b4fc; }
+    .m-req-body.open { display: block; }
+    .m-req-arrow.open { transform: rotate(90deg); }
+
+    /* STEPS LIST */
+    .m-steps { padding: 12px 16px 80px; display: flex; flex-direction: column; gap: 10px; }
+
+    .m-step {
+      background: #1a1d27;
+      border: 1px solid #2a2f45;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .m-step.done { border-color: #16532a; }
+    .m-step.done .m-step-header { background: #0d2318; }
+
+    .m-step-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 13px 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .m-badge {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: #22263a; border: 1.5px solid #2a2f45;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-family: 'JetBrains Mono', monospace;
+      color: #8892aa; flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .m-badge.done { background: #22c55e; border-color: #22c55e; color: white; font-size: 13px; }
+    .m-badge.active { background: #3d7eff; border-color: #3d7eff; color: white; }
+    .m-step-title { font-size: 13.5px; font-weight: 500; flex: 1; line-height: 1.3; color: #e2e8f0; }
+    .m-step-arrow { font-size: 10px; color: #5a6478; transition: transform 0.2s; flex-shrink: 0; }
+    .m-step.active .m-step-arrow { transform: rotate(90deg); }
+
+    .m-step-body { display: none; padding: 0 14px 14px 50px; }
+    .m-step.active .m-step-body { display: block; }
+
+    .m-step-text {
+      font-size: 13px; color: #8892aa; line-height: 1.75;
+      border-top: 1px solid #2a2f45;
+      padding-top: 12px; margin-bottom: 10px;
+    }
+    .m-step-text strong { color: #e2e8f0; }
+    .m-step-text code {
+      font-family: 'JetBrains Mono', monospace;
+      background: #0d0f14; border: 1px solid #2a2f45;
+      border-radius: 4px; padding: 1px 5px; font-size: 12px;
+      color: #5b9bff;
+    }
+
+    .m-hint {
+      font-size: 11px; color: #3d7eff;
+      font-family: 'JetBrains Mono', monospace;
+      background: #0d1526; border: 1px solid #1e3a6e;
+      border-radius: 6px; padding: 8px 10px;
+      margin-bottom: 12px; line-height: 1.5;
+      word-break: break-word;
+    }
+    .m-hint::before { content: '📍 '; }
+
+    .m-done-btn {
+      width: 100%;
+      padding: 10px;
+      border-radius: 7px;
+      border: none;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s, background 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .m-done-btn.todo { background: #22c55e; color: white; }
+    .m-done-btn.undo { background: #22263a; color: #8892aa; border: 1px solid #2a2f45; }
+    .m-done-btn:active { opacity: 0.75; }
+  </style>
+
+  <div class="m-topbar">
+    <div class="m-win-logo"><span></span><span></span><span></span><span></span></div>
+    <div>
+      <div class="m-topbar-title">Win10 Vežbanje</div>
+      <div class="m-topbar-sub">VM mod — pratite korake na računaru</div>
+    </div>
+  </div>
+
+  <div class="m-task-bar">
+    <label>Izaberi zadatak</label>
+    <select class="m-task-select" id="mTaskSelect" onchange="mSelectTask(this.value)">
+      ${TASKS.map((t,i) => `<option value="${i}">${t.code}: ${t.name}</option>`).join('')}
+    </select>
+  </div>
+
+  <div class="m-progress">
+    <div class="m-prog-bar"><div class="m-prog-fill" id="mProgFill" style="width:0%"></div></div>
+    <div class="m-prog-text" id="mProgText">0 / 0 urađeno</div>
+  </div>
+
+  <div class="m-req-toggle" id="mReqToggle">
+    <div class="m-req-toggle-header" onclick="mToggleReq()">
+      <span>📋 Zahtev zadatka</span>
+      <span class="m-req-arrow open" id="mReqArrow">▶</span>
+    </div>
+    <div class="m-req-body open" id="mReqBody"></div>
+  </div>
+
+  <div class="m-steps" id="mStepsList"></div>
+  `;
+
+  // Re-apply after innerHTML wipe
+  document.documentElement.style.cssText = 'height:auto;overflow:auto;';
+  document.body.style.cssText = 'height:auto;overflow:auto;overflow-x:hidden;display:block;background:#0d0f14;';
+
+  let mCurrentTask = 0;
+  let mDone = TASKS.map(() => new Set());
+  let mActiveStep = -1;
+  let mReqOpen = true;
+
+  window.mToggleReq = function() {
+    mReqOpen = !mReqOpen;
+    document.getElementById('mReqBody').classList.toggle('open', mReqOpen);
+    document.getElementById('mReqArrow').classList.toggle('open', mReqOpen);
+  };
+
+  window.mSelectTask = function(idx) {
+    mCurrentTask = parseInt(idx);
+    mActiveStep = -1;
+    mRender();
+  };
+
+  function mRender() {
+    const task = TASKS[mCurrentTask];
+    const done = mDone[mCurrentTask];
+
+    // Requirements
+    const reqEl = document.getElementById('mReqBody');
+    if (reqEl) reqEl.innerHTML = (TASK_REQUIREMENTS[mCurrentTask] || '<p>Nema zahteva.</p>');
+
+    // Progress
+    const fill = document.getElementById('mProgFill');
+    const txt = document.getElementById('mProgText');
+    if (fill) fill.style.width = (done.size / task.steps.length * 100) + '%';
+    if (txt) txt.textContent = done.size + ' / ' + task.steps.length + ' urađeno';
+
+    // Steps
+    const list = document.getElementById('mStepsList');
+    if (!list) return;
+    list.innerHTML = task.steps.map((s, i) => {
+      const isDone = done.has(i);
+      const isActive = mActiveStep === i;
+      return `
+        <div class="m-step${isDone ? ' done' : ''}${isActive ? ' active' : ''}" id="mStep${i}">
+          <div class="m-step-header" onclick="mToggleStep(${i})">
+            <div class="m-badge${isDone ? ' done' : isActive ? ' active' : ''}">${isDone ? '✓' : (i + 1)}</div>
+            <div class="m-step-title">${s.title}</div>
+            <span class="m-step-arrow">▶</span>
+          </div>
+          <div class="m-step-body">
+            <div class="m-step-text">${s.body}</div>
+            <div class="m-hint">${s.hint}</div>
+            <button class="m-done-btn ${isDone ? 'undo' : 'todo'}" onclick="mToggleDone(event, ${i})">
+              ${isDone ? '↩ Označi kao neurađeno' : '✓ Označi kao urađeno'}
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.mToggleStep = function(i) {
+    mActiveStep = mActiveStep === i ? -1 : i;
+    mRender();
+    if (mActiveStep === i) {
+      setTimeout(() => {
+        const el = document.getElementById('mStep' + i);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+  };
+
+  window.mToggleDone = function(e, i) {
+    e.stopPropagation();
+    if (mDone[mCurrentTask].has(i)) mDone[mCurrentTask].delete(i);
+    else mDone[mCurrentTask].add(i);
+    mRender();
+  };
+
+  mRender();
+}
+
+// ============================================================
 // STARTUP
 // ============================================================
 const isMobile = window.innerWidth <= 768 || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
 renderTaskRequirements(0);
 if (isMobile) {
-  // Na telefonu: direktno u VM mod bez pitanja
-  setMode(true);
-  selectTask(0);
+  initMobile();
 } else {
   // Na desktopu: prikaži modal sa izborom
   document.getElementById('welcomeModal').style.display = 'flex';

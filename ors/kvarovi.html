@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KVAROVI — MATURA KVIZ</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0d0d0f;
+    --surface:  #141417;
+    --surface2: #1c1c21;
+    --border:   #2e2e38;
+    --purple:   #a855f7;
+    --purple-dim: rgba(168,85,247,0.12);
+    --purple-border: rgba(168,85,247,0.35);
+    --text:     #efefef;
+    --muted:    #666;
+    --correct:  #4ade80;
+    --wrong:    #f87171;
+    --partial:  #fbbf24;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* subtle radial glow */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; left: 50%;
+    transform: translateX(-50%);
+    width: 700px; height: 500px;
+    background: radial-gradient(ellipse, rgba(168,85,247,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 28px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── SCORE BAR ── */
+  .score-bar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(13,13,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: none;
+  }
+  .score-bar.show { display: block; }
+  .score-inner {
+    max-width: 780px; margin: 0 auto;
+    padding: 14px 28px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .score-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 18px; font-weight: 700;
+    color: var(--purple);
+    white-space: nowrap;
+  }
+  .score-track {
+    flex: 1; height: 3px;
+    background: var(--border); overflow: hidden;
+  }
+  .score-fill {
+    height: 100%;
+    background: var(--purple);
+    transition: width 0.4s ease, background 0.4s;
+    width: 0%;
+  }
+  .score-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 2px;
+    color: var(--muted); text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .reset-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 1px;
+    padding: 7px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+  .reset-btn:hover { border-color: var(--wrong); color: var(--wrong); }
+
+  /* ── HEADER ── */
+  header {
+    padding: 56px 0 36px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 36px;
+  }
+  .header-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; letter-spacing: 4px;
+    color: var(--purple); text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: clamp(38px, 6vw, 58px);
+    font-weight: 600; letter-spacing: -1px;
+    line-height: 1.1; color: var(--text);
+  }
+  header h1 em {
+    font-style: normal; color: var(--purple);
+  }
+  .header-desc {
+    margin-top: 14px;
+    font-size: 15px; color: var(--muted);
+  }
+
+  /* ── NAV ── */
+  .nav {
+    display: flex; flex-wrap: wrap;
+    align-items: center; gap: 10px;
+    margin-bottom: 36px;
+  }
+  .nav-sep {
+    width: 1px; height: 28px;
+    background: var(--border);
+    margin: 0 4px;
+  }
+  .task-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 1px;
+    padding: 10px 22px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+  .task-btn:hover { border-color: var(--purple-border); color: var(--purple); }
+  .task-btn.active {
+    background: var(--purple-dim);
+    border-color: var(--purple);
+    color: var(--purple);
+  }
+  .random-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 1px;
+    padding: 10px 22px;
+    background: var(--purple);
+    border: 1px solid var(--purple);
+    color: #fff; cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+  .random-btn:hover { opacity: 0.85; }
+
+  /* ── TASK HEADER ── */
+  .task-header {
+    display: flex; align-items: flex-start; gap: 18px;
+    padding: 20px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--purple);
+    margin-bottom: 28px;
+  }
+  .task-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 22px; font-weight: 700;
+    color: var(--purple); letter-spacing: 1px;
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+  .task-title { font-size: 16px; font-weight: 500; }
+  .task-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  /* ── RANDOM BADGE ── */
+  .random-badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; letter-spacing: 2px;
+    color: var(--purple); text-transform: uppercase;
+    padding: 10px 18px;
+    border: 1px solid var(--purple-border);
+    background: var(--purple-dim);
+    margin-bottom: 28px;
+  }
+  .blink { animation: blink 1.4s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  /* ── QUESTION BLOCK ── */
+  .q-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+    animation: up 0.25s ease both;
+  }
+  @keyframes up { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+  .q-block.state-correct { border-color: var(--correct); }
+  .q-block.state-wrong   { border-color: var(--wrong); }
+  .q-block.state-partial { border-color: var(--partial); }
+
+  .q-head {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .q-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 2px;
+    color: var(--purple);
+    background: var(--purple-dim);
+    border: 1px solid var(--purple-border);
+    padding: 4px 9px;
+    white-space: nowrap; flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .q-text {
+    font-size: 16px; font-weight: 500;
+    color: var(--text); line-height: 1.5;
+  }
+  .q-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* ── OPTIONS ── */
+  .opts { padding: 16px 24px 4px; display: flex; flex-direction: column; gap: 8px; }
+
+  .opt {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 13px 16px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    cursor: pointer;
+    transition: border-color 0.12s, background 0.12s;
+    user-select: none;
+  }
+  .opt:hover:not(.locked) { border-color: var(--purple-border); background: var(--surface2); }
+  .opt.sel {
+    border-color: var(--purple);
+    background: var(--purple-dim);
+  }
+  .opt.locked { cursor: default; }
+  .opt.reveal-correct { border-color: var(--correct) !important; background: rgba(74,222,128,0.07) !important; }
+  .opt.reveal-wrong   { border-color: var(--wrong) !important;   background: rgba(248,113,113,0.07) !important; opacity: 0.7; }
+
+  .cb {
+    width: 20px; height: 20px; flex-shrink: 0;
+    border: 1px solid var(--border);
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    transition: all 0.12s;
+  }
+  .opt.sel .cb { background: var(--purple); border-color: var(--purple); color: #fff; }
+  .opt.reveal-correct .cb { background: var(--correct); border-color: var(--correct); color: #000; }
+  .opt.reveal-wrong   .cb { background: var(--wrong);   border-color: var(--wrong);   color: #fff; }
+
+  .opt-text { font-size: 15px; line-height: 1.5; color: var(--text); }
+
+  /* ── SUBMIT ROW ── */
+  .submit-row {
+    padding: 16px 24px 20px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .submit-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; font-weight: 700; letter-spacing: 2px;
+    padding: 11px 28px;
+    background: var(--purple);
+    border: none; color: #fff; cursor: pointer;
+    text-transform: uppercase;
+    transition: opacity 0.15s;
+  }
+  .submit-btn:hover { opacity: 0.85; }
+  .submit-btn:disabled { opacity: 0.25; cursor: default; }
+
+  .verdict {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; letter-spacing: 1px;
+    padding: 9px 15px; text-transform: uppercase;
+  }
+  .verdict.correct { background: rgba(74,222,128,0.1);  color: var(--correct); border: 1px solid var(--correct); }
+  .verdict.partial { background: rgba(251,191,36,0.1);  color: var(--partial); border: 1px solid var(--partial); }
+  .verdict.wrong   { background: rgba(248,113,113,0.1); color: var(--wrong);   border: 1px solid var(--wrong);   }
+
+  /* ── EXPLANATION ── */
+  .exp {
+    display: none;
+    margin: 0 24px 20px;
+    padding: 14px 18px;
+    border-left: 2px solid var(--purple);
+    background: var(--surface2);
+  }
+  .exp.show { display: block; }
+  .exp-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 3px; color: var(--purple);
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .exp-text { font-size: 14px; color: #bbb; line-height: 1.65; }
+
+  /* ── EMPTY ── */
+  .empty {
+    padding: 80px 0; text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px; color: var(--muted); letter-spacing: 1px;
+  }
+
+  footer {
+    padding: 40px 0 60px;
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; color: var(--muted);
+    letter-spacing: 2px; text-align: center;
+  }
+
+  @media(max-width:560px){
+    .random-btn { margin-left: 0; }
+    .nav { flex-direction: row; }
+    header h1 { font-size: 34px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SCORE BAR -->
+<div class="score-bar" id="scoreBar">
+  <div class="score-inner">
+    <span class="score-label">Skor</span>
+    <span class="score-num" id="scoreNum">0 / 0</span>
+    <div class="score-track"><div class="score-fill" id="scoreFill"></div></div>
+    <button class="reset-btn" onclick="resetAll()">RESETUJ</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header>
+    <div class="header-eyebrow">// matura prep //</div>
+    <h1>Kvarovi<br><em>Računara</em></h1>
+    <p class="header-desc">Odaberi zadatak ili pokreni nasumičnih 10 pitanja.</p>
+  </header>
+
+  <!-- NAV -->
+  <div class="nav">
+    <button class="task-btn" onclick="loadTask('A1')">A1</button>
+    <button class="task-btn" onclick="loadTask('A2')">A2</button>
+    <button class="task-btn" onclick="loadTask('A9')">A9</button>
+    <button class="task-btn" onclick="loadTask('A17')">A17</button>
+    <div class="nav-sep"></div>
+    <button class="random-btn" onclick="loadRandom()">⚡ Random 10</button>
+  </div>
+
+  <div id="quizArea">
+    <div class="empty">// Izaberi zadatak gore //</div>
+  </div>
+
+  <footer>KVAROVI RAČUNARA — MATURA KVIZ</footer>
+</div>
+
+<script>
+// ============================================================
+// DATA — pitanja su direktno koraci iz PDF-a + fake koraci
+// ============================================================
+const TASKS = {
+
+  A1: {
+    code: 'A1',
+    title: 'Računar se ne pali — nema nikakve reakcije',
+    sub: 'Nema LED-ova, nema ventilatora, ekran crn.',
+    questions: [
+      {
+        id: 'a1_1',
+        text: '1. Provera napona — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Proveriti da li ima napona u utičnici (npr. drugim uređajem ili multimetrom)', correct: true },
+          { text: 'Ako nema napona u utičnici → kvar nije u računaru nego u napajanju objekta', correct: true },
+          { text: 'Proveriti napon direktno na ATX konektoru matične ploče pre svega ostalog', correct: false },
+          { text: 'Resetovati CMOS da bi se vratio podrazumevani napon procesora', correct: false },
+        ],
+        explanation: 'Napon u utičnici proveravas nekim drugim uređajem ili multimetrom — to te odmah govori da li je problem u instalaciji objekta ili u samom računaru. ATX napon meriš tek kad sumnjаš na PSU, ne na početku.'
+      },
+      {
+        id: 'a1_2',
+        text: '2. Provera kabla za napajanje — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Vizuelno proveriti kabl (oštećenja, prelomi, zagorizavanja)', correct: true },
+          { text: 'Proveriti da li je kabl dobro ulegnut i sa strane računara i sa strane utičnice', correct: true },
+          { text: 'Izmeriti otpornost kabla multimetrom dok je pod naponom', correct: false },
+          { text: 'Zameniti kabl novim i proveriti da li radi', correct: true },
+        ],
+        explanation: 'Vizualni pregled i provera konektovanosti su standardni koraci. Zamena kabla je brz i siguran test. Meriti otpornost pod naponom je opasno i ne radi se u praksi dijagnostike.'
+      },
+      {
+        id: 'a1_3',
+        text: '3. Provera prekidača na napajanju (PSU switch) — Koji krak je ispravan?',
+        hint: 'Izaberi jedan tačan',
+        options: [
+          { text: 'Ako postoji prekidač (0/1) na zadnjoj strani PSU, proveriti da li je na poziciji 1 (uključeno)', correct: true },
+          { text: 'Ugasiti računar i ukloniti GPU pre provere PSU prekidača', correct: false },
+          { text: 'Prekidač na PSU ne utiče na paljenje — on samo prekida napajanje ventilatora', correct: false },
+          { text: 'Resetovati PSU prekidač treba uraditi pre provere kabla za napajanje', correct: false },
+        ],
+        explanation: 'PSU ima fizički I/O prekidač na zadnjoj strani kućišta. Ako je na 0 — računar se neće paliti bez obzira na sve ostalo. Provera ovoga dolazi rano u dijagnostici jer je trivijalna.'
+      },
+      {
+        id: 'a1_4',
+        text: '4. Provera konektora na matičnoj ploči — Šta se proverava?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'ATX 24-pin konektor (glavni naponski konektor matične ploče)', correct: true },
+          { text: 'CPU naponski konektor (4-pin ili 8-pin blizu procesora)', correct: true },
+          { text: 'Power Switch kabl koji ide od prednjeg panela kućišta', correct: true },
+          { text: 'SATA data konektor hard diska', correct: false },
+          { text: 'USB 3.0 header konektor prednjeg panela', correct: false },
+        ],
+        explanation: 'Za samo paljenje računara bitna su tri konektora: ATX 24-pin (napaja matičnu), CPU 4/8-pin (napaja procesor) i Power Switch kabl (signal za uključivanje). SATA data i USB header su bitni za rad sistema ali ne sprečavaju paljenje.'
+      },
+      {
+        id: 'a1_5',
+        text: '5. Provera dugmeta za uključivanje — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Proveriti da li dugme fizički reaguje (klik)', correct: true },
+          { text: 'Proveriti konekciju Power Switch kabla na header pinovima matične ploče', correct: true },
+          { text: 'Kratko spojiti Power Switch pinove na matičnoj ravnim predmetom (test bez dugmeta)', correct: true },
+          { text: 'Proveriti da li je dugme ispravno u BIOS-u pod "Boot Options"', correct: false },
+          { text: 'Zameniti dugme novim pre provere konektora', correct: false },
+        ],
+        explanation: 'Power dugme se testira tako što se kratko spoje PS_ON pinovi na matičnoj direktno — to zaobiđe dugme i kabl. BIOS nema postavku za power dugme.'
+      },
+      {
+        id: 'a1_6',
+        text: '6. Provera napajanja (PSU) — Koji pristup je ispravan?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Testirati PSU zamenom sa poznatim ispravnim napajanjem', correct: true },
+          { text: 'Koristiti PSU tester za proveru izlaznih napona', correct: true },
+          { text: 'Paperclip testom (premostiti PS_ON i GND) proveriti da li PSU uopšte daje struju', correct: true },
+          { text: 'Ako PSU ne daje znake života uz ispravan kabl i utičnicu → PSU je neispravan', correct: true },
+          { text: 'Izmeriti napon na ATX konektoru dok je PSU priključen na matičnu ali ne i na struju', correct: false },
+        ],
+        explanation: 'PSU se testira zamenom, testerom ili paperclip testom. Meriti napon bez struje nema smisla — PSU mora biti priključen na mrežu da bi dao napon. Paperclip test: premostiš pin 16 (zeleni, PS_ON) i bilo koji crni (GND) na 24-pin konektoru.'
+      },
+      {
+        id: 'a1_7',
+        text: '7. Zaključak — Koji je najčešći uzrok i ispravan redosled dijagnostike?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Redosled: napon → kabl → prekidač PSU → konektori → dugme → PSU → matična ploča', correct: true },
+          { text: 'Najčešći uzrok je neispravno napajanje (PSU), ređe matična ploča', correct: true },
+          { text: 'Matična ploča je statistički najčešći uzrok potpunog odsustva reakcije', correct: false },
+          { text: 'Dijagnostiku treba početi od matične ploče jer je ona centralna komponenta', correct: false },
+        ],
+        explanation: 'Uvek od jednostavnog ka skupom i komplikovanom. PSU je daleko češći krivac od matične ploče. Matičnu zamenjuješ tek kad si isključio sve ostalo.'
+      },
+    ]
+  },
+
+  A2: {
+    code: 'A2',
+    title: 'Računar se nasumično gasi tokom rada',
+    sub: 'Spontana gašenja bez upozorenja, bez BSOD-a.',
+    questions: [
+      {
+        id: 'a2_1',
+        text: '1. Provera pregrevanja — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Proveriti temperaturu procesora (i GPU-a) tokom rada', correct: true },
+          { text: 'Proveriti da li ventilatori CPU hladnjaka i kućišta rade', correct: true },
+          { text: 'Proveriti da li ima nakupljene prašine u kućištu i na hladnjacima', correct: true },
+          { text: 'Ako se računar pregreva, automatski se gasi radi zaštite hardvera', correct: true },
+          { text: 'Pregreva se samo ako je thermal paste nanet u obliku X — svaki drugi oblik uzrokuje gašenje', correct: false },
+          { text: 'Proveriti temperaturu RAM modula jer RAM pregrevanje je najčešći uzrok gašenja', correct: false },
+        ],
+        explanation: 'CPU thermal protection automatski gasi sistem kad temperatura pređe limit (obično 90-105°C u zavisnosti od procesora). Ventilatori, prašina i temperatura su ključni. RAM retko uzrokuje ovakvo gašenje, a oblik nanošenja paste nije presudan — važno je pokriće.'
+      },
+      {
+        id: 'a2_2',
+        text: '2. Provera napajanja (PSU) — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Moguće da PSU ne daje stabilan napon pod opterećenjem', correct: true },
+          { text: 'Testirati zamenom sa poznatim ispravnim napajanjem', correct: true },
+          { text: 'PSU koji radi na 80% kapaciteta konstantno može postati nestabilan i uzrokovati gašenja', correct: true },
+          { text: 'PSU problem se uvek može dijagnostikovati pre zamene merenjem napona na idle stanju', correct: false },
+        ],
+        explanation: 'Nestabilan PSU pod opterećenjem ne mora biti vidljiv na idle merenju — problem se javlja kad potražnja skoči. Zamena sa poznatim ispravnim PSU je najpouzdaniji test.'
+      },
+      {
+        id: 'a2_3',
+        text: '3. Provera električne mreže — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Proveriti utičnicu i produžni kabl', correct: true },
+          { text: 'Mogući kratki prekidi napona u mreži mogu uzrokovati gašenje računara', correct: true },
+          { text: 'UPS ili stabilizator napona može eliminisati ovu vrstu problema', correct: true },
+          { text: 'Nestabilna električna mreža uzrokuje isključivo BSOD greške, ne gašenja', correct: false },
+          { text: 'Proveriti da li je faza napona u utičnici sinhronizovana sa PSU frekvencijom', correct: false },
+        ],
+        explanation: 'Kratki padovi napona u mreži mogu uzrokovati čisto gašenje bez BSOD-a. UPS to rešava. Sinhronizacija faze nije nešto što korisnik proverava niti je relevantno za standardne ATX PSU.'
+      },
+      {
+        id: 'a2_4',
+        text: 'Zaključak — Koji su najčešći uzroci nasumičnog gašenja?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Pregrevanje (CPU/GPU thermal protection aktivira shutdown)', correct: true },
+          { text: 'Neispravno ili nestabilno napajanje (PSU)', correct: true },
+          { text: 'Kratki prekidi napona u električnoj mreži', correct: true },
+          { text: 'Nekompatibilan RAM (pogrešan XMP profil)', correct: false },
+          { text: 'Zastareli BIOS firmware', correct: false },
+        ],
+        explanation: 'Nasumična gašenja bez BSOD-a su u ogromnoj većini slučajeva ili pregrevanje ili PSU. Električna mreža je ređi ali validan uzrok. RAM XMP i BIOS mogu uzrokovati instabilnost, ali uglavnom daju freeze ili BSOD, ne čisto gašenje.'
+      },
+    ]
+  },
+
+  A9: {
+    code: 'A9',
+    title: 'Nema internet konekcije',
+    sub: 'Računar nema pristup internetu ili lokalnoj mreži.',
+    questions: [
+      {
+        id: 'a9_1',
+        text: '1. Provera fizičke konekcije — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Proveriti da li je mrežni kabl fizički priključen na računar i switch/ruter', correct: true },
+          { text: 'Proveriti da li LED lampice na mrežnoj kartici svetle (link i activity)', correct: true },
+          { text: 'Ako je bežično — proveriti da li je Wi-Fi adapter uključen (hardverski i softverski)', correct: true },
+          { text: 'Proveriti da li je mrežni kabl direktno uzemljen na kućištu računara', correct: false },
+          { text: 'Proveriti da li je RJ45 konektor pravilno krimp-ovan (otpinkovati i krimp ponovo)', correct: false },
+        ],
+        explanation: 'Fizička provera: kabl ulegnut, LED lampice svetle, Wi-Fi uključen. Uzemljenje kabla na kućištu nije stvar korisnika. Rekrimping konektora je korak samo ako si siguran da je kabl neispravan, ne na početku dijagnostike.'
+      },
+      {
+        id: 'a9_2',
+        text: '2. Provera mrežnih podešavanja — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Proveriti da li računar ima dodeljenu IP adresu (ipconfig)', correct: true },
+          { text: 'Proveriti podešavanja — da li je aktivan DHCP ili ručna (statička) konfiguracija', correct: true },
+          { text: '169.254.x.x adresa znači da DHCP nije odgovorio — APIPA adresa', correct: true },
+          { text: 'Proveriti MAC adresu mrežne kartice i upoređivati je sa DHCP lease tablom rutera', correct: false },
+          { text: 'Ako IP adresa počinje sa 10.x.x.x — to je greška i treba je ručno promeniti', correct: false },
+        ],
+        explanation: '10.x.x.x je validna privatna adresa (RFC 1918) — nije greška. MAC adresu u DHCP tabeli proverava administrator mreže, ne korisnik u prvom koraku dijagnostike. 169.254.x.x (APIPA) je ključni signal da DHCP ne radi.'
+      },
+      {
+        id: 'a9_3',
+        text: '3. Provera mrežnog uređaja (ruter/switch) — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Proveriti da li ruter/switch radi (status lampice)', correct: true },
+          { text: 'Pokušati pristup internetu sa drugog računara ili uređaja na istoj mreži', correct: true },
+          { text: 'Restartovati ruter (isključiti, sačekati 30 sekundi, uključiti)', correct: true },
+          { text: 'Obavezno resetovati ruter na fabričke postavke kao prvi korak provere', correct: false },
+          { text: 'Proveriti da li ruter ima aktivan DHCP server u admin panelu', correct: false },
+        ],
+        explanation: 'Factory reset rutera je poslednji korak, ne prvi — izgubiš sva podešavanja. Provera DHCP u admin panelu je napredniji korak. Za početak: status lampice, test s drugim uređajem, restart rutera.'
+      },
+      {
+        id: 'a9_4',
+        text: '4. Provera internet konekcije (ISP strana) — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Ako ni jedan uređaj na mreži nema internet → problem je kod provajdera (ISP)', correct: true },
+          { text: 'Restartovati ruter može rešiti problem sa ISP konekcijom (renegocijacija veze)', correct: true },
+          { text: 'Proveriti ISP status stranicu ili nazvati podršku', correct: true },
+          { text: 'Ping prema 8.8.8.8 koji ne prolazi uvek znači da je ISP u kvaru', correct: false },
+          { text: 'Ako LAN između računara radi ali internet ne → problem je definitivno u mrežnoj kartici', correct: false },
+        ],
+        explanation: 'Ping prema 8.8.8.8 može biti blokiran firewall-om na ruteru ili ISP strani — nije apsolutni indikator ISP kvara. Ako LAN radi a internet ne → problem je upstream od rutera (ISP ili WAN konekcija), ne u mrežnoj kartici.'
+      },
+      {
+        id: 'a9_5',
+        text: '5. Provera mrežne kartice — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Proveriti da li je drajver za mrežnu karticu instaliran (Device Manager)', correct: true },
+          { text: 'Proveriti da li je mrežna kartica uopšte prepoznata od strane sistema', correct: true },
+          { text: 'Testirati karticu u drugom računaru ili zameniti novom', correct: true },
+          { text: 'Mrežnu karticu uvek treba zameniti pre provere drajvera', correct: false },
+          { text: 'Neispravna mrežna kartica uvek uzrokuje i probleme sa zvukom i USB-om', correct: false },
+        ],
+        explanation: 'Drajver i prepoznatost u Device Manageru su prvi koraci. Fizička zamena dolazi kad je softverska strana isključena. Mrežna kartica ne utiče na zvuk ni USB — to su nezavisni kontroleri.'
+      },
+      {
+        id: 'a9_6',
+        text: '6. Provera softvera — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Firewall ili antivirus može blokirati mrežni saobraćaj', correct: true },
+          { text: 'Proveriti podešavanja browser-a (proxy, DNS over HTTPS konfiguracija)', correct: true },
+          { text: 'Privremeno isključiti firewall kao test (u sigurnoj mreži)', correct: true },
+          { text: 'Reinstalirati Windows je standardni korak u dijagnostici mrežnih problema', correct: false },
+          { text: 'Brisanje browsing istorije rešava probleme sa internet konekcijom', correct: false },
+        ],
+        explanation: 'Firewall i proxy su česti softverski uzroci. Reinstalacija Windowsa je nuklearna opcija i nikad nije "standardni" korak. Brisanje istorije ne utiče na konekciju.'
+      },
+      {
+        id: 'a9_7',
+        text: 'Zaključak — Koji je ispravan redosled i najčešći uzroci?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Redosled: fizička konekcija → IP podešavanja → ruter → ISP → mrežna kartica → softver', correct: true },
+          { text: 'Najčešći uzroci: pogrešna mrežna konfiguracija ili problem sa ruterom/ISP konekcijom', correct: true },
+          { text: 'Mrežna kartica je statistički najčešći uzrok problema sa internetom', correct: false },
+          { text: 'Softverski uzroci (firewall, antivirus) se proveravaju pre fizičke konekcije', correct: false },
+        ],
+        explanation: 'Fizičko uvek prvo. Mrežna kartica je relativno redak uzrok — češće su konfiguracija ili ruter. Softver se proverava tek kad je hardware/config strana čista.'
+      },
+    ]
+  },
+
+  A17: {
+    code: 'A17',
+    title: 'Nema zvuka',
+    sub: 'Zvučnici i slušalice ne rade.',
+    questions: [
+      {
+        id: 'a17_1',
+        text: '1. Provera osnovnih podešavanja zvuka — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Proveriti da li je zvuk utišan (mute) u system tray-u ili na tastaturnoj prečici', correct: true },
+          { text: 'Proveriti nivo jačine zvuka (volume) — možda je spušten na minimum', correct: true },
+          { text: 'Proveriti Volume Mixer — moguće da je određena aplikacija utišana', correct: true },
+          { text: 'Proveriti da li je zvučna kartica blokirana u BIOS-u pre bilo čega drugog', correct: false },
+          { text: 'Proveriti da li Windows Update nije promenio audio podešavanja', correct: false },
+        ],
+        explanation: 'Mute i volume su trivijalnost ali neverovatno čest uzrok — uvek početi odavde. BIOS provera dolazi mnogo kasnije u dijagnostici. Windows Update promena audio podešavanja je teorijski moguća ali nije standardni korak.'
+      },
+      {
+        id: 'a17_2',
+        text: '2. Provera zvučnika / slušalica — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Proveriti da li su pravilno priključeni na računar', correct: true },
+          { text: 'Testirati zvučnike/slušalice na drugom uređaju (telefon, drugi računar)', correct: true },
+          { text: 'Ako rade na drugom uređaju → zvučnici su ispravni, problem je na računaru', correct: true },
+          { text: 'Zvučnike treba testirati isključivo na audio signal 1kHz sinusnog talasa', correct: false },
+          { text: 'Bluetooth zvučnici ne mogu imati problema sa drajverima', correct: false },
+        ],
+        explanation: 'Test na drugom uređaju je brz i definitivan za zvučnike. Specifičan frekvencijski test nije potreban za standardnu dijagnostiku. Bluetooth audio ima sopstvene drajvere i može imati sličnih problema kao žičani.'
+      },
+      {
+        id: 'a17_3',
+        text: '3. Provera konektora — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Proveriti da li su zvučnici priključeni u ispravan audio port (zeleni, line-out)', correct: true },
+          { text: 'Razlikovati audio portove: zeleni (line-out/zvučnici), rozi (mic), plavi (line-in)', correct: true },
+          { text: 'Na matičnoj sa HD Audio — pink port se automatski rekonfiguriše za zvučnike ako zeleni zakaže', correct: false },
+          { text: 'Proveriti da li je jack priključen do kraja (čuje se klik)', correct: true },
+        ],
+        explanation: 'Zeleni port je line-out za zvučnike/slušalice. Plugovanje u mic port (roze) je česta greška. Automatska rekonfiguracija portova postoji na nekim sistemima ali nije garantovana i nije deo standardne dijagnostike.'
+      },
+      {
+        id: 'a17_4',
+        text: '4. Provera audio uređaja u sistemu — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Proveriti da li je izabran ispravan default playback device u Windows Sound Settings', correct: true },
+          { text: 'Ako je HDMI monitor priključen, Windows možda šalje audio na HDMI umesto na zvučnike', correct: true },
+          { text: 'Desni klik na ikonicu zvuka → Sound Settings → izabrati ispravan output uređaj', correct: true },
+          { text: 'Default audio device se mora podešavati u BIOS-u, ne u Windows Sound Settings', correct: false },
+          { text: 'Promeniti sample rate audio uređaja na 192kHz za bolju kompatibilnost', correct: false },
+        ],
+        explanation: 'HDMI kao default audio device je veoma čest uzrok "nema zvuka iz zvučnika". Podešava se u Windows Sound Settings, ne u BIOS-u. Sample rate promena nije dijagnostički korak.'
+      },
+      {
+        id: 'a17_5',
+        text: '5. Provera drajvera — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Proveriti da li je instaliran drajver za zvučnu karticu (Device Manager)', correct: true },
+          { text: 'Po potrebi reinstalirati ili ažurirati audio drajver', correct: true },
+          { text: 'Žuti uzvičnik (!) na audio uređaju u Device Manageru = drajver problem', correct: true },
+          { text: 'Drajver se mora instalirati ručno sa USB-a, Windows Update nikad ne instalira audio drajvere', correct: false },
+          { text: 'Reinstalacija drajvera zahteva reinstalaciju kompletnog operativnog sistema', correct: false },
+        ],
+        explanation: 'Windows Update može instalirati generički HD Audio drajver koji obično funkcioniše. Reinstalacija OS-a zbog audio drajvera je nepotrebna — samo reinstaliraš drajver.'
+      },
+      {
+        id: 'a17_6',
+        text: '6. Provera softvera — Koji koraci su ispravni?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Proveriti da li problem postoji u svim programima ili samo u jednom', correct: true },
+          { text: 'Proveriti podešavanja u video plejeru ili browseru (lokalni mute)', correct: true },
+          { text: 'Ako zvuk radi u jednom programu a ne u drugom → problem je per-app, ne hardver', correct: true },
+          { text: 'Ako samo browser nema zvuk → proveriti da li je tab utišan ili je site-level mute aktivan', correct: true },
+          { text: 'Reinstalirati sve audio codec pakete ako zvuk ne radi u jednoj aplikaciji', correct: false },
+        ],
+        explanation: 'Izolacija problema na jednu aplikaciju odmah eliminiše hardver i drajver. Codec reinstalacija zbog per-app problema je nepotrebna — problem je u aplikaciji, ne u systemu.'
+      },
+      {
+        id: 'a17_7',
+        text: '7. Zaključak — Koji je ispravan redosled i najčešći uzroci?',
+        hint: 'Izaberi sve tačne',
+        options: [
+          { text: 'Redosled: mute/volume → zvučnici → konektori → default device → drajver → softver → hardver', correct: true },
+          { text: 'Najčešći uzroci: utišan zvuk, pogrešan audio output device, ili problem sa drajverom', correct: true },
+          { text: 'Zvučna kartica (hardver) je najčešći uzrok problema sa zvukom', correct: false },
+          { text: 'Provera drajvera treba da bude prvi korak jer drajver problemi su najčešći', correct: false },
+        ],
+        explanation: 'Hardver (zvučna kartica) je retko uzrok — daleko češće su trivijalni razlozi (mute, pogrešan device, drajver). Uvek početi od najprostijeg.'
+      },
+    ]
+  }
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let mode = null;
+let currentTaskKey = null;
+let questions = [];
+let selected = {};   // id -> Set<number>
+let done = {};       // id -> bool
+let correct = 0;
+let answered = 0;
+
+// ============================================================
+// LOAD
+// ============================================================
+function loadTask(key) {
+  document.querySelectorAll('.task-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim() === key);
+  });
+  mode = 'task';
+  currentTaskKey = key;
+  questions = TASKS[key].questions.map(q => ({ ...q, taskKey: key }));
+  init();
+  render();
+}
+
+function loadRandom() {
+  document.querySelectorAll('.task-btn').forEach(b => b.classList.remove('active'));
+  mode = 'random';
+  currentTaskKey = null;
+  let pool = [];
+  for (const k of Object.keys(TASKS))
+    for (const q of TASKS[k].questions) pool.push({ ...q, taskKey: k });
+  // shuffle
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  questions = pool.slice(0, 10);
+  init();
+  render();
+}
+
+function init() {
+  selected = {};
+  done = {};
+  correct = 0;
+  answered = 0;
+  for (const q of questions) {
+    selected[q.id] = new Set();
+    done[q.id] = false;
+  }
+}
+
+function resetAll() {
+  if (mode === 'random') loadRandom();
+  else if (currentTaskKey) loadTask(currentTaskKey);
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render() {
+  const area = document.getElementById('quizArea');
+  const bar = document.getElementById('scoreBar');
+  bar.classList.add('show');
+  updateScore();
+
+  let h = '';
+
+  if (mode === 'random') {
+    h += `<div class="random-badge"><span class="blink">●</span> Random mode — 10 nasumičnih pitanja</div>`;
+  } else {
+    const t = TASKS[currentTaskKey];
+    h += `<div class="task-header">
+      <div class="task-badge">${t.code}</div>
+      <div>
+        <div class="task-title">${t.title}</div>
+        <div class="task-sub">${t.sub}</div>
+      </div>
+    </div>`;
+  }
+
+  questions.forEach((q, i) => {
+    const isDone = done[q.id];
+    const sel = selected[q.id];
+    const stateClass = isDone ? (isFullyCorrect(q) ? 'state-correct' : (isPartial(q) ? 'state-partial' : 'state-wrong')) : '';
+    const tag = mode === 'random' ? ` <span style="font-size:11px;color:var(--purple);font-family:'IBM Plex Mono',monospace;margin-left:8px;">[${q.taskKey}]</span>` : '';
+
+    h += `<div class="q-block ${stateClass}" id="qb_${q.id}" style="animation-delay:${i*0.04}s">`;
+    h += `<div class="q-head">
+      <div class="q-num">Q${i+1}${tag}</div>
+      <div>
+        <div class="q-text">${q.text}</div>
+        <div class="q-hint">// ${q.hint}</div>
+      </div>
+    </div>`;
+
+    h += `<div class="opts">`;
+    q.options.forEach((opt, oi) => {
+      const isSel = sel.has(oi);
+      let cls = 'opt';
+      if (isSel) cls += ' sel';
+      if (isDone) {
+        cls += ' locked';
+        if (opt.correct) cls += ' reveal-correct';
+        else if (isSel) cls += ' reveal-wrong';
+      }
+      const mark = isDone ? (opt.correct ? '✓' : (isSel ? '✗' : '')) : (isSel ? '✓' : '');
+      h += `<div class="${cls}" onclick="${isDone ? '' : `toggle('${q.id}',${oi})`}">
+        <div class="cb">${mark}</div>
+        <div class="opt-text">${opt.text}</div>
+      </div>`;
+    });
+    h += `</div>`;
+
+    h += `<div class="submit-row">`;
+    if (!isDone) {
+      h += `<button class="submit-btn" id="sb_${q.id}" onclick="submit('${q.id}')" ${sel.size === 0 ? 'disabled' : ''}>Potvrdi</button>`;
+    } else {
+      const fc = isFullyCorrect(q), pc = isPartial(q);
+      const vc = fc ? 'correct' : pc ? 'partial' : 'wrong';
+      const vt = fc ? '✓ Tačno' : pc ? '⚡ Delimično' : '✗ Netačno';
+      h += `<div class="verdict ${vc}">${vt}</div>`;
+    }
+    h += `</div>`;
+
+    h += `<div class="exp ${isDone ? 'show' : ''}" id="exp_${q.id}">
+      <div class="exp-label">// Objašnjenje</div>
+      <div class="exp-text">${q.explanation}</div>
+    </div>`;
+
+    h += `</div>`;
+  });
+
+  area.innerHTML = h;
+  updateScore();
+}
+
+// ============================================================
+// INTERACTION
+// ============================================================
+function toggle(qid, oi) {
+  if (done[qid]) return;
+  const q = questions.find(q => q.id === qid);
+  const sel = selected[qid];
+
+  // single vs multi — detect by correct count
+  const correctCount = q.options.filter(o => o.correct).length;
+  if (correctCount === 1) {
+    sel.clear(); sel.add(oi);
+  } else {
+    sel.has(oi) ? sel.delete(oi) : sel.add(oi);
+  }
+
+  // update options live (no full re-render)
+  const block = document.getElementById(`qb_${qid}`);
+  block.querySelectorAll('.opt').forEach((el, i) => {
+    el.className = 'opt' + (sel.has(i) ? ' sel' : '');
+    el.querySelector('.cb').textContent = sel.has(i) ? '✓' : '';
+    el.onclick = () => toggle(qid, i);
+  });
+  const btn = document.getElementById(`sb_${qid}`);
+  if (btn) btn.disabled = sel.size === 0;
+}
+
+function submit(qid) {
+  if (done[qid]) return;
+  done[qid] = true;
+  answered++;
+  if (isFullyCorrect(questions.find(q => q.id === qid))) correct++;
+  render();
+  setTimeout(() => {
+    const next = questions.find(q => !done[q.id]);
+    if (next) {
+      const el = document.getElementById(`qb_${next.id}`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, 350);
+}
+
+function isFullyCorrect(q) {
+  const sel = selected[q.id];
+  const ci = new Set(q.options.map((o, i) => o.correct ? i : -1).filter(i => i !== -1));
+  if (sel.size !== ci.size) return false;
+  for (const i of sel) if (!ci.has(i)) return false;
+  return true;
+}
+
+function isPartial(q) {
+  const sel = selected[q.id];
+  const ci = new Set(q.options.map((o, i) => o.correct ? i : -1).filter(i => i !== -1));
+  for (const i of sel) if (ci.has(i)) return true;
+  return false;
+}
+
+function updateScore() {
+  const total = questions.length;
+  document.getElementById('scoreNum').textContent = `${correct} / ${total}`;
+  const pct = total > 0 ? (answered / total) * 100 : 0;
+  const fill = document.getElementById('scoreFill');
+  fill.style.width = pct + '%';
+  if (answered === total && total > 0) {
+    fill.style.background = correct === total ? 'var(--correct)' : correct >= total * 0.7 ? 'var(--partial)' : 'var(--wrong)';
+  } else {
+    fill.style.background = 'var(--purple)';
+  }
+}
+</script>
+</body>
+</html>

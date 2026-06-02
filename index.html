@@ -279,6 +279,49 @@
       to{opacity:1;}
     }
 
+    /* ORS kartica — malo manja */
+    .card-ors {
+      min-height: auto;
+    }
+
+    /* ORS Kvarovi dugme + opis */
+    .kvarovi-wrap {
+      margin-top: 22px;
+    }
+
+    .kvarovi-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 18px;
+      background: linear-gradient(90deg, #7c5cff, #5b8cff);
+      border: none;
+      border-radius: 16px;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: transform 0.3s, box-shadow 0.3s;
+      width: 100%;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .kvarovi-btn:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 25px rgba(124,92,255,0.4);
+    }
+
+    .kvarovi-desc {
+      margin-top: 12px;
+      color: #9aa4b2;
+      font-size: 13px;
+      line-height: 1.5;
+      padding-left: 4px;
+    }
+
     @media(max-width:768px){
       .container{
         padding:40px 20px;
@@ -383,7 +426,7 @@
       </div>
 
       <!-- ORS -->
-      <div class="card">
+      <div class="card card-ors">
 
         <h2>ORS</h2>
 
@@ -400,6 +443,15 @@
 		  <li>Nije potreba virtuelna masina (ali je preporuka)</li>
 		  <li>*Nisu dostupni svi zadaci</li>
         </ul>
+
+        <div class="kvarovi-wrap">
+          <a href="ors/kvarovi.html" class="kvarovi-btn">
+            ORS Kvarovi →
+          </a>
+          <p class="kvarovi-desc">
+            Kviz za vežbanje kvarova kao teorija — šta proveriti, koji deo zameniti, kako dijagnostikovati problem.
+          </p>
+        </div>
 
       </div>
 
