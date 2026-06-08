@@ -3183,11 +3183,12 @@ const questions = [
   type: "matching",
   question: "201. Poređaj hronološkim redosledom korake VBScript skripte za kreiranje računara 'Lucas' u OU 'Jedi' na domenu starwars.com:",
   pairs: [
-    { left: "Set objOU = GetObject(\"LDAP://OU=Jedi, DC=starwars, DC=com\")", right: "1. korak" },
-    { left: "Set objComputer = objOU.Create(\"Computer\", \"CN=Lucas\")", right: "2. korak" },
-    { left: "objComputer.Put \"sAMAccountName\", \"Lucas$\"", right: "3. korak" },
+    
     { left: "objComputer.Put \"userAccountControl\", 4096", right: "4. korak" },
-    { left: "objComputer.SetInfo", right: "5. korak" }
+	{ left: "Set objComputer = objOU.Create(\"Computer\", \"CN=Lucas\")", right: "2. korak" },
+    { left: "objComputer.SetInfo", right: "5. korak" },
+	{ left: "Set objOU = GetObject(\"LDAP://OU=Jedi, DC=starwars, DC=com\")", right: "1. korak" },
+	{ left: "objComputer.Put \"sAMAccountName\", \"Lucas$\"", right: "3. korak" }
   ],
   correct: [],
   explanation: "Redosled VBScript AD skripte: (1) Povežemo se na OU, (2) Kreiramo računarski objekat, (3) Postavimo SAM ime (mora imati $ na kraju), (4) Postavimo userAccountControl=4096 (workstation), (5) SetInfo() upisuje objekat u AD.",
